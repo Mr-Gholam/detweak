@@ -1,10 +1,25 @@
 const express = require('express')
 
+// importing routers
+const mainRouter = require('./router/main')
+
+//importing database 
+const mongoConnect = require('./database/mongodb').mongoConnect
+//importing custom middleware
+const core = require('./middleware/core')
 
 // Using express middleware
 const app = express()
 app.use(express.json())
 
+//Using custom Middleware
+app.use(core.core)
+
+//using routes 
+app.use(mainRouter)
 
 
-app.listen('85')
+mongoConnect(() => {
+    console.log('mongodb connected')
+    app.listen('8585')
+})
