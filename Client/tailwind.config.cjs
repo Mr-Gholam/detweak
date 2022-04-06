@@ -5,7 +5,8 @@ module.exports = {
       colors: {
         'main': '#27AB64',
         'main-lighter': '#3EAB73',
-        'main-darker': '#2B965D'
+        'main-darker': '#2B965D',
+        'error': '#B00020'
       },
 
     },
