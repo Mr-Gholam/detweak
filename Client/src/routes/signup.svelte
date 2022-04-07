@@ -5,8 +5,13 @@
 	let username;
 	let password;
 	let confirmPassword;
-	let privacy;
+	let privacy = false;
 	let error;
+	let passsedEmail = false;
+	let passedUsername = false;
+	let passedPassword = false;
+	let passedConfirm = false;
+	let passedPrivacy = false;
 	onMount(() => {
 		// create error golbaly
 		error = document.createElement('p');
@@ -22,9 +27,13 @@
 			if (el.parentNode.querySelector('.text-error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			el.classList.add('border-error');
+			passsedEmail = false;
 		} else {
 			el.classList.remove('border-error');
-			el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.text-error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			}
+			passsedEmail = true;
 		}
 	}
 	// checking username
@@ -35,9 +44,13 @@
 			el.classList.add('border-error');
 			if (el.parentNode.querySelector('.text-error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
+			passedUsername = false;
 		} else {
-			el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.text-error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			}
 			el.classList.remove('border-error');
+			passedUsername = true;
 		}
 	}
 	/**
@@ -61,13 +74,14 @@
 			lowercase.classList.remove('text-error');
 			el.classList.add('border-error');
 			number.classList.add('text-error');
-		} else if (password.length <= 8) {
+		} else if (password.length <= 7) {
 			number.classList.remove('text-error');
 			el.classList.add('border-error');
 			length.classList.add('text-error');
 		} else {
 			el.classList.remove('border-error');
 			length.classList.remove('text-error');
+			passedPassword = true;
 		}
 	}
 	// checking confirm password
@@ -78,15 +92,54 @@
 			error.innerHTML = 'Password and confirm password are not same';
 			if (el.parentNode.querySelector('.text-error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
+			passedConfirm = false;
 		} else {
 			el.classList.remove('border-error');
-			el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.text-error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			}
+			passedConfirm = true;
+		}
+	}
+	//privacy
+	function checkPrivacy() {
+		if (!privacy) {
+			privacy = true;
+			passedPrivacy = true;
+		} else {
+			privacy = false;
+			passedPrivacy = false;
+		}
+	}
+	// submit
+	function submit() {
+		if (passsedEmail && passedUsername && passedPassword && passedConfirm && passedPrivacy) {
+			fetch('http://localhost:8585/signup', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					email,
+					password,
+					confirmPassword
+				})
+			}).then((res) => {
+				if (res.status == 301) {
+					location.href = '/set-profile';
+				}
+			});
 		}
 	}
 </script>
 
 <main class="flex justify-center m-auto py-8  items-center">
-	<form action="/signup" method="post" class="flex flex-col justify-between mr-56 p-4 gap-3">
+	<form
+		on:submit|preventDefault={submit}
+		action="/signup"
+		method="post"
+		class="flex flex-col justify-between mr-56 p-4 gap-3"
+	>
 		<section class="w-80">
 			<label class="text-base" for="email">Email</label>
 			<input
@@ -123,7 +176,7 @@
 				<li class="text-sm my-1" id="uppercase"><p>At least one uppercase letter</p></li>
 				<li class="text-sm my-1" id="lowercase"><p>At least one lowercase letter</p></li>
 				<li class="text-sm my-1" id="number"><p>contain at least one number</p></li>
-				<li class="text-sm my-1" id="length"><p>should be more than 4 character</p></li>
+				<li class="text-sm my-1" id="length"><p>should be more than 8 character</p></li>
 			</ul>
 		</section>
 		<section class="w-80">
@@ -138,8 +191,10 @@
 			/>
 		</section>
 		<section class="m-2">
-			<input type="checkbox" name="privacy" id="" />
-			<span>Privacy bullshit</span>
+			<label for="privacy" on:click={checkPrivacy}>
+				<input bind:checked={privacy} type="checkbox" name="privacy" id="" />
+				Privacy Bullshit
+			</label>
 		</section>
 		<section class="w-80">
 			<input
