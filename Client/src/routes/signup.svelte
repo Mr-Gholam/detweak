@@ -7,7 +7,7 @@
 	let confirmPassword;
 	let privacy = false;
 	let error;
-	let passsedEmail = false;
+	let passedEmail = false;
 	let passedUsername = false;
 	let passedPassword = false;
 	let passedConfirm = false;
@@ -27,13 +27,13 @@
 			if (el.parentNode.querySelector('.text-error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			el.classList.add('border-error');
-			passsedEmail = false;
+			passedEmail = false;
 		} else {
 			el.classList.remove('border-error');
 			if (el.parentNode.querySelector('.text-error')) {
 				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
 			}
-			passsedEmail = true;
+			passedEmail = true;
 		}
 	}
 	// checking username
@@ -113,7 +113,7 @@
 	}
 	// submit
 	function submit() {
-		if (passsedEmail && passedUsername && passedPassword && passedConfirm && passedPrivacy) {
+		if (passedEmail && passedUsername && passedPassword && passedConfirm && passedPrivacy) {
 			fetch('http://localhost:8585/signup', {
 				method: 'POST',
 				headers: {
