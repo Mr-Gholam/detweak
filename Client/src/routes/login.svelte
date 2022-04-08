@@ -24,7 +24,9 @@
 			passedEmail = true;
 		}
 	}
-
+	/**
+	 * todo password
+	 */
 	// check password
 	function checkPassword() {}
 </script>
