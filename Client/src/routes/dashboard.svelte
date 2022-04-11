@@ -99,7 +99,8 @@
 	<!--left part-->
 	<div class=" h-fit p-4 my-2  sticky top-0 ">
 		<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold ">
-			<a href="profile" class="hover:text-main">Profile</a>
+			<a href="/profile" class="hover:text-main">Profile</a>
+			<a href="/notification" class="hover:text-main">Notification</a>
 			<a href="/massages" class="hover:text-main">Massages</a>
 			<a href="/Liked-massage" class="hover:text-main"> Liked Massage</a>
 			<a href="/setting" class="hover:text-main">Setting</a>
@@ -262,12 +263,12 @@
 			<section class="flex justify-between gap-4 flex-col">
 				{#each suggestion as suggedtedPeople}
 					<section
-						class="  py-2 px-4 flex my-2 items-center gap-2 justify-between w-64 border-2 border-main-bg rounded-md "
+						class="  py-2 px-3 flex my-2 items-center  justify-between lg:w-72 border-2 border-main-bg rounded-md "
 					>
 						<!--name and username-->
-						<section class="flex gap-2 items-center">
+						<section class="flex  items-center w-8/12 ">
 							<!--profile img-->
-							<a href="/{suggedtedPeople.userName}">
+							<a href="/{suggedtedPeople.userName}" class="lg:w-6/12">
 								<!-- svelte-ignore a11y-img-redundant-alt -->
 								<img
 									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
@@ -276,19 +277,26 @@
 								/>
 							</a>
 							<!-- Name and username-->
-							<a href="/{suggedtedPeople.userName}">
-								<h4 class="mx-2 font-semibold text-gray-900 hover:text-gray-500">
+							<a href="/{suggedtedPeople.userName}" class="mx-2 w-full">
+								<h4 class=" font-semibold text-sm text-gray-900 hover:text-gray-500 ">
 									{suggedtedPeople.firstName}
 									{suggedtedPeople.lastName}
 								</h4>
-								<h5 class=" text-sm  text-gray-900 hover:text-gray-500 mx-2 ">
+								<h5 class=" text-xs  text-gray-900 hover:text-gray-500  ">
 									@{suggedtedPeople.userName}
 								</h5>
 							</a>
 						</section>
-						<h6 class="text-xs text-orange text-center cursor-default">
-							{suggedtedPeople.onlineTime}
-						</h6>
+						<form
+							action="/friend-request"
+							method="post"
+							class="text-xs font-semibold   text-center  w-4/12 "
+						>
+							<button
+								class="hover:bg-gray-800 hover:shadow-xl hover:text-main border-2 border-main rounded-2xl px-2 py-1.5"
+								>Add Friend
+							</button>
+						</form>
 					</section>
 				{/each}
 			</section>
