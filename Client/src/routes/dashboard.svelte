@@ -95,25 +95,26 @@
 	}
 </script>
 
-<main class="flex justify-between 2xl:w-7/12 2xl:mx-auto items-start">
+<main class="flex  xl:w-8/12  lg:w-9/12 mx-auto items-start justify-center md:justify-between">
 	<!--left part-->
-	<div class=" h-fit p-4 my-2  sticky top-0 ">
+	<!--menu-->
+	<div class=" h-fit p-4 my-2  sticky top-0 hidden md:block ">
 		<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold ">
 			<a href="/profile" class="hover:text-main">Profile</a>
 			<a href="/notification" class="hover:text-main">Notification</a>
 			<a href="/massages" class="hover:text-main">Massages</a>
 			<a href="/Liked-massage" class="hover:text-main"> Liked Massage</a>
 			<a href="/setting" class="hover:text-main">Setting</a>
-			<form action="/logout" method="post">
+			<!-- <form action="/logout" method="post">
 				<button class="font-semibold text-lg hover:text-main ">Logout</button>
-			</form>
+			</form> -->
 		</section>
 	</div>
 	<!--Main part-->
-	<div class="flex  justify-between items-center p-4 gap-4 flex-col w-6/12">
+	<div class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 md:mr-32 lg:mr-0">
 		<!--Creat Post-->
 		<div
-			class="border-2 border-solid border-gray-200 shadow-xl w-96 rounded-md my-2 overflow-hidden"
+			class="md:border-2 md:border-solid md:border-gray-200 shadow-xl w-full rounded-md my-2 overflow-hidden"
 		>
 			<form
 				action="/create-post"
@@ -158,7 +159,7 @@
 		<!--post-->
 		{#each avileblePosts as post}
 			<!-- post outline-->
-			<div class="border-2 border-solid border-gray-200  shadow-xl w-96 rounded-md my-2">
+			<div class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2">
 				<!-- svelte-ignore a11y-img-redundant-alt -->
 				<section class=" flex justify-between items-center flex-col ">
 					<!--post info-->
@@ -189,7 +190,7 @@
 					<!-- post-->
 					<section>
 						<img
-							class="w-full h-64  mx-auto"
+							class="w-full h-64  md:mx-auto "
 							src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu9PvSvDgRqonJcU8peJcUrC8ydfa_lEm9ag&usqp=CAU"
 							alt=""
 						/>
@@ -218,19 +219,19 @@
 		{/each}
 	</div>
 	<!--Right part-->
-	<div class=" h-fit p-4 my-2 ">
+	<div class=" h-fit p-4 my-2 hidden lg:block">
 		<!--online friends-->
 		<section>
 			<h3 class="text-center text-lg font-semibold my-2 ">Online Friends</h3>
 			<section class="flex justify-between gap-4 flex-col">
 				{#each onlineFriends as onlinefriend}
 					<section
-						class="  py-2 px-4 flex my-2  items-center gap-2 justify-between w-64 border-2 border-main-bg rounded-md "
+						class="  py-2 px-3 flex my-2 items-center  justify-between lg:w-72 border-2 border-main-bg rounded-md "
 					>
 						<!--name and username-->
-						<section class="flex justify-between w-fit items-center">
+						<section class="flex  items-center w-8/12 ">
 							<!--profile img-->
-							<a href="/{onlinefriend.userName}">
+							<a href="/{onlinefriend.userName}" class="lg:w-6/12">
 								<!-- svelte-ignore a11y-img-redundant-alt -->
 								<img
 									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
@@ -239,19 +240,17 @@
 								/>
 							</a>
 							<!-- Name and username-->
-							<a href="/{onlinefriend.userName}">
-								<h4 class="mx-2 font-semibold text-gray-900 hover:text-gray-500">
+							<a href="/{onlinefriend.userName}" class="mx-2 w-full">
+								<h4 class=" font-semibold text-sm text-gray-900 hover:text-gray-500 ">
 									{onlinefriend.firstName}
 									{onlinefriend.lastName}
 								</h4>
-								<h5 class=" text-sm  text-gray-900 hover:text-gray-500 mx-2 ">
+								<h5 class=" text-xs  text-gray-900 hover:text-gray-500  ">
 									@{onlinefriend.userName}
 								</h5>
 							</a>
 						</section>
-						<h6 class="text-xs text-orange text-center mx-2 cursor-default">
-							{onlinefriend.timeRemian}
-						</h6>
+						<h5 class="text-xs text-orange mx-2 cursor-default">{onlinefriend.timeRemian}</h5>
 					</section>
 				{/each}
 			</section>

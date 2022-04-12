@@ -130,12 +130,12 @@
 	//
 </script>
 
-<main class=" flex justify-center m-auto py-8  items-center">
+<main class=" md:flex md:justify-center md:m-auto md:py-8  md:items-center">
 	<form
 		on:submit|preventDefault={submit}
 		action="/set-profile"
 		method="post"
-		class="flex flex-col justify-between mr-56  p-4 gap-4"
+		class="flex flex-col justify-between lg:mr-56  p-4 gap-4 items-center"
 		enctype="multipart/form-data"
 	>
 		<section class="w-80">
@@ -239,5 +239,5 @@
 			/>
 		</section>
 	</form>
-	<h1 class="ml-56  p-4 ">There will be pic here</h1>
+	<h1 class="md:ml-56  md:p-4 hidden">There will be pic here</h1>
 </main>

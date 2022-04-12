@@ -31,11 +31,11 @@
 	function checkPassword() {}
 </script>
 
-<main class=" flex justify-center m-auto py-8 my-16  items-center">
+<main class=" flex justify-center m-auto py-8 md:my-16  items-center">
 	<form
 		action="/login"
 		method="post"
-		class="flex flex-col justify-between items-center  mr-56  p-4 gap-4"
+		class="flex flex-col justify-between items-center  md:mr-56  md:p-4 gap-4"
 	>
 		<section class="w-80">
 			<label class="text-base" for="email">Email</label>
@@ -83,5 +83,5 @@
 			>
 		</h4>
 	</form>
-	<h1 class="mr-56 p-4">there will be a pic here</h1>
+	<h1 class="md:mr-56 md:p-4 hidden">there will be a pic here</h1>
 </main>

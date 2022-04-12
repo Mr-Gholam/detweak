@@ -12,6 +12,9 @@ module.exports = {
         'error': '#B00020',
         'orange': '#eb9114'
       },
+      rotate: {
+        'N45': '-45deg'
+      }
 
     },
   },

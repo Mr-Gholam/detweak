@@ -133,14 +133,14 @@
 	}
 </script>
 
-<main class="flex justify-center m-auto py-8  items-center">
+<main class="md:flex md:justify-center md:m-auto md:py-8  md:items-center">
 	<form
 		on:submit|preventDefault={submit}
 		action="/signup"
 		method="post"
-		class="flex flex-col justify-between mr-56 p-4 gap-3"
+		class="flex flex-col justify-between md:mr-56 p-4 gap-3 items-center"
 	>
-		<section class="w-80">
+		<section class="w-80 ">
 			<label class="text-base" for="email">Email</label>
 			<input
 				bind:value={email}
@@ -151,7 +151,7 @@
 				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
-		<section class="w-80">
+		<section class="w-80 ">
 			<label class="text-base" for="username">Username</label>
 			<input
 				bind:value={username}
@@ -162,7 +162,7 @@
 				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
-		<section class="w-80">
+		<section class="w-80 ">
 			<label class="text-base" for="password">Password</label>
 			<input
 				bind:value={password}
@@ -179,7 +179,7 @@
 				<li class="text-sm my-1" id="length"><p>should be more than 8 character</p></li>
 			</ul>
 		</section>
-		<section class="w-80">
+		<section class="w-80 ">
 			<label class="text-base" for="confirmPassword">Confirm Password</label>
 			<input
 				bind:value={confirmPassword}
@@ -190,7 +190,7 @@
 				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
-		<section class="m-2">
+		<section class="m-2 w-80 px-4">
 			<label for="privacy" on:click={checkPrivacy}>
 				<input bind:checked={privacy} type="checkbox" name="privacy" id="" />
 				Privacy Bullshit
@@ -207,5 +207,5 @@
 			Already a member?<a href="/login" class="text-lg text-main mx-1">Login</a>
 		</h5>
 	</form>
-	<h1 class="ml-56 p-4">There will be pic here</h1>
+	<h1 class="md:ml-56 md:p-4 hidden">There will be pic here</h1>
 </main>
