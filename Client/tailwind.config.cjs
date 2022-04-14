@@ -4,8 +4,7 @@ module.exports = {
     extend: {
       colors: {
         'main': '#f5487f',
-        // 'main': '#1f306e',
-        'main-lighter': '#c7417b',
+        'green': '#27AB64',
         'main-purple': '#553772',
         'main-bg': '#1f306e',
         'error': '#FF3333',
