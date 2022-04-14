@@ -95,7 +95,9 @@
 	}
 </script>
 
-<main class="flex  xl:w-8/12  lg:w-9/12 mx-auto items-start justify-center md:justify-between">
+<main
+	class="flex md:w-10/12 xl:w-8/12  lg:w-9/12 mx-auto items-start justify-center md:justify-between"
+>
 	<!--left part-->
 	<!--menu-->
 	<div class=" h-fit p-4 my-2  sticky top-0 hidden md:block ">

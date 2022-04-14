@@ -6,48 +6,48 @@
 	let password;
 	let confirmPassword;
 	let privacy = false;
-	let error;
+
 	let passedEmail = false;
 	let passedUsername = false;
 	let passedPassword = false;
 	let passedConfirm = false;
 	let passedPrivacy = false;
-	onMount(() => {
-		// create error golbaly
-		error = document.createElement('p');
-		error.classList.add('text-error', 'text-center', 'text-base', 'my-2');
-	});
+
 	//checking email
 	function checkEmail() {
+		const error = document.createElement('p');
+		error.classList.add('error');
 		const sample =
 			/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 		const el = document.getElementById('email');
 		error.innerHTML = 'Email is not vaild';
 		if (!email.match(sample)) {
-			if (el.parentNode.querySelector('.text-error')) return;
+			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			el.classList.add('border-error');
 			passedEmail = false;
 		} else {
 			el.classList.remove('border-error');
-			if (el.parentNode.querySelector('.text-error')) {
-				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.error'));
 			}
 			passedEmail = true;
 		}
 	}
 	// checking username
 	function checkUsername() {
+		const error = document.createElement('p');
+		error.classList.add('error');
 		const el = document.getElementById('username');
 		error.innerHTML = 'Username must be at least 3 characters';
 		if (username.length <= 3) {
 			el.classList.add('border-error');
-			if (el.parentNode.querySelector('.text-error')) return;
+			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			passedUsername = false;
 		} else {
-			if (el.parentNode.querySelector('.text-error')) {
-				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.error'));
 			}
 			el.classList.remove('border-error');
 			passedUsername = true;
@@ -58,6 +58,8 @@
 	 */
 	// checking Password
 	function checkPassword() {
+		const error = document.createElement('p');
+		error.classList.add('error');
 		const el = document.getElementById('password');
 		const uppercase = document.getElementById('uppercase');
 		const lowercase = document.getElementById('lowecase');
@@ -86,16 +88,18 @@
 	}
 	// checking confirm password
 	function checkConfrimPassword() {
+		const error = document.createElement('p');
+		error.classList.add('error');
 		const el = document.getElementById('confirmPassword');
 		if (password !== confirmPassword) {
 			el.classList.add('border-error');
 			error.innerHTML = 'Password and confirm password are not same';
-			if (el.parentNode.querySelector('.text-error')) return;
+			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			passedConfirm = false;
 		} else {
 			el.classList.remove('border-error');
-			if (el.parentNode.querySelector('.text-error')) {
+			if (el.parentNode.querySelector('.error')) {
 				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
 			}
 			passedConfirm = true;
@@ -148,7 +152,7 @@
 				type="email"
 				name="email"
 				id="email"
-				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
 		<section class="w-80 ">
@@ -159,7 +163,7 @@
 				type="text"
 				name="username"
 				id="username"
-				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
 		<section class="w-80 ">
@@ -170,7 +174,7 @@
 				type="password"
 				name="password"
 				id="password"
-				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 			<ul class=" px-4">
 				<li class="text-sm my-1" id="uppercase"><p>At least one uppercase letter</p></li>
@@ -187,7 +191,7 @@
 				type="password"
 				name="confirmPassword"
 				id="confirmPassword"
-				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
 		<section class="m-2 w-80 px-4">
@@ -200,7 +204,7 @@
 			<input
 				type="submit"
 				value="Sign Up"
-				class="cursor-pointer text-lg rounded-lg text-white bg-main py-2 px-20 mx-auto block w-11/12 hover:shadow-xl hover:bg-main-darker  "
+				class="cursor-pointer text-lg rounded-lg  bg-main-bg hover:text-main py-2 px-20 mx-auto block w-11/12 hover:shadow-xl text-white "
 			/>
 		</section>
 		<h5 class="text-base text-center">

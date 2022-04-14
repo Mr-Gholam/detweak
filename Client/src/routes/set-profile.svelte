@@ -52,17 +52,17 @@
 	function checkFirstName() {
 		const el = document.getElementById('firstName');
 		const error = document.createElement('p');
-		error.classList.add('text-error', 'text-center', 'text-base', 'my-2');
+		error.classList.add('error');
 		error.innerHTML = 'First name should be at least 3 charecters';
 		if (firstName.length <= 3) {
 			el.classList.add('border-error');
-			if (el.parentNode.querySelector('.text-error')) return;
+			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			passedName = false;
 		} else {
 			el.classList.remove('border-error');
-			if (el.parentNode.querySelector('.text-error')) {
-				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.error'));
 			}
 			passedName = true;
 		}
@@ -71,7 +71,7 @@
 	function checkLastName() {
 		const el = document.getElementById('lastName');
 		const error = document.createElement('p');
-		error.classList.add('text-error', 'text-center', 'text-base', 'my-2');
+		error.classList.add('error');
 		error.innerHTML = 'Last name should be at least 3 charecters';
 		if (lastName.length <= 3) {
 			el.classList.add('border-error');
@@ -80,8 +80,8 @@
 			passedLastName = false;
 		} else {
 			el.classList.remove('border-error');
-			if (el.parentNode.querySelector('.text-error')) {
-				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.error'));
 			}
 			passedLastName = true;
 		}
@@ -90,17 +90,17 @@
 	function checkBio() {
 		const el = document.getElementById('bio');
 		const error = document.createElement('p');
-		error.classList.add('text-error', 'text-center', 'text-base', 'my-2');
+		error.classList.add('error');
 		error.innerHTML = 'Bio should be at least 15 charecters';
 		if (bio.length <= 15) {
 			el.classList.add('border-error');
-			if (el.parentNode.querySelector('.text-error')) return;
+			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			passedBio = false;
 		} else {
 			el.classList.remove('border-error');
-			if (el.parentNode.querySelector('.text-error')) {
-				el.parentNode.removeChild(el.parentNode.querySelector('.text-error'));
+			if (el.parentNode.querySelector('.error')) {
+				el.parentNode.removeChild(el.parentNode.querySelector('.error'));
 			}
 			passedBio = true;
 		}
@@ -146,7 +146,7 @@
 				id="firstName"
 				bind:value={firstName}
 				on:change={checkFirstName}
-				class="outline-none border-2 border-main border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
 		<section class="w-80">
@@ -158,7 +158,7 @@
 				id="lastName"
 				bind:value={lastName}
 				on:change={checkLastName}
-				class="outline-none border-2 border-main border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
 		<section class="w-80">
@@ -170,7 +170,7 @@
 				rows="5"
 				bind:value={bio}
 				on:change={checkBio}
-				class="outline-none border-2 border-main border-solid
+				class="outline-none border-2 border-main-bg border-solid
                  rounded-lg px-2.5 mx-auto block w-11/12 my-3 p-2 resize-none
                  "
 			/>
@@ -181,7 +181,7 @@
 				<select
 					id="online-time"
 					bind:value={timelineSelected}
-					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main border-solid rounded-lg p-1 my-3"
+					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3"
 				>
 					<option selected disabled value=""> hour</option>
 					{#each timelines as timeline}
@@ -194,7 +194,7 @@
 					bind:value={amPm}
 					name="am-pm"
 					id="am-pm"
-					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main border-solid rounded-lg p-1 my-3"
+					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3"
 				>
 					<option selected disabled value=""> Am-PM</option>
 					<option value="AM">AM</option>
@@ -222,11 +222,12 @@
 					class="block w-4/6 text-sm text-gray-500
                 file:mr-3 file:py-2 file:px-3 
                 file:text-sm file:font-semibold
-                file:bg-violet-50 file:text-main
-                file:border-main file:border-2
+                file:bg-violet-50 file:text-main-bg
+                file:border-main-bg file:border-2
                 file:border-solid
                 file:rounded-full
-                hover:file:bg-violet-100
+                file:hover:bg-main
+		
                 file:hover:cursor-pointer"
 				/>
 			</div>
@@ -235,7 +236,7 @@
 			<input
 				type="submit"
 				value="Next"
-				class="cursor-pointer text-lg rounded-lg text-white bg-main py-2 px-20 mx-auto block w-11/12 hover:shadow-xl hover:bg-main-darker  "
+				class="cursor-pointer text-lg rounded-lg hover:text-main text-white bg-main-bg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl hover:bg-main-darker  "
 			/>
 		</section>
 	</form>

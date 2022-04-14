@@ -6,13 +6,13 @@
 	// check Email
 	function checkEmail() {
 		const error = document.createElement('p');
-		error.classList.add('text-error', 'text-center', 'text-base', 'my-2');
+		error.classList.add('error');
 		const sample =
 			/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 		const el = document.getElementById('email');
 		error.innerHTML = 'Email is not vaild';
 		if (!email.match(sample)) {
-			if (el.parentNode.querySelector('.text-error')) return;
+			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
 			el.classList.add('border-error');
 			passedEmail = false;
@@ -45,7 +45,7 @@
 				type="email"
 				name="email"
 				id="email"
-				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				placeholder="Email"
 			/>
 		</section>
@@ -57,7 +57,7 @@
 				type="password"
 				name="password"
 				id="password"
-				class="outline-none border-2 border-main border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				placeholder="Password"
 			/>
 		</section>
@@ -65,7 +65,7 @@
 			<h4 class="text-base">
 				Forgot your Password? <a
 					href="/reset-password"
-					class="text-lg text-main  mx-1 hover:text-main-darker">Reset Password</a
+					class="text-lg text-main  mx-1 hover:text-main-bg">Reset Password</a
 				>
 			</h4>
 		</section>
@@ -73,13 +73,13 @@
 			<input
 				type="submit"
 				value="Login"
-				class="cursor-pointer text-lg rounded-lg bg-main py-2 px-20 hover:shadow-xl mx-auto block w-11/12 hover:bg-main-darker "
+				class="cursor-pointer text-lg rounded-lg bg-main-bg py-2 hover:text-main px-20 hover:shadow-xl mx-auto block w-11/12 text-white"
 			/>
 		</section>
 		<h4 class="text-base my-5">
 			Not a member yet?<a
 				href="/signup"
-				class="text-lg text-main font-medium mx-1 hover:text-main-darker ">Sign up</a
+				class="text-lg text-main font-medium mx-1 hover:text-main-bg">Sign up</a
 			>
 		</h4>
 	</form>
