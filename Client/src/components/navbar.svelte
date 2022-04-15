@@ -1,4 +1,6 @@
 <script>
+	// @ts-nocheck
+
 	let IsloggedIn = true;
 	let humberguer = false;
 	function openHumberguer() {
@@ -43,7 +45,7 @@
 			<input
 				type="text"
 				placeholder="search"
-				class="w-42 lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none  "
+				class="w-42  lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none  "
 			/>
 		</section>
 		<!--humberguer menu-->
@@ -62,7 +64,7 @@
 				<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold  ">
 					<a href="/profile" class="hover:text-main  ">Profile</a>
 					<a href="/notification" class="hover:text-main">Notification</a>
-					<a href="/massages" class="hover:text-main">Massages</a>
+					<a href="/messages" class="hover:text-main">Messages</a>
 					<a href="/Liked-massage" class="hover:text-main"> Liked Massage</a>
 					<a href="/setting" class="hover:text-main">Setting</a>
 					<form action="/logout" method="post">

@@ -95,25 +95,11 @@
 	}
 </script>
 
-<main
-	class="flex md:w-10/12 xl:w-8/12  lg:w-9/12 mx-auto items-start justify-center md:justify-between"
->
-	<!--left part-->
-	<!--menu-->
-	<div class=" h-fit p-4 my-2  sticky top-0 hidden md:block ">
-		<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold ">
-			<a href="/profile" class="hover:text-main">Profile</a>
-			<a href="/notification" class="hover:text-main">Notification</a>
-			<a href="/massages" class="hover:text-main">Massages</a>
-			<a href="/Liked-massage" class="hover:text-main"> Liked Massage</a>
-			<a href="/setting" class="hover:text-main">Setting</a>
-			<!-- <form action="/logout" method="post">
-				<button class="font-semibold text-lg hover:text-main ">Logout</button>
-			</form> -->
-		</section>
-	</div>
+<main class="flex w-9/12 items-start justify-center md:justify-between">
 	<!--Main part-->
-	<div class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 md:mr-32 lg:mr-0">
+	<div
+		class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0"
+	>
 		<!--Creat Post-->
 		<div
 			class="md:border-2 md:border-solid md:border-gray-200 shadow-xl w-full rounded-md my-2 overflow-hidden"
@@ -124,7 +110,14 @@
 				class="flex-col flex"
 				on:submit|preventDefault={newPost}
 			>
-				<img src="" bind:this={imageSrc} alt="" class="w-80 h80 rounded-sm mx-auto my-1" />
+				<!--Make img great again-->
+				<img
+					src=""
+					bind:this={imageSrc}
+					alt=""
+					class="w-full h-fit rounded-sm mx-auto my-1 object-cover"
+				/>
+
 				<textarea
 					name="postContent"
 					id="postContent"
@@ -136,7 +129,7 @@
 				/>
 				<section class="flex justify-evenly items-center">
 					<!-- file input-->
-					<label for="postPic" class="text-2xl  hover:cursor-pointer "
+					<label for="postPic" class="text-2xl  hover:cursor-pointer hover:text-main "
 						><i class="fa-solid fa-paperclip" /></label
 					>
 					<input
@@ -153,6 +146,7 @@
 						value="Post "
 						class="p-1 text-xl font-semibold hover:cursor-pointer py-2 px-5 
 						m-2 rounded-md 
+						hover:text-main
 						w-24"
 					/>
 				</section>
@@ -190,9 +184,9 @@
 						<h6 class="text-xs text-orange mx-2 cursor-default">{post.timeRemain}</h6>
 					</section>
 					<!-- post-->
-					<section>
+					<section class="w-full h-fit">
 						<img
-							class="w-full h-64  md:mx-auto "
+							class="w-full h-fit  md:mx-auto  object-cover"
 							src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQu9PvSvDgRqonJcU8peJcUrC8ydfa_lEm9ag&usqp=CAU"
 							alt=""
 						/>

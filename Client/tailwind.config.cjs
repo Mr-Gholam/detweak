@@ -10,6 +10,9 @@ module.exports = {
         'error': '#FF3333',
         'orange': '#eb9114'
       },
+      width: {
+        '128': '32rem',
+      },
       rotate: {
         'N45': '-45deg'
       }
