@@ -95,7 +95,7 @@
 	}
 </script>
 
-<main class="flex w-9/12 items-start justify-center md:justify-between">
+<div class="flex w-9/12 items-start justify-center md:justify-between">
 	<!--Main part-->
 	<div
 		class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0"
@@ -297,4 +297,4 @@
 			</section>
 		</section>
 	</div>
-</main>
+</div>
