@@ -36,15 +36,45 @@
 			return;
 		}
 	}
+	function switchPersonal() {
+		const personal = document.getElementById('personal');
+		const account = document.getElementById('account');
+		const personalBtn = document.getElementById('personalBtn');
+		const accountBtn = document.getElementById('accountBtn');
+		personal.classList.remove('hidden');
+		account.classList.add('hidden');
+		personalBtn.classList.add('text-main');
+		accountBtn.classList.remove('text-main');
+	}
+	function switchAccount() {
+		const personal = document.getElementById('personal');
+		const account = document.getElementById('account');
+		const personalBtn = document.getElementById('personalBtn');
+		const accountBtn = document.getElementById('accountBtn');
+		personal.classList.add('hidden');
+		account.classList.remove('hidden');
+		personalBtn.classList.remove('text-main');
+		accountBtn.classList.add('text-main');
+	}
 </script>
 
-<div class="p-4 my-2 flex ">
+<div class="md:p-4 my-2 md:w-9/12 ">
+	<section
+		class="w-80 flex border-2 justify-evenly p-3 bg-main-bg rounded-full text-white mx-auto mb-4 "
+	>
+		<button class="hover:text-main text-main" id="personalBtn" on:click={switchPersonal}
+			>Personal Setting</button
+		>
+		<button class="hover:text-main" id="accountBtn" on:click={switchAccount}>Account Setting</button
+		>
+	</section>
 	<!--Personal-->
 	<form
 		action="/set-profile"
 		method="post"
-		class="flex flex-col justify-between lg:mr-56  p-4 gap-4 items-center shadow-xl border-2"
+		class="flex flex-col justify-between  p-4 gap-4 items-center shadow-xl border-2 w-fit mx-auto"
 		enctype="multipart/form-data"
+		id="personal"
 	>
 		<h1 class="text-lg font-semibold text-center">Personal Setting</h1>
 		<section class="w-80">
@@ -152,7 +182,8 @@
 	<form
 		action="/signup"
 		method="post"
-		class="flex flex-col justify-between  p-4 gap-3 items-center "
+		class="flex flex-col justify-between  p-4 gap-3 items-center shadow-xl border-2 hidden w-fit mx-auto"
+		id="account"
 	>
 		<h1 class="text-lg font-semibold text-center">Account Settting</h1>
 		<section class="w-80 ">

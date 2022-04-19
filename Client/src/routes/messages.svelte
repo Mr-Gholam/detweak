@@ -14,6 +14,7 @@
 	let currentChat = {};
 	let textInput;
 	let showList = true;
+	let bouncing = false;
 	function createSendMessage(input) {
 		const middePart = document.getElementById('middlePart');
 		const messageParent = document.createElement('div');
@@ -57,6 +58,20 @@
 			el = el.parentElement;
 		}
 		// waiting for server
+	}
+	function typing() {
+		const sendBtn = document.getElementById('sendBtn');
+		if (bouncing) {
+			sendBtn.classList.remove('right-bounce');
+			bouncing = false;
+		} else {
+			sendBtn.classList.add('right-bounce');
+			bouncing = true;
+		}
+		setInterval(() => {
+			sendBtn.classList.remove('right-bounce');
+			bouncing = false;
+		}, 6250);
 	}
 </script>
 
@@ -147,12 +162,13 @@
 				on:submit|preventDefault={sendMessage}
 			>
 				<input
+					on:focus={typing}
 					bind:value={textInput}
 					type="text"
 					class="flex-1 p-2  border-2 border-main rounded-full focus:outline-none foucs:border-main"
 					placeholder="test"
 				/>
-				<button class="m-2 font-semibold rounded-full bg-main py-2  px-4"
+				<button class="m-2 font-semibold rounded-full bg-main py-2  px-4" id="sendBtn"
 					><i class="fas fa-chevron-right" /></button
 				>
 			</form>
