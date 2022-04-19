@@ -6,7 +6,7 @@
 		<a href="/profile" class="hover:text-main">Profile</a>
 		<a href="/notification" class="hover:text-main">Notification</a>
 		<a href="/messages" class="hover:text-main">Messages</a>
-		<a href="/Liked-massage" class="hover:text-main"> Liked Massage</a>
+		<a href="/liked-posts" class="hover:text-main"> Liked Posts</a>
 		<a href="/setting" class="hover:text-main">Setting</a>
 	</section>
 </div>

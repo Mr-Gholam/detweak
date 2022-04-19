@@ -60,12 +60,12 @@
 
 		{#if IsloggedIn}
 			<!--menu-->
-			<div class=" p-4   hidden absolute top-10 left-0 bg-main-bg w-full h-fit " id="menu">
+			<div class=" p-4   hidden absolute top-10 left-0 bg-main-bg w-full h-fit z-10 " id="menu">
 				<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold  ">
 					<a href="/profile" class="hover:text-main  ">Profile</a>
 					<a href="/notification" class="hover:text-main">Notification</a>
 					<a href="/messages" class="hover:text-main">Messages</a>
-					<a href="/Liked-massage" class="hover:text-main"> Liked Massage</a>
+					<a href="/liked-posts" class="hover:text-main"> Liked Posts</a>
 					<a href="/setting" class="hover:text-main">Setting</a>
 					<form action="/logout" method="post">
 						<button class="font-semibold text-lg hover:text-main ">Logout</button>

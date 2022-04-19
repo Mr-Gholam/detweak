@@ -15,8 +15,10 @@ module.exports = {
       },
       rotate: {
         'N45': '-45deg'
+      },
+      height: {
+        '128': '50rem'
       }
-
     },
   },
   plugins: [],
