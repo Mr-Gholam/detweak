@@ -20,6 +20,24 @@ const User = sequelize.define('users', {
     password: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    firstName: {
+        type: Sequelize.STRING,
+    },
+    lastName: {
+        type: Sequelize.STRING,
+    },
+    bio: {
+        type: Sequelize.STRING,
+    },
+    profileImgUrl: {
+        type: Sequelize.STRING,
+    },
+    onlineTime: {
+        type: Sequelize.DATE,
+    },
+    birthday: {
+        type: Sequelize.DATE,
     }
 })
 module.exports = User

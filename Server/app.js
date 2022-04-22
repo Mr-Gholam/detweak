@@ -8,6 +8,12 @@ const sequelize = require('./database/sequelize')
 //importing custom middleware
 const core = require('./middleware/core')
 
+// importing models 
+const User = require('./model/user')
+const Post = require('./model/post')
+const Comment = require('./model/comment')
+const Friend = require('./model/friend')
+
 // Using express middleware
 const app = express()
 app.use(express.json())
@@ -22,9 +28,15 @@ app.use(core.core)
 app.use(authRouter)
 app.use(mainRouter)
 
+// relation between models
+User.hasMany(Post)
+User.hasMany(Comment)
+User.hasMany(Friend)
+Post.hasMany(Comment)
+
 
 //syncing database
-sequelize.sync({ forced: true }).then(result => {
+sequelize.sync({ force: true }).then(result => {
     // console.log(result)
     app.listen('8585')
 }).catch(err => { console.log(err) })

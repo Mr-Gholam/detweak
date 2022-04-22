@@ -24,12 +24,11 @@ exports.postSignup = async (req, res, next) => {
                 // hashing the password
                 const hashedPassword = await bcrypt.hash(password, 12)
                 // creating the new user
-                const newUser = await User.create({
+                await User.create({
                     email: email,
                     username: username,
-                    password: hashedPassword
+                    password: hashedPassword,
                 })
-
                 res.status(301).json({
 
                 })
