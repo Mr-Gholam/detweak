@@ -9,7 +9,7 @@ const Post = sequelize.define('posts', {
         primaryKey: true,
         allowNull: false
     },
-    imgUrl: {
+    imageUrl: {
         type: Sequelize.STRING
     },
     description: {

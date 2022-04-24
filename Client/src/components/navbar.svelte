@@ -1,7 +1,11 @@
 <script>
 	// @ts-nocheck
+	import { IsLoggedIn } from '../store';
+	import { onDestroy } from 'svelte';
+	let loggedIn;
+	const unsubscribe = IsLoggedIn.subscribe((value) => (loggedIn = value));
 
-	let IsloggedIn = true;
+	onDestroy(unsubscribe);
 	let humberguer = false;
 	function openHumberguer() {
 		const firstBurger = document.getElementById('firstBurger');
@@ -58,7 +62,7 @@
 			<span class="block w-5 h-0.5 bg-main transition ease-in-out" id="lastBurger" />
 		</div>
 
-		{#if IsloggedIn}
+		{#if loggedIn}
 			<!--menu-->
 			<div class=" p-4   hidden absolute top-10 left-0 bg-main-bg w-full h-fit z-10 " id="menu">
 				<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold  ">

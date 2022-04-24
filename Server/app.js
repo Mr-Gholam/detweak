@@ -1,8 +1,32 @@
 const express = require('express')
 
+// importing path 
+const path = require('path')
+// importing multer
+const multer = require('multer')
+// creating multer options
+const fileDestination = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname)
+    }
+})
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image.jpeg') {
+        cb(null, true)
+    } else {
+        cb(null, false)
+    }
+}
 // importing routers
 const mainRouter = require('./router/main')
 const authRouter = require('./router/auth')
+const postRouter = require('./router/post')
 //importing database 
 const sequelize = require('./database/sequelize')
 //importing custom middleware
@@ -17,8 +41,10 @@ const Friend = require('./model/friend')
 // Using express middleware
 const app = express()
 app.use(express.json())
+// using multer
+app.use(multer({ storage: fileDestination, fileFilter: fileFilter }).single('image'))
+app.use('/images', express.static(path.join(__dirname, 'images')))
 
-// using body parser
 
 
 //Using custom Middleware
@@ -26,6 +52,7 @@ app.use(core.core)
 
 //using routes 
 app.use(authRouter)
+app.use(postRouter)
 app.use(mainRouter)
 
 // relation between models
@@ -36,7 +63,7 @@ Post.hasMany(Comment)
 
 
 //syncing database
-sequelize.sync({ force: true }).then(result => {
+sequelize.sync().then(result => {
     // console.log(result)
     app.listen('8585')
 }).catch(err => { console.log(err) })

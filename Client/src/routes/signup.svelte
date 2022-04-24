@@ -125,6 +125,7 @@
 				},
 				body: JSON.stringify({
 					email,
+					username,
 					password,
 					confirmPassword
 				})

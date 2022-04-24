@@ -30,7 +30,7 @@ exports.postSignup = async (req, res, next) => {
                     password: hashedPassword,
                 })
                 res.status(301).json({
-
+                    msg: 'user created'
                 })
 
             }

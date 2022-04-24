@@ -19,18 +19,6 @@
 		{ id: 9, value: '9-10' },
 		{ id: 10, value: '10-11' },
 		{ id: 11, value: '11-12' }
-		// { id: 12, value: '12 - 13' },
-		// { id: 13, value: '13 - 14' },
-		// { id: 14, value: '14 - 15' },
-		// { id: 15, value: '15 - 16' },
-		// { id: 16, value: '16 - 17' },
-		// { id: 17, value: '17 - 18' },
-		// { id: 18, value: '18 - 19' },
-		// { id: 19, value: '19 - 20' },
-		// { id: 20, value: '20 - 21' },
-		// { id: 21, value: '21 - 22' },
-		// { id: 22, value: '22 - 21' },
-		// { id: 23, value: '23 - 24' }
 	];
 	let passedName = false;
 	let passedLastName = false;
@@ -44,7 +32,6 @@
 				profilePic.setAttribute('src', reader.result);
 			});
 			reader.readAsDataURL(file);
-			console.log(file);
 			return;
 		}
 	}
@@ -158,7 +145,7 @@
 				id="lastName"
 				bind:value={lastName}
 				on:change={checkLastName}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
 			/>
 		</section>
 		<section class="w-80">
