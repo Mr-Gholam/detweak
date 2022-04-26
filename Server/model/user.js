@@ -34,7 +34,7 @@ const User = sequelize.define('users', {
         type: Sequelize.STRING,
     },
     onlineTime: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
     },
     birthday: {
         type: Sequelize.DATE,

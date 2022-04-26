@@ -4,6 +4,8 @@ const express = require('express')
 const path = require('path')
 // importing multer
 const multer = require('multer')
+
+const cookieParser = require('cookie-parser');
 // creating multer options
 const fileDestination = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -17,7 +19,7 @@ const fileFilter = (req, file, cb) => {
     if (
         file.mimetype === 'image/png' ||
         file.mimetype === 'image/jpg' ||
-        file.mimetype === 'image.jpeg') {
+        file.mimetype === 'image/jpeg') {
         cb(null, true)
     } else {
         cb(null, false)
@@ -40,6 +42,7 @@ const Friend = require('./model/friend')
 
 // Using express middleware
 const app = express()
+app.use(cookieParser());
 app.use(express.json())
 // using multer
 app.use(multer({ storage: fileDestination, fileFilter: fileFilter }).single('image'))

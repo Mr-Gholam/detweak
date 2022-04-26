@@ -16,8 +16,9 @@ exports.getAvailablePosts = async (req, res, next) => {
                 , firstName: user.firstName
                 , lastName: user.lastName
                 , profileImg: user.profileImgUrl
-                , onlineTime: user.onlineTime,
-                postId: post.id
+                , onlineTime: user.onlineTime
+                , createdAt: post.createdAt
+                , postId: post.id
             }
         })
     res.status(200).json({ availablePosts })

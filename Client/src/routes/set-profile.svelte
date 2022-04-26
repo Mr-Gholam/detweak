@@ -1,4 +1,5 @@
 <script>
+	let userId;
 	let firstName;
 	let lastName;
 	let bio;
@@ -23,6 +24,7 @@
 	let passedName = false;
 	let passedLastName = false;
 	let passedBio = false;
+
 	//preview  profile picture
 	function imageChange() {
 		const file = profilePicInput.files[0];

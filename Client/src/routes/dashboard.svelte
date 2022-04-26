@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 	let postContent;
 	let imageSrc;
@@ -37,13 +38,9 @@
 	onMount(async () => {
 		const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
 		const posts = await response.json();
-		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
-		console.log(JSON.parse(JSON.stringify(posts.availablePosts)));
+		const orderedPosts = JSON.parse(JSON.stringify(posts.availablePosts));
+		availablePosts = orderedPosts.reverse();
 	});
-	//publish the new post
-	// function publish(data) {
-	// 	availablePosts.push(data);
-	// }
 	//post new content
 	function newPost() {
 		if (!postContent) return;
@@ -54,9 +51,16 @@
 			method: 'POST',
 			body: formData
 		})
-			.then((res) => {
-				res.json();
-				console.log(res);
+			.then(async (res) => {
+				if (res.status === 200) {
+					postContent = null;
+					postPicInput = null;
+					imageSrc.setAttribute('src', '');
+					const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
+					const posts = await response.json();
+					const orderedPosts = JSON.parse(JSON.stringify(posts.availablePosts));
+					availablePosts = orderedPosts.reverse();
+				}
 			})
 			.then((data) => {
 				// console.log(data);
@@ -162,7 +166,9 @@
 									</h5>
 								</a>
 							</section>
-							<h6 class="text-xs text-orange mx-2 cursor-default">{post.timeRemain}</h6>
+							<h6 class="text-xs text-orange mx-2 cursor-default">
+								{post.onlineTime}
+							</h6>
 						</section>
 						<!-- post-->
 						<section class="w-full h-fit">
@@ -189,7 +195,9 @@
 								>
 							</section>
 							<!--time-->
-							<h6 class="text-xs text-orange mx-2">{post.createdAt}</h6>
+							<h6 class="text-xs text-orange mx-2">
+								{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+							</h6>
 						</section>
 					</section>
 				</div>

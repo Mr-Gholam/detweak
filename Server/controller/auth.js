@@ -1,5 +1,7 @@
 // importing bcrypt 
 const bcrypt = require('bcryptjs')
+// importing JWT
+const jwt = require('jsonwebtoken')
 // importing validation result
 const { validationResult } = require('express-validator')
 //importing user model
@@ -29,8 +31,12 @@ exports.postSignup = async (req, res, next) => {
                     username: username,
                     password: hashedPassword,
                 })
+                const token = jwt.sign({ email }, 'superSecret')
+                res.cookie('jwt', token)
                 res.status(301).json({
-                    msg: 'user created'
+                    token,
+                    msg: 'user created',
+                    email: email
                 })
 
             }
@@ -89,4 +95,31 @@ exports.postLogin = async (req, res, next) => {
             emailErr: 'Email not found'
         })
     }
+}
+
+// Post set profile
+exports.postSetProfile = async (req, res, next) => {
+    console.log(req.headers)
+    const email = req.body.email
+    const firstName = req.body.firstName
+    const lastName = req.body.lastName
+    const bio = req.body.bio
+    const onlineTime = req.body.onlineTime
+    const birthday = req.body.birthday
+    let imageUrl
+    imageUrl = req.body.imageUrl
+    if (req.file) {
+        imageUrl = req.file.path
+    }
+    await User.update({
+        firstName,
+        lastName,
+        bio,
+        onlineTime,
+        birthday,
+        profileImgUrl: imageUrl
+    }, { where: { email } })
+    res.json({
+        msg: 'user updated'
+    })
 }

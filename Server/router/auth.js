@@ -30,4 +30,7 @@ router.post('/login',
     ]
     , authController.postLogin)
 
+// post set profile
+router.post('/set-profile', authController.postSetProfile)
+
 module.exports = router

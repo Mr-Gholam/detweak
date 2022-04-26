@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import ResetPassword from './reset-password.svelte';
 
 	let email;
 	let username;
@@ -129,9 +129,10 @@
 					password,
 					confirmPassword
 				})
-			}).then((res) => {
+			}).then(async (res) => {
+				let Response = await res.json();
 				if (res.status == 301) {
-					location.href = '/set-profile';
+					// location.href = '/set-profile';
 				}
 			});
 		}
