@@ -1,7 +1,8 @@
 const express = require('express')
 // importing express-validator
 const { body } = require('express-validator')
-
+// importing is auth middleware 
+const isAuth = require('../middleware/is-auth')
 
 const authController = require('../controller/auth')
 
@@ -31,6 +32,6 @@ router.post('/login',
     , authController.postLogin)
 
 // post set profile
-router.post('/set-profile', authController.postSetProfile)
+router.post('/set-profile', isAuth, authController.postSetProfile)
 
 module.exports = router

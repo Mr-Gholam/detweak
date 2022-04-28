@@ -1,5 +1,6 @@
 <script>
-	import ResetPassword from './reset-password.svelte';
+	import { goto } from '$app/navigation';
+	import { User } from '../store';
 
 	let email;
 	let username;
@@ -131,8 +132,9 @@
 				})
 			}).then(async (res) => {
 				let Response = await res.json();
-				if (res.status == 301) {
-					// location.href = '/set-profile';
+				if (res.status == 200) {
+					User.set({ username });
+					goto('/set-profile');
 				}
 			});
 		}

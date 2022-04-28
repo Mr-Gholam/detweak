@@ -18,7 +18,7 @@ exports.postSignup = async (req, res, next) => {
     const password = req.body.password
     try {
         // Looking for similar email
-        const emailFound = await User.findOne({ where: { email: email } })
+        const emailFound = await User.findOne({ where: { email } })
         if (!emailFound) {
             // Looking for similar username
             const usernameFound = await User.findOne({ where: { username } })
@@ -32,8 +32,8 @@ exports.postSignup = async (req, res, next) => {
                     password: hashedPassword,
                 })
                 const token = jwt.sign({ email }, 'superSecret')
-                res.cookie('jwt', token)
-                res.status(301).json({
+                res.cookie('jwt', token, { maxAge: 1000 * 3600 })
+                res.status(200).json({
                     token,
                     msg: 'user created',
                     email: email
@@ -99,8 +99,7 @@ exports.postLogin = async (req, res, next) => {
 
 // Post set profile
 exports.postSetProfile = async (req, res, next) => {
-    console.log(req.headers)
-    const email = req.body.email
+    const email = req.email
     const firstName = req.body.firstName
     const lastName = req.body.lastName
     const bio = req.body.bio
@@ -119,7 +118,7 @@ exports.postSetProfile = async (req, res, next) => {
         birthday,
         profileImgUrl: imageUrl
     }, { where: { email } })
-    res.json({
+    res.status(200).json({
         msg: 'user updated'
     })
 }

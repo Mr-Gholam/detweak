@@ -14,7 +14,7 @@
 		"jsconfig.json": true,
 		"postcss.config.cjs": true,
 		"README.md": true,
-		"svelte.config.js": true,
+		"svelte.config.js": false,
 		"tailwind.config.cjs": true,
 		"package-lock.json": true,
 		"static": true,

@@ -1,4 +1,14 @@
 <script>
+	import { goto } from '$app/navigation';
+
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		const response = await fetch('http://localhost:8585', { method: 'POST' });
+		if (response.status == 200) {
+			goto('/dashboard');
+		}
+	});
 </script>
 
 <h1 class="bg-red-900">Welcome to SvelteKit</h1>

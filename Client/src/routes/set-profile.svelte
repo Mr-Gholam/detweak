@@ -1,4 +1,6 @@
 <script>
+	import { goto } from '$app/navigation';
+	import { IsLoggedIn } from '../store';
 	let userId;
 	let firstName;
 	let lastName;
@@ -6,6 +8,7 @@
 	let profilePic;
 	let profilePicInput;
 	let timelineSelected;
+	let birthday;
 	let amPm;
 	let timelines = [
 		{ id: 0, value: '0-1' },
@@ -98,15 +101,26 @@
 	 * ? ya ali madad
 	 */
 	//submit
-	function submit() {
+	async function submit() {
 		if (passedName) {
 			if (timelineSelected) {
 				if (amPm) {
-					if (profilePicInput.file) {
-					} else {
-						document
-							.getElementById('profileImg')
-							.classList.add('file:border-error', 'file:text-error');
+					const formData = new FormData();
+					formData.append('firstname', firstName);
+					formData.append('lastname', lastName);
+					formData.append('bio', bio);
+					formData.append('birthay', birthday);
+					formData.append('image', profilePicInput.files[0]);
+					formData.append('onlineTime', timelineSelected + amPm);
+					const response = await fetch('http://localhost:8585/set-profile', {
+						method: 'POST',
+						body: formData
+					});
+					const data = await response.json();
+					console.log(data);
+					if (response.ok) {
+						IsLoggedIn.set(true);
+						goto('/dashboard');
 					}
 				} else {
 					document.getElementById('am-pm').classList.add('border-error');
@@ -114,6 +128,8 @@
 			} else {
 				document.getElementById('online-time').classList.add('border-error');
 			}
+		} else {
+			document.getElementById('firstName').classList.add('border-error');
 		}
 	}
 	//
@@ -162,6 +178,16 @@
 				class="outline-none border-2 border-main-bg border-solid
                  rounded-lg px-2.5 mx-auto block w-11/12 my-3 p-2 resize-none
                  "
+			/>
+		</section>
+		<section class="w-80">
+			<label class="text-base" for="birthday">Bithday</label>
+			<input
+				type="date"
+				name="birthday"
+				id=""
+				bind:value={birthday}
+				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
 			/>
 		</section>
 		<section class="w-80">
