@@ -1,4 +1,13 @@
 <script>
+	import { page } from '$app/stores';
+
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		const username = $page.params.username;
+		console.log(username);
+		const response = await fetch(`/http://localhost:8585/profile/${username}`);
+	});
 	let avileblePosts = [
 		{
 			userName: 'mehdi',
