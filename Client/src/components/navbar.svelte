@@ -1,11 +1,9 @@
 <script>
 	// @ts-nocheck
-	import { IsLoggedIn } from '../store';
-	import { onDestroy } from 'svelte';
-	let loggedIn;
-	const unsubscribe = IsLoggedIn.subscribe((value) => (loggedIn = value));
+	import { User } from '../store';
+	let username;
+	User.subscribe((value) => (username = value.username));
 
-	onDestroy(unsubscribe);
 	let humberguer = false;
 	function openHumberguer() {
 		const firstBurger = document.getElementById('firstBurger');
@@ -18,7 +16,7 @@
 			firstBurger.classList.remove('rotate-45', 'absolute', 'top-5');
 			lastBurger.classList.remove('rotate-N45', 'absolute', 'bottom-1');
 			midtBurger.classList.remove('hidden');
-			if (IsloggedIn) {
+			if ($User.username) {
 				menu.classList.add('hidden');
 			} else {
 				auth.classList.add('hidden');
@@ -32,7 +30,7 @@
 			lastBurger.style.top = '7px';
 			lastBurger.style.left = '18px';
 			midtBurger.classList.add('hidden');
-			if (IsloggedIn) {
+			if ($User.username) {
 				menu.classList.remove('hidden');
 			} else {
 				auth.classList.remove('hidden');
@@ -62,11 +60,11 @@
 			<span class="block w-5 h-0.5 bg-main transition ease-in-out" id="lastBurger" />
 		</div>
 
-		{#if loggedIn}
+		{#if $User.username}
 			<!--menu-->
 			<div class=" p-4   hidden absolute top-10 left-0 bg-main-bg w-full h-fit z-10 " id="menu">
 				<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold  ">
-					<a href="/profile" class="hover:text-main  ">Profile</a>
+					<a href="/profile/{username}" class="hover:text-main">My Profile</a>
 					<a href="/notification" class="hover:text-main">Notification</a>
 					<a href="/messages" class="hover:text-main">Messages</a>
 					<a href="/liked-posts" class="hover:text-main"> Liked Posts</a>

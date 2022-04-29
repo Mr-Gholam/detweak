@@ -1,17 +1,18 @@
 <script>
-	import { IsLoggedIn } from '../store';
+	import { User } from '../store';
 	import '../app.css';
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
-	import { onDestroy } from 'svelte';
-	let loggedIn;
-	const unsubscribe = IsLoggedIn.subscribe((value) => (loggedIn = value));
-
-	onDestroy(unsubscribe);
+	import { onMount } from 'svelte';
+	onMount(async () => {
+		const res = await fetch('/jwt');
+		const u = await res.json();
+		User.set(u);
+	});
 </script>
 
 <Navbar />
-{#if loggedIn}
+{#if $User.username}
 	<main class="flex  xl:w-8/12  lg:w-9/12 mx-auto items-start justify-center md:justify-between">
 		<LeftSidebar />
 		<slot />

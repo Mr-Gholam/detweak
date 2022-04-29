@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 //importing user model
 const User = require('../model/user')
+// get Sign up 
+
 // Post Sign up controller
 exports.postSignup = async (req, res, next) => {
     // Looking for validation errors
@@ -31,12 +33,11 @@ exports.postSignup = async (req, res, next) => {
                     username: username,
                     password: hashedPassword,
                 })
-                const token = jwt.sign({ email }, 'superSecret')
+                const newUser = await User.findOne({ where: { email } })
+                const token = jwt.sign({ id: newUser.id, email, username }, 'superSecret')
                 res.cookie('jwt', token, { maxAge: 1000 * 3600 })
                 res.status(200).json({
-                    token,
-                    msg: 'user created',
-                    email: email
+                    username
                 })
 
             }
@@ -73,17 +74,20 @@ exports.postLogin = async (req, res, next) => {
     // email found 
     if (emailFound) {
         // comparing the password 
-        const matchPassword = await bcrypt.compare(password, result.password)
+        const matchPassword = await bcrypt.compare(password, emailFound.password)
         // passwords match
         if (matchPassword) {
+            const token = jwt.sign({ id: emailFound.id, email, username: emailFound.username }, 'superSecret')
+            console.log(token)
+            res.cookie('jwt', token)
             res.status(200).json({
-                IsLoggedIn: true
+                username: emailFound.username
             })
         }
         // passwords do not match
         else {
             res.status(403).json({
-                IsLoggedIn: false
+                passwordErr: 'Password is incorrect'
             })
         }
 
@@ -121,4 +125,23 @@ exports.postSetProfile = async (req, res, next) => {
     res.status(200).json({
         msg: 'user updated'
     })
+}
+// get Jwt 
+exports.getJWT = async (req, res) => {
+    try {
+        if (!req.cookies?.jwt) return res.status(401).end()
+        const token = req.cookies.jwt
+        const { id, username, email } = jwt.verify(
+            token,
+            'superSecret'
+        )
+        if (!id) return res.status(401).end()
+        res.json({
+            id,
+            username,
+            email
+        })
+    } catch (error) {
+        return res.status(401).end()
+    }
 }

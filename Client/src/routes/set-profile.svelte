@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { IsLoggedIn } from '../store';
+
 	let userId;
 	let firstName;
 	let lastName;
@@ -119,7 +119,6 @@
 					const data = await response.json();
 					console.log(data);
 					if (response.ok) {
-						IsLoggedIn.set(true);
 						goto('/dashboard');
 					}
 				} else {

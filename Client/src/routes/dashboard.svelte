@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
-
+	let hasPhoto;
 	let postContent;
 	let imageSrc;
 	let postPicInput;
@@ -55,6 +55,7 @@
 				if (res.status === 200) {
 					postContent = null;
 					postPicInput = null;
+					hasPhoto = false;
 					imageSrc.setAttribute('src', '');
 					const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
 					const posts = await response.json();
@@ -75,6 +76,7 @@
 				imageSrc.setAttribute('src', reader.result);
 			});
 			reader.readAsDataURL(file);
+			hasPhoto = true;
 		}
 	}
 </script>
@@ -94,13 +96,14 @@
 				class="flex-col flex"
 				on:submit|preventDefault={newPost}
 			>
-				<!--Make img great again-->
-				<img
-					src=""
-					bind:this={imageSrc}
-					alt=""
-					class="w-full h-fit rounded-sm mx-auto my-1 object-cover"
-				/>
+				{#if hasPhoto}
+					<img
+						src=""
+						bind:this={imageSrc}
+						alt=""
+						class="w-full h-fit rounded-sm mx-auto my-1 object-cover"
+					/>
+				{/if}
 
 				<textarea
 					name="postContent"
@@ -148,7 +151,7 @@
 							<!--name and username-->
 							<section class="flex gap-2 items-center">
 								<!--profile img-->
-								<a href="/{post.username}" class="ml-2">
+								<a href="/profile/{post.username}" class="ml-2">
 									<img
 										class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
 										src="http://localhost:8585/{post.profileImg}"
@@ -156,7 +159,7 @@
 									/>
 								</a>
 								<!-- Name and username-->
-								<a href="/{post.username}">
+								<a href="/profile/{post.username}">
 									<h4 class="mx-2 font-semibold text-gray-900 hover:text-gray-500">
 										{post.firstName}
 										{post.lastName}
@@ -217,7 +220,7 @@
 						<!--name and username-->
 						<section class="flex  items-center w-8/12 ">
 							<!--profile img-->
-							<a href="/{onlinefriend.userName}" class="lg:w-6/12">
+							<a href="/prfile/{onlinefriend.userName}" class="lg:w-6/12">
 								<!-- svelte-ignore a11y-img-redundant-alt -->
 								<img
 									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
@@ -253,7 +256,7 @@
 						<!--name and username-->
 						<section class="flex  items-center w-8/12 ">
 							<!--profile img-->
-							<a href="/{suggedtedPeople.userName}" class="lg:w-6/12">
+							<a href="/profile/{suggedtedPeople.userName}" class="lg:w-6/12">
 								<!-- svelte-ignore a11y-img-redundant-alt -->
 								<img
 									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
@@ -262,7 +265,7 @@
 								/>
 							</a>
 							<!-- Name and username-->
-							<a href="/{suggedtedPeople.userName}" class="mx-2 w-full">
+							<a href="/profile/{suggedtedPeople.userName}" class="mx-2 w-full">
 								<h4 class=" font-semibold text-sm text-gray-900 hover:text-gray-500 ">
 									{suggedtedPeople.firstName}
 									{suggedtedPeople.lastName}
@@ -278,7 +281,7 @@
 							class="text-xs font-semibold   text-center  w-4/12 "
 						>
 							<button
-								class="hover:bg-gray-800 hover:shadow-xl hover:text-main border-2 border-main rounded-2xl px-2 py-1.5"
+								class=" bg-main-bg hover:text-main hover:shadow-xl py-3 px-3 mx-auto rounded-xl  py-1.5 text-white"
 								>Add Friend
 							</button>
 						</form>

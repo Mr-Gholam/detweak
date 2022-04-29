@@ -3,11 +3,14 @@ const express = require('express')
 const { body } = require('express-validator')
 // importing is auth middleware 
 const isAuth = require('../middleware/is-auth')
-
+// importing auth main controller
 const authController = require('../controller/auth')
 
-const router = express.Router()
 
+
+const router = express.Router()
+// get jwt
+router.get('/jwt', authController.getJWT)
 // post signup
 router.post('/signup',
     [
@@ -29,7 +32,7 @@ router.post('/login',
         body('email').isEmail().normalizeEmail().notEmpty(),
         body('password').trim().isAlphanumeric().isLength({ min: 8 })
     ]
-    , authController.postLogin)
+    , isAuth, authController.postLogin)
 
 // post set profile
 router.post('/set-profile', isAuth, authController.postSetProfile)

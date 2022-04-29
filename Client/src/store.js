@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 
 
-export const IsLoggedIn = writable(false)
 
-export const User = writable({})
+export const User = writable({ username: null })
+

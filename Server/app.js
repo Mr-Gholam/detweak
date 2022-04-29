@@ -31,6 +31,7 @@ const fileFilter = (req, file, cb) => {
 const mainRouter = require('./router/main')
 const authRouter = require('./router/auth')
 const postRouter = require('./router/post')
+const profileRouter = require('./router/profile')
 //importing database 
 const sequelize = require('./database/sequelize')
 
@@ -57,6 +58,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')))
 
 //using routes 
 app.use(authRouter)
+app.use(profileRouter)
 app.use(postRouter)
 app.use(mainRouter)
 

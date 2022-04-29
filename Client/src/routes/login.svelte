@@ -1,7 +1,11 @@
 <script>
+	import { goto } from '$app/navigation';
+	import { User } from '../store';
+
 	let email;
 	let password;
 	let passedEmail = false;
+	let passedPassword = false;
 
 	// check Email
 	function checkEmail() {
@@ -24,17 +28,69 @@
 			passedEmail = true;
 		}
 	}
-	/**
-	 * todo password
-	 */
+
 	// check password
-	function checkPassword() {}
+	function checkPassword() {
+		const error = document.createElement('p');
+		error.classList.add('error');
+		const el = document.getElementById('password');
+		if (!/[A-Z]/.test(password)) {
+			el.classList.add('border-error');
+		} else if (!/[a-z]/.test(password)) {
+			el.classList.add('border-error');
+		} else if (!/[0-9]/.test(password)) {
+			el.classList.add('border-error');
+		} else if (password.length <= 7) {
+			el.classList.add('border-error');
+		} else {
+			el.classList.remove('border-error');
+			passedPassword = true;
+		}
+	}
+	async function sumbit() {
+		if (passedEmail && passedPassword) {
+			const response = await fetch('http://localhost:8585/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					email,
+					password
+				})
+			});
+			const data = await response.json();
+			if (response.status == 200) {
+				User.set(data);
+				goto('/dashboard');
+			}
+			// handleing invalid email
+			if (response.status == 403 && data.emailErr) {
+				const error = document.createElement('p');
+				error.classList.add('error');
+				const el = document.getElementById('email');
+				error.innerHTML = 'Email is not vaild';
+				el.classList.add('border-error');
+				el.parentNode.insertBefore(error, el.previousElementSibling);
+			}
+			// handleing invalid password
+			if (response.status == 403 && data.passwordErr) {
+				const error = document.createElement('p');
+				error.classList.add('error');
+				const el = document.getElementById('password');
+				error.innerHTML = 'Password is not vaild';
+				el.classList.add('border-error');
+				el.parentNode.insertBefore(error, el.previousElementSibling);
+			}
+		}
+	}
 </script>
 
 <main class=" flex justify-center m-auto py-8 md:my-16  items-center">
 	<form
 		action="/login"
 		method="post"
+		on:submit|preventDefault={sumbit}
 		class="flex flex-col justify-between items-center  md:mr-56  md:p-4 gap-4"
 	>
 		<section class="w-80">

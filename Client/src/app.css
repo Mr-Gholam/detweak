@@ -6,6 +6,9 @@
 * {
 	font-family: 'Roboto', sans-serif;
 }
+.tiny {
+	font-size: 16px;
+}
 .error {
 	font-size: 1rem; /* 16px */
 	line-height: 1.5rem; /* 24px */

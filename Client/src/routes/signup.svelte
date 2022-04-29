@@ -1,5 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { User } from '../store';
 
 	let email;
@@ -117,9 +118,9 @@
 		}
 	}
 	// submit
-	function submit() {
+	async function submit() {
 		if (passedEmail && passedUsername && passedPassword && passedConfirm && passedPrivacy) {
-			fetch('http://localhost:8585/signup', {
+			const Response = await fetch('http://localhost:8585/signup', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -130,15 +131,38 @@
 					password,
 					confirmPassword
 				})
-			}).then(async (res) => {
-				let Response = await res.json();
-				if (res.status == 200) {
-					User.set({ username });
-					goto('/set-profile');
-				}
 			});
+			const data = await Response.json();
+			if (Response.status == 200) {
+				User.set({ username });
+				goto('/set-profile');
+			}
+			// handleing duplicate email
+			if (Response.status == 403 && data.emailErr) {
+				const error = document.createElement('p');
+				const el = document.getElementById('email');
+				error.innerHTML = 'This Email has been used before';
+				error.classList.add('error');
+				el.classList.add('border-error');
+				el.parentNode.insertBefore(error, el.previousElementSibling);
+			}
+			// handleing duplicate username
+			if (Response.status == 403 && data.UsernameErr) {
+				const error = document.createElement('p');
+				const el = document.getElementById('username');
+				error.innerHTML = 'This Username has been used before';
+				error.classList.add('error');
+				el.classList.add('border-error');
+				el.parentNode.insertBefore(error, el.previousElementSibling);
+			}
 		}
 	}
+	onMount(async () => {
+		const response = await fetch('http://localhost:8585/signup', { method: 'GET' });
+		if (response.status == 200) {
+			goto('/dashboard');
+		}
+	});
 </script>
 
 <main class="md:flex md:justify-center md:m-auto md:py-8  md:items-center">
