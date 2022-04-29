@@ -77,52 +77,66 @@
 			{#if !loading}
 				<!--profile info-->
 				<section
-					class="w-full flex flex-col h-fit my-2  shadow-xl border-solid border-gray-200 md:border-2"
+					class="w-full flex flex-col h-fit my-2  shadow-lg border-solid border-slate-500/30 md:border  rounded-md"
 				>
-					<!--profile pic-->
-					<section class=" flex items-center p-2 justify-between">
-						<!-- svelte-ignore a11y-img-redundant-alt -->
+					<!-- svelte-ignore a11y-img-redundant-alt -->
+					<!-- profile img - first name - last name - online time -->
+					<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 p-2">
 						<img
-							class="h-20 w-20 object-cover rounded-full border-2 border-white  "
+							class="h-20 w-20 object-cover rounded-full lg:mr-16 "
 							src="http://localhost:8585/{profileImg}"
 							alt="Current profile photo"
 						/>
-
-						<!--Name & UserName & Bio-->
-						<section class="  m-2 w-9/12 flex flex-col items-start ">
-							<h4 class=" font-semibold text-base text-gray-900 my-1 ">
+						<div>
+							<h4 class=" font-semibold text-base text-gray-900 my-1 lg:mr-16">
 								{firstName}
 								{lastName}
 							</h4>
-							<div class="flex justify-between w-7/12">
-								<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
-									@{userName}
-								</h5>
-								{#if birthday}
-									<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
-										<i class="fa-solid fa-cake-candles" />
-										{month}/{day}
-									</h5>
-								{/if}
-							</div>
-							<h5 class="text-sm my-1 ">
-								{bio}
+							<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
+								@{userName}
 							</h5>
-						</section>
-					</section>
-					<!--time & buttons-->
-					<section class="flex items-center justify-evenly m-2">
-						<h4 class="text-green" id="timerCountdown">
+						</div>
+						<h4 class="text-green text-sm" id="timerCountdown">
 							<i class="fa-solid fa-signal" />
 							{onlineTime}
 						</h4>
+					</div>
+					<!-- birthday - location - bio-->
+					<div class="m-2 p-2">
+						<!--birthday - location -->
+						<section class="flex w-6/12 justify-between lg:w-7/12">
+							{#if birthday}
+								<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+									<i class="fa-solid fa-cake-candles" />
+									{month}/{day}
+								</h5>
+							{/if}
+							<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+								<i class="fa-solid fa-location-dot" />
+								Kermanshah
+							</h5>
+						</section>
+						<h5 class="text-sm my-2 ">
+							{bio}
+						</h5>
+					</div>
+					<!-- posts - friends - friend request or send massage-->
+					<div class="flex justify-evenly w-full items-center p-2">
+						<section class="flex flex-col items-center">
+							<h4>5</h4>
+							<h3 class="font-semibold">Posts</h3>
+						</section>
+						<section class="flex flex-col items-center">
+							<h4>23</h4>
+							<h3 class="font-semibold">Friends</h3>
+						</section>
 						<form action="/friend-request" method="post">
 							<button
-								class="px-2 py-1 border-2 border-main rounded-md  hover:text-main hover:shadow-xl "
+								class="px-2 py-1 border border-main rounded-md  hover:text-main hover:shadow-xl font-semibold"
 								>Add Friend</button
 							>
 						</form>
-					</section>
+					</div>
 				</section>
 				<!--post-->
 				{#each posts as post}
@@ -277,52 +291,66 @@
 	<div class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 lg:w-128 mx-auto">
 		<!--profile info-->
 		<section
-			class="w-full flex flex-col h-fit my-2  shadow-xl border-solid border-gray-200 md:border-2"
+			class="w-full flex flex-col h-fit my-2  shadow-lg border-solid border-slate-500/30 md:border  rounded-md"
 		>
-			<!--profile pic-->
-			<section class=" flex items-center p-2 justify-between">
-				<!-- svelte-ignore a11y-img-redundant-alt -->
+			<!-- svelte-ignore a11y-img-redundant-alt -->
+			<!-- profile img - first name - last name - online time -->
+			<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 p-2">
 				<img
-					class="h-20 w-20 object-cover rounded-full border-2 border-white  "
+					class="h-20 w-20 object-cover rounded-full lg:mr-16 "
 					src="http://localhost:8585/{profileImg}"
 					alt="Current profile photo"
 				/>
-
-				<!--Name & UserName & Bio-->
-				<section class="  m-2 w-9/12 flex flex-col items-start ">
-					<h4 class=" font-semibold text-base text-gray-900 my-1 ">
+				<div>
+					<h4 class=" font-semibold text-base text-gray-900 my-1 lg:mr-16">
 						{firstName}
 						{lastName}
 					</h4>
-					<div class="flex justify-between w-7/12">
-						<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
-							@{userName}
-						</h5>
-						{#if birthday}
-							<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
-								<i class="fa-solid fa-cake-candles" />
-								{month}/{day}
-							</h5>
-						{/if}
-					</div>
-					<h5 class="text-sm my-1 ">
-						{bio}
+					<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
+						@{userName}
 					</h5>
-				</section>
-			</section>
-			<!--time & buttons-->
-			<section class="flex items-center justify-evenly m-2">
-				<h4 class="text-green" id="timerCountdown">
+				</div>
+				<h4 class="text-green text-sm" id="timerCountdown">
 					<i class="fa-solid fa-signal" />
 					{onlineTime}
 				</h4>
+			</div>
+			<!-- birthday - location - bio-->
+			<div class="m-2 p-2">
+				<!--birthday - location -->
+				<section class="flex w-6/12 justify-between lg:w-7/12">
+					{#if birthday}
+						<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+							<i class="fa-solid fa-cake-candles" />
+							{month}/{day}
+						</h5>
+					{/if}
+					<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+						<i class="fa-solid fa-location-dot" />
+						Kermanshah
+					</h5>
+				</section>
+				<h5 class="text-sm my-2 ">
+					{bio}
+				</h5>
+			</div>
+			<!-- posts - friends - friend request or send massage-->
+			<div class="flex justify-evenly w-full items-center p-2">
+				<section class="flex flex-col items-center">
+					<h4>5</h4>
+					<h3 class="font-semibold">Posts</h3>
+				</section>
+				<section class="flex flex-col items-center">
+					<h4>23</h4>
+					<h3 class="font-semibold">Friends</h3>
+				</section>
 				<form action="/friend-request" method="post">
 					<button
-						class="px-2 py-1 border-2 border-main rounded-md  hover:text-main hover:shadow-xl "
+						class="px-2 py-1 border border-main rounded-md  hover:text-main hover:shadow-xl font-semibold"
 						>Add Friend</button
 					>
 				</form>
-			</section>
+			</div>
 		</section>
 		<!--post-->
 		{#each posts as post}
