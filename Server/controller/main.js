@@ -8,7 +8,6 @@ exports.getMain = (req, res, next) => {
 }
 // post main controller
 exports.postMain = (req, res, next) => {
-    res.status(200).json({ go: 'go baby' })
     if (req.email) {
         res.status(200)
     } else {

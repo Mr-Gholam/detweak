@@ -4,10 +4,13 @@
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	onMount(async () => {
 		const res = await fetch('/jwt');
 		const u = await res.json();
-		User.set(u);
+		if (res.status == 200) {
+			User.set(u);
+		}
 	});
 </script>
 

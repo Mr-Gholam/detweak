@@ -36,5 +36,7 @@ router.post('/login',
 
 // post set profile
 router.post('/set-profile', isAuth, authController.postSetProfile)
+// post logout 
+router.post('/logout', authController.postLogout)
 
 module.exports = router

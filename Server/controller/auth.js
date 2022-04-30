@@ -1,3 +1,4 @@
+
 // importing bcrypt 
 const bcrypt = require('bcryptjs')
 // importing JWT
@@ -78,7 +79,6 @@ exports.postLogin = async (req, res, next) => {
         // passwords match
         if (matchPassword) {
             const token = jwt.sign({ id: emailFound.id, email, username: emailFound.username }, 'superSecret')
-            console.log(token)
             res.cookie('jwt', token)
             res.status(200).json({
                 username: emailFound.username
@@ -109,6 +109,7 @@ exports.postSetProfile = async (req, res, next) => {
     const bio = req.body.bio
     const onlineTime = req.body.onlineTime
     const birthday = req.body.birthday
+    const location = req.body.location
     let imageUrl
     imageUrl = req.body.imageUrl
     if (req.file) {
@@ -119,6 +120,7 @@ exports.postSetProfile = async (req, res, next) => {
         lastName,
         bio,
         onlineTime,
+        location,
         birthday,
         profileImgUrl: imageUrl
     }, { where: { email } })
@@ -129,19 +131,24 @@ exports.postSetProfile = async (req, res, next) => {
 // get Jwt 
 exports.getJWT = async (req, res) => {
     try {
-        if (!req.cookies?.jwt) return res.status(401).end()
-        const token = req.cookies.jwt
-        const { id, username, email } = jwt.verify(
-            token,
-            'superSecret'
-        )
-        if (!id) return res.status(401).end()
-        res.json({
-            id,
-            username,
-            email
-        })
+        if (req.cookies?.jwt) {
+            const token = req.cookies.jwt
+            const { id, username, email } = jwt.verify(
+                token,
+                'superSecret'
+            )
+            res.status(200).json({
+                id,
+                username,
+                email
+            })
+        }
+
     } catch (error) {
-        return res.status(401).end()
+        console.log(error)
     }
+}
+// post logout
+exports.postLogout = async (req, res, next) => {
+    res.cookie('jwt', '', { maxAge: -1 }).end()
 }

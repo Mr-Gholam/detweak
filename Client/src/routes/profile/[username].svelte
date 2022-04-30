@@ -15,6 +15,10 @@
 	let birthday;
 	let onlineTime;
 	let userName;
+	let postCount;
+	let friendCount;
+	let location;
+	let myProfile;
 	let posts = null;
 	let onlineFriends = [
 		{
@@ -46,7 +50,9 @@
 	];
 	onMount(async () => {
 		const username = $page.params.username;
-		console.log(username);
+		if (username === loggedIn) {
+			myProfile = true;
+		}
 		const response = await fetch(`http://localhost:8585/profile/${username}`);
 		const data = await response.json();
 		if (data) {
@@ -58,6 +64,9 @@
 		bio = data.bio;
 		profileImg = data.profileImg;
 		birthday = data.birthday;
+		postCount = data.postCount;
+		friendCount = data.friendCount;
+		location = data.location;
 		if (birthday) {
 			day = new Date(birthday).getDate();
 			month = new Date(birthday).getMonth() + 1;
@@ -66,6 +75,14 @@
 		const orderedPosts = JSON.parse(JSON.stringify(data.availablePosts));
 		posts = orderedPosts.reverse();
 	});
+	async function addFriend() {
+		const response = await fetch('http://localhost:8585/add-friend', {
+			method: 'POST',
+			body: JSON.stringify({
+				targetUsername: userName
+			})
+		});
+	}
 </script>
 
 {#if loggedIn}
@@ -111,10 +128,12 @@
 									{month}/{day}
 								</h5>
 							{/if}
-							<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
-								<i class="fa-solid fa-location-dot" />
-								Kermanshah
-							</h5>
+							{#if location}
+								<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+									<i class="fa-solid fa-location-dot" />
+									{location}
+								</h5>
+							{/if}
 						</section>
 						<h5 class="text-sm my-2 ">
 							{bio}
@@ -123,19 +142,19 @@
 					<!-- posts - friends - friend request or send massage-->
 					<div class="flex justify-evenly w-full items-center p-2">
 						<section class="flex flex-col items-center">
-							<h4>5</h4>
+							<h4>{postCount}</h4>
 							<h3 class="font-semibold">Posts</h3>
 						</section>
 						<section class="flex flex-col items-center">
-							<h4>23</h4>
+							<h4>{friendCount}</h4>
 							<h3 class="font-semibold">Friends</h3>
 						</section>
-						<form action="/friend-request" method="post">
+						{#if !myProfile}
 							<button
 								class="px-2 py-1 border border-main rounded-md  hover:text-main hover:shadow-xl font-semibold"
-								>Add Friend</button
+								on:click={addFriend}>Add Friend</button
 							>
-						</form>
+						{/if}
 					</div>
 				</section>
 				<!--post-->
@@ -204,7 +223,7 @@
 			{/if}
 		</div>
 		<!--right part-->
-		<div class=" h-fit p-4 my-2 hidden lg:block">
+		<div class=" h-fit p-4 my-2 hidden 2xl:block xl:max-w-3/12">
 			<!--online friends-->
 			<section>
 				<h3 class="text-center text-lg font-semibold my-2 ">Online Friends</h3>
@@ -295,7 +314,7 @@
 		>
 			<!-- svelte-ignore a11y-img-redundant-alt -->
 			<!-- profile img - first name - last name - online time -->
-			<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 p-2">
+			<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 md:p-2 p-1">
 				<img
 					class="h-20 w-20 object-cover rounded-full lg:mr-16 "
 					src="http://localhost:8585/{profileImg}"
@@ -318,17 +337,19 @@
 			<!-- birthday - location - bio-->
 			<div class="m-2 p-2">
 				<!--birthday - location -->
-				<section class="flex w-6/12 justify-between lg:w-7/12">
+				<section class="flex w-8/12 justify-between lg:w-7/12">
 					{#if birthday}
 						<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
 							<i class="fa-solid fa-cake-candles" />
 							{month}/{day}
 						</h5>
 					{/if}
-					<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
-						<i class="fa-solid fa-location-dot" />
-						Kermanshah
-					</h5>
+					{#if location}
+						<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+							<i class="fa-solid fa-location-dot" />
+							{location}
+						</h5>
+					{/if}
 				</section>
 				<h5 class="text-sm my-2 ">
 					{bio}
@@ -337,11 +358,11 @@
 			<!-- posts - friends - friend request or send massage-->
 			<div class="flex justify-evenly w-full items-center p-2">
 				<section class="flex flex-col items-center">
-					<h4>5</h4>
+					<h4>{postCount}</h4>
 					<h3 class="font-semibold">Posts</h3>
 				</section>
 				<section class="flex flex-col items-center">
-					<h4>23</h4>
+					<h4>{friendCount}</h4>
 					<h3 class="font-semibold">Friends</h3>
 				</section>
 				<form action="/friend-request" method="post">

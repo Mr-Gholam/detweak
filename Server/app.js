@@ -41,6 +41,7 @@ const User = require('./model/user')
 const Post = require('./model/post')
 const Comment = require('./model/comment')
 const Friend = require('./model/friend')
+const FriendReq = require('./model/friendReq')
 
 // Using express middleware
 const app = express()
@@ -66,6 +67,7 @@ app.use(mainRouter)
 User.hasMany(Post)
 User.hasMany(Comment)
 User.hasMany(Friend)
+User.hasMany(FriendReq)
 Post.hasMany(Comment)
 
 

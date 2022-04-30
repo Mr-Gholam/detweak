@@ -1,4 +1,6 @@
 <script>
+	import { goto } from '$app/navigation';
+
 	// @ts-nocheck
 	import { User } from '../store';
 	let username;
@@ -37,6 +39,13 @@
 			}
 		}
 	}
+	async function logout() {
+		const response = await fetch('http://localhost:8585/logout', { method: 'POST' });
+		if (response.status == 200) {
+			User.set(null);
+			location.replace('/');
+		}
+	}
 </script>
 
 <nav class=" bg-main-bg">
@@ -69,17 +78,16 @@
 					<a href="/messages" class="hover:text-main">Messages</a>
 					<a href="/liked-posts" class="hover:text-main"> Liked Posts</a>
 					<a href="/setting" class="hover:text-main">Setting</a>
-					<form action="/logout" method="post">
-						<button class="font-semibold text-lg hover:text-main ">Logout</button>
-					</form>
+					<button
+						class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main"
+						on:click={logout}>Logout</button
+					>
 				</section>
 			</div>
-			<form action="/logout" method="post" class="md:block hidden">
-				<button
-					class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main "
-					>Logout</button
-				>
-			</form>
+			<button
+				class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main"
+				on:click={logout}>Logout</button
+			>
 		{:else}
 			<!--auth -->
 			<section

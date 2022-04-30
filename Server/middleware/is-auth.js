@@ -2,19 +2,23 @@ const JWT = require('jsonwebtoken')
 
 
 module.exports = (req, res, next) => {
-    const token = req.cookies.jwt
+    let token
     let decodedToken
+    if (req.cookies.jwt) {
+        token = req.cookies.jwt
+    }
     try {
-        decodedToken = JWT.verify(token, 'superSecret')
+        if (token) {
+            decodedToken = JWT.verify(token, 'superSecret')
+            if (!decodedToken) {
+                const error = new Error('Not authenticated')
+                error.statusCode = 401
+                throw error
+            }
+            req.email = decodedToken.email
+        }
     } catch (err) {
         console.log(err)
     }
-    if (!decodedToken) {
-        const error = new Error('Not authenticated')
-        error.statusCode = 401
-        throw error
-    }
-    req.userId = decodedToken.userId
-    req.email = decodedToken.email
     next()
 }

@@ -38,6 +38,9 @@ const User = sequelize.define('users', {
     },
     birthday: {
         type: Sequelize.DATE,
+    },
+    location: {
+        type: Sequelize.STRING
     }
 })
 module.exports = User
