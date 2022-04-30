@@ -78,6 +78,9 @@
 	async function addFriend() {
 		const response = await fetch('http://localhost:8585/add-friend', {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
 				targetUsername: userName
 			})

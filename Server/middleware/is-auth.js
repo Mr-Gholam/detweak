@@ -15,6 +15,7 @@ module.exports = (req, res, next) => {
                 error.statusCode = 401
                 throw error
             }
+            req.UserId = decodedToken.id
             req.email = decodedToken.email
         }
     } catch (err) {

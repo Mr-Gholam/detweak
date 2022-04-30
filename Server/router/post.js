@@ -1,13 +1,14 @@
 const express = require('express')
 
 const router = express.Router()
-
+// importing Is auth controller
+const isAuth = require('../middleware/is-auth')
 // importing post controller
 const postController = require('../controller/post')
 
 router.get('/availablePosts', postController.getAvailablePosts)
 
 //  post create post
-router.post('/create-post', postController.postCreatePost)
+router.post('/create-post', isAuth, postController.postCreatePost)
 
 module.exports = router

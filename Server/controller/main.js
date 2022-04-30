@@ -8,9 +8,9 @@ exports.getMain = (req, res, next) => {
 }
 // post main controller
 exports.postMain = (req, res, next) => {
-    if (req.email) {
-        res.status(200)
+    if (req.cookies.jwt) {
+        res.status(200).end()
     } else {
-        res.status(400)
+        res.status(400).end()
     }
 }

@@ -31,7 +31,7 @@ exports.postCreatePost = async (req, res, next) => {
         imageUrl = req.file.path
     }
     const description = req.body.description
-    const userId = 1
+    const userId = req.UserId
     Post.create({
         description,
         imageUrl,

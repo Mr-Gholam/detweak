@@ -32,6 +32,7 @@ const mainRouter = require('./router/main')
 const authRouter = require('./router/auth')
 const postRouter = require('./router/post')
 const profileRouter = require('./router/profile')
+const friendRouter = require('./router/friend')
 //importing database 
 const sequelize = require('./database/sequelize')
 
@@ -61,6 +62,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')))
 app.use(authRouter)
 app.use(profileRouter)
 app.use(postRouter)
+app.use(friendRouter)
 app.use(mainRouter)
 
 // relation between models
