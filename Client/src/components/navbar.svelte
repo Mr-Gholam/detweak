@@ -41,7 +41,9 @@
 	}
 	async function search() {
 		if (searchValue.length > 2) {
-			goto(`/search/${searchValue}`);
+			const value = searchValue;
+			searchValue = '';
+			goto(`/search/${value}`);
 		}
 	}
 	async function logout() {
