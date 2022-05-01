@@ -11,7 +11,7 @@ const Friend = require('../model/friend')
 exports.getProfile = async (req, res, next) => {
     const username = req.params.username
     try {
-        const user = await User.findOne({ where: { username } })
+        const user = await User.findOne({ where: { username }, attributes: ['id', 'username', 'firstName', 'lastName', 'profileImgUrl', 'onlineTime', 'bio', 'birthday', 'location'] })
         const Posts = await Post.findAll({ where: { userId: user.id } })
         const friend = await Friend.findAll({ where: { userId: user.id } })
         const friendCount = friend.length
