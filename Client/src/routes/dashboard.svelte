@@ -38,8 +38,7 @@
 	onMount(async () => {
 		const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
 		const posts = await response.json();
-		const orderedPosts = JSON.parse(JSON.stringify(posts.availablePosts));
-		availablePosts = orderedPosts.reverse();
+		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
 	});
 	//post new content
 	function newPost() {
@@ -50,22 +49,17 @@
 		fetch('http://localhost:8585/create-post', {
 			method: 'POST',
 			body: formData
-		})
-			.then(async (res) => {
-				if (res.status === 200) {
-					postContent = null;
-					postPicInput = null;
-					hasPhoto = false;
-					imageSrc.setAttribute('src', '');
-					const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
-					const posts = await response.json();
-					const orderedPosts = JSON.parse(JSON.stringify(posts.availablePosts));
-					availablePosts = orderedPosts.reverse();
-				}
-			})
-			.then((data) => {
-				// console.log(data);
-			});
+		}).then(async (res) => {
+			if (res.status === 200) {
+				postContent = null;
+				postPicInput = null;
+				hasPhoto = false;
+				imageSrc.setAttribute('src', '');
+				const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
+				const posts = await response.json();
+				availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
+			}
+		});
 	}
 	// preview post image
 	function previewImg() {

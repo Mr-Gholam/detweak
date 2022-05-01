@@ -1,10 +1,10 @@
 <script>
 	import { goto } from '$app/navigation';
-
 	// @ts-nocheck
 	import { User } from '../store';
 	let username;
 	User.subscribe((value) => (username = value.username));
+	let searchValue;
 
 	let humberguer = false;
 	function openHumberguer() {
@@ -39,6 +39,11 @@
 			}
 		}
 	}
+	async function search() {
+		if (searchValue.length > 2) {
+			goto(`/search/${searchValue}`);
+		}
+	}
 	async function logout() {
 		const response = await fetch('http://localhost:8585/logout', { method: 'POST' });
 		if (response.status == 200) {
@@ -53,11 +58,14 @@
 		<a href="/" class="mx-2 text-main">Logo</a>
 		<!--search bar-->
 		<section>
-			<input
-				type="text"
-				placeholder="search"
-				class="w-42  lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none  "
-			/>
+			<form on:submit|preventDefault={search}>
+				<input
+					type="text"
+					bind:value={searchValue}
+					placeholder="search"
+					class="w-42  lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128 "
+				/>
+			</form>
 		</section>
 		<!--humberguer menu-->
 		<div

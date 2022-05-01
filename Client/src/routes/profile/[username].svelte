@@ -72,8 +72,7 @@
 			month = new Date(birthday).getMonth() + 1;
 		}
 		onlineTime = data.onlineTime;
-		const orderedPosts = JSON.parse(JSON.stringify(data.availablePosts));
-		posts = orderedPosts.reverse();
+		posts = JSON.parse(JSON.stringify(data.availablePosts));
 	});
 	async function addFriend() {
 		const response = await fetch('http://localhost:8585/add-friend', {

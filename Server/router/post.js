@@ -6,7 +6,7 @@ const isAuth = require('../middleware/is-auth')
 // importing post controller
 const postController = require('../controller/post')
 
-router.get('/availablePosts', postController.getAvailablePosts)
+router.get('/availablePosts', isAuth, postController.getAvailablePosts)
 
 //  post create post
 router.post('/create-post', isAuth, postController.postCreatePost)
