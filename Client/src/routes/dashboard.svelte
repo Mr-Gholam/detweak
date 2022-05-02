@@ -1,6 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
+	import { User } from '../store';
+	let user;
+	User.subscribe((value) => (user = value.username));
 	let hasPhoto;
 	let postContent;
 	let imageSrc;
@@ -71,6 +74,15 @@
 			});
 			reader.readAsDataURL(file);
 			hasPhoto = true;
+		}
+	}
+	//  open post option
+	function postOption(postId) {
+		const option = document.getElementById(`${postId}`);
+		if (option.classList.contains('hidden')) {
+			option.classList.remove('hidden');
+		} else {
+			option.classList.add('hidden');
 		}
 	}
 </script>
@@ -171,9 +183,34 @@
 									</h5>
 								</a>
 							</section>
-							<h6 class="text-xs text-orange mx-2 cursor-default">
-								{post.onlineTime}
-							</h6>
+							<section class="flex items-center ">
+								<h6 class="text-xs text-orange mx-2 cursor-default">
+									{post.onlineTime}
+								</h6>
+								{#if post.username == user}
+									<div class="relative">
+										<i
+											on:click={postOption(post.postId)}
+											class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main-bg"
+										/>
+										<div
+											id={post.postId}
+											class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2"
+										>
+											<button
+												class="text-sm flex items-center w-full justify-start hover:text-main text-white"
+											>
+												<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
+											</button>
+											<button
+												class="text-sm flex items-center w-full justify-start hover:text-red-600 text-white"
+											>
+												<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
+											</button>
+										</div>
+									</div>
+								{/if}
+							</section>
 						</section>
 						<!-- post-->
 						<section class="w-full h-fit">
@@ -189,13 +226,14 @@
 							<!-- button  part-->
 							<section class=" flex justify-start  text-lg  gap-2  ">
 								<input type="hidden" value={post.postId} />
-								<button class="text-gray-400 hover:text-red-600 text-2xl p-2"
-									><i class="fa-solid fa-heart" id="likes" /></button
+								<button class="text-gray-400 hover:text-red-600 text-2xl p-2 flex items-center w-16"
+									><i class="fa-solid fa-heart" id="likes" />
+									<p class="text-sm ml-2 ">25</p></button
 								>
-								<button class="text-gray-400 hover:text-main-bg text-2xl p-2" id="comments"
+								<button class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16" id="comments"
 									><i class="fa-solid fa-comments" /></button
 								>
-								<button class="text-gray-400 hover:text-gray-800 text-2xl p-2" id="share"
+								<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
 									><i class="fa-solid fa-share" /></button
 								>
 							</section>
