@@ -2,6 +2,7 @@
 const User = require('../model/user')
 const { Op } = require("sequelize");
 const Friend = require('../model/friend')
+const FriendReq = require('../model/friendReq')
 // get search controller
 exports.getSearch = async (req, res, next) => {
     let usersFound = []
@@ -16,7 +17,10 @@ exports.getSearch = async (req, res, next) => {
         let userFound
         if (req.UserId) {
             const userId = req.UserId
+            let myProfile = false
+            if (userId === user.id) myProfile = true
             const isFriend = await Friend.findOne({ where: { [Op.or]: [{ [Op.and]: [{ userId }, { targetId: user.id }] }, { [Op.and]: [{ userId: user.id }, { targetId: userId }] }] } })
+            const friendReq = await FriendReq.findOne({ where: { [Op.and]: [{ userId }, { targetId: user.id }] } })
             if (isFriend) {
                 userFound = {
                     username: user.username,
@@ -24,7 +28,21 @@ exports.getSearch = async (req, res, next) => {
                     lastName: user.lastName,
                     profileImg: user.profileImgUrl,
                     id: user.id,
-                    isFriend: true
+                    myProfile,
+                    isFriend: true,
+                    sentRequest: false
+                }
+                usersFound.push(userFound)
+            } else if (friendReq) {
+                userFound = {
+                    username: user.username,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    profileImg: user.profileImgUrl,
+                    id: user.id,
+                    myProfile,
+                    isFriend: false,
+                    sentRequest: true
                 }
                 usersFound.push(userFound)
             } else {
@@ -34,7 +52,9 @@ exports.getSearch = async (req, res, next) => {
                     lastName: user.lastName,
                     profileImg: user.profileImgUrl,
                     id: user.id,
-                    isFriend: false
+                    myProfile,
+                    isFriend: false,
+                    sentRequest: false
                 }
                 usersFound.push(userFound)
             }
@@ -45,6 +65,9 @@ exports.getSearch = async (req, res, next) => {
                 lastName: user.lastName,
                 profileImg: user.profileImgUrl,
                 id: user.id,
+                myProfile,
+                isFriend: false,
+                sentRequest: false
             }
             usersFound.push(userFound)
         }

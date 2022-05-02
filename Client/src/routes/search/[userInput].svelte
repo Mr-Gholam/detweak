@@ -65,11 +65,26 @@
 						</h5>
 					</a>
 				</section>
-				<button
-					on:click={addFriend(suggedtedPeople.username)}
-					class=" bg-main-bg hover:text-main hover:shadow-xl py-3 px-3 mx-auto rounded-xl  py-1.5 text-white"
-					>Add Friend
-				</button>
+				{#if !suggedtedPeople.myProfile}
+					{#if suggedtedPeople.sentRequest}
+						<button
+							class="px-2 py-1 border border-main-bg rounded-md   bg-main-bg text-white hover:text-main flex items-center "
+						>
+							<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
+						</button>
+					{:else if suggedtedPeople.isFriend}
+						<button
+							class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
+							>Sent Massage</button
+						>
+					{:else}
+						<button
+							on:click={addFriend(suggedtedPeople.username)}
+							class=" bg-main-bg hover:text-main hover:shadow-xl py-3 px-3 mx-auto rounded-xl  py-1.5 text-white"
+							>Add Friend
+						</button>
+					{/if}
+				{/if}
 			</section>
 		{/each}
 	</div>
