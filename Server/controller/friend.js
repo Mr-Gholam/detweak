@@ -6,6 +6,7 @@ const Post = require('../model/post')
 const Friend = require('../model/friend')
 // importing friend Req model
 const FriendReq = require('../model/friendReq')
+const { Op } = require("sequelize");
 const res = require('express/lib/response')
 
 exports.postAddFriend = async (req, res, next) => {
@@ -13,11 +14,21 @@ exports.postAddFriend = async (req, res, next) => {
     try {
         const target = await User.findOne({ where: { username: targetUsername }, attributes: ['id'] })
         const userId = req.UserId
-        FriendReq.create({
-            targetId: target.id,
-            userId
-        })
-        res.status(200).end()
+        const friend = await Friend.findOne({ where: { [Op.or]: [{ [Op.and]: [{ userId }, { targetId: target.id }] }, { [Op.and]: [{ userId: target.id }, { targetId: userId }] }] } })
+        const sentRequest = await FriendReq.findOne({ where: { [Op.or]: [{ [Op.and]: [{ userId }, { targetId: target.id }] }, { [Op.and]: [{ userId: target.id }, { targetId: userId }] }] } })
+        if (!friend && !sentRequest) {
+            FriendReq.create({
+                targetId: target.id,
+                userId
+            })
+            res.status(200).end()
+        } else {
+            if (friend) {
+                res.status(400).json({ errMsg: 'this users are friends' })
+            } else {
+                res.status(400).json({ errMsg: 'they are in friend request list' })
+            }
+        }
 
     } catch (err) {
         console.log(err)
@@ -54,16 +65,20 @@ exports.getFriendRequests = async (req, res, next) => {
         console.log(err)
     }
 }
-exports.postAcceptRequest = async (req, re, next) => {
+exports.postAcceptRequest = async (req, res, next) => {
     const requestId = req.body.requestId
     const request = await FriendReq.findOne({ where: { id: requestId }, attributes: ['userId', 'targetId',] })
-    await Friend.create({
-        targetId: request.targetId,
-        userId: request.userId
-    })
-    FriendReq.destroy({
-        where: { id: requestId }
-    }).then(result => {
-        res.status(200)
-    })
+    const alreadyFriend = await Friend.findOne({ where: { [Op.or]: [{ [Op.and]: [{ userId: request.userId }, { targetId: request.targetId }] }, { [Op.and]: [{ userId: request.targetId }, { targetId: request.userId }] }] } })
+    if (!alreadyFriend) {
+        Friend.create({
+            targetId: request.targetId,
+            userId: request.userId
+        })
+        await FriendReq.destroy({
+            where: { id: requestId }
+        })
+        res.status(200).end()
+    } else {
+        res.status(400).json({ errMsg: 'they are already a friend' })
+    }
 }

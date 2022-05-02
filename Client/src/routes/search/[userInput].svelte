@@ -12,7 +12,7 @@
 		const data = await response.json();
 		suggestion = JSON.parse(JSON.stringify(data.usersFound));
 	});
-	async function addFriend(userName) {
+	async function addFriend(username) {
 		if (loggedIn) {
 			const response = await fetch('http://localhost:8585/add-friend', {
 				method: 'POST',
@@ -20,9 +20,15 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					targetUsername: userName
+					targetUsername: username
 				})
 			});
+			if (response.status == 200) {
+				const userInput = $page.params.userInput;
+				const response = await fetch(`/search/${userInput}`);
+				const data = await response.json();
+				suggestion = JSON.parse(JSON.stringify(data.usersFound));
+			}
 		} else {
 			goto('/login');
 		}

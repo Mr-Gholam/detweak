@@ -70,6 +70,6 @@ exports.getProfile = async (req, res, next) => {
             availablePosts
 
         })
-    } catch (err) { console.log(err) }
+    } catch (err) { }
 
 }

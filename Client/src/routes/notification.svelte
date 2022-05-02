@@ -8,9 +8,7 @@
 		const orderedReq = JSON.parse(JSON.stringify(data.friendRequests));
 		friendRequests = orderedReq.reverse();
 	});
-	async function acceptReq() {
-		// @ts-ignore
-		const requestId = document.getElementById('requestId').value;
+	async function acceptReq(requestId) {
 		const response = await fetch('/accept-request', {
 			method: 'POST',
 			headers: {
@@ -22,7 +20,6 @@
 		});
 		if (response.status == 200) {
 			const el = document.getElementById(`${requestId}`);
-			console.log(el);
 			el.parentNode.removeChild(el);
 		}
 	}
@@ -64,7 +61,7 @@
 						<input type="hidden" value={friendRequest.requestId} id="requestId" />
 						<button
 							class=" w-7 h-7 rounded-full text-center  hover:text-green"
-							on:click={acceptReq}
+							on:click={acceptReq(friendRequest.requestId)}
 						>
 							<i class="fa-solid fa-check" />
 						</button>
