@@ -10,7 +10,6 @@
 		const userInput = $page.params.userInput;
 		const response = await fetch(`/search/${userInput}`);
 		const data = await response.json();
-		console.log(data);
 		suggestion = JSON.parse(JSON.stringify(data.usersFound));
 	});
 	async function addFriend(userName) {
@@ -41,11 +40,19 @@
 					<!--profile img-->
 					<a href="/profile/{suggedtedPeople.username}">
 						<!-- svelte-ignore a11y-img-redundant-alt -->
-						<img
-							class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-							src="http://localhost:8585/{suggedtedPeople.profileImg}"
-							alt="Current profile photo"
-						/>
+						{#if suggedtedPeople.profileImg}
+							<img
+								class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
+								src="http://localhost:8585/{suggedtedPeople.profileImg}"
+								alt="Current profile photo"
+							/>
+						{:else}
+							<div
+								class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+							>
+								<i class="fa-solid fa-user text-slate-400 text-2xl" />
+							</div>
+						{/if}
 					</a>
 					<!-- Name and username-->
 					<a href="/profile/{suggedtedPeople.username}" class="mx-2 w-9/12">

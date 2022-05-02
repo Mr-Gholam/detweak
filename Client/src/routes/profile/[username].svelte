@@ -5,6 +5,7 @@
 	let loggedIn;
 	User.subscribe((value) => (loggedIn = value.username));
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	let loading = true;
 	let firstName;
 	let month;
@@ -75,15 +76,19 @@
 		posts = JSON.parse(JSON.stringify(data.availablePosts));
 	});
 	async function addFriend() {
-		const response = await fetch('http://localhost:8585/add-friend', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				targetUsername: userName
-			})
-		});
+		if (loggedIn) {
+			const response = await fetch('http://localhost:8585/add-friend', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					targetUsername: userName
+				})
+			});
+		} else {
+			goto('/login');
+		}
 	}
 </script>
 
@@ -91,7 +96,7 @@
 	<div class="flex w-9/12 items-start justify-center md:justify-between">
 		<!--main part -->
 		<div
-			class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0"
+			class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0"
 		>
 			{#if !loading}
 				<!--profile info-->
@@ -101,11 +106,17 @@
 					<!-- svelte-ignore a11y-img-redundant-alt -->
 					<!-- profile img - first name - last name - online time -->
 					<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 p-2">
-						<img
-							class="h-20 w-20 object-cover rounded-full lg:mr-16 "
-							src="http://localhost:8585/{profileImg}"
-							alt="Current profile photo"
-						/>
+						{#if profileImg}
+							<img
+								class="h-20 w-20 object-cover rounded-full lg:mr-16 "
+								src="http://localhost:8585/{profileImg}"
+								alt="Current profile photo"
+							/>
+						{:else}
+							<div class="h-20 w-20 rounded-full  bg-main-bg flex items-center justify-center">
+								<i class="fa-solid fa-user text-slate-400 text-4xl" />
+							</div>
+						{/if}
 						<div>
 							<h4 class=" font-semibold text-base text-gray-900 my-1 lg:mr-16">
 								{firstName}
@@ -115,10 +126,12 @@
 								@{userName}
 							</h5>
 						</div>
-						<h4 class="text-green text-sm" id="timerCountdown">
-							<i class="fa-solid fa-signal" />
-							{onlineTime}
-						</h4>
+						{#if onlineTime}
+							<h4 class="text-green text-sm" id="timerCountdown">
+								<i class="fa-solid fa-signal" />
+								{onlineTime}
+							</h4>
+						{/if}
 					</div>
 					<!-- birthday - location - bio-->
 					<div class="m-2 p-2">
@@ -137,9 +150,11 @@
 								</h5>
 							{/if}
 						</section>
-						<h5 class="text-sm my-2 ">
-							{bio}
-						</h5>
+						{#if bio}
+							<h5 class="text-sm my-2 ">
+								{bio}
+							</h5>
+						{/if}
 					</div>
 					<!-- posts - friends - friend request or send massage-->
 					<div class="flex justify-evenly w-full items-center p-2">
@@ -153,7 +168,7 @@
 						</section>
 						{#if !myProfile}
 							<button
-								class="px-2 py-1 border border-main rounded-md  hover:text-main hover:shadow-xl font-semibold"
+								class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
 								on:click={addFriend}>Add Friend</button
 							>
 						{/if}
@@ -309,7 +324,7 @@
 		</div>
 	</div>
 {:else if !loading}
-	<div class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 lg:w-128 mx-auto">
+	<div class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 mx-auto">
 		<!--profile info-->
 		<section
 			class="w-full flex flex-col h-fit my-2  shadow-lg border-solid border-slate-500/30 md:border  rounded-md"
@@ -317,11 +332,17 @@
 			<!-- svelte-ignore a11y-img-redundant-alt -->
 			<!-- profile img - first name - last name - online time -->
 			<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 md:p-2 p-1">
-				<img
-					class="h-20 w-20 object-cover rounded-full lg:mr-16 "
-					src="http://localhost:8585/{profileImg}"
-					alt="Current profile photo"
-				/>
+				{#if profileImg}
+					<img
+						class="h-20 w-20 object-cover rounded-full lg:mr-16 "
+						src="http://localhost:8585/{profileImg}"
+						alt="Current profile photo"
+					/>
+				{:else}
+					<div class="h-20 w-20 rounded-full  bg-main-bg flex items-center justify-center">
+						<i class="fa-solid fa-user text-slate-400 text-4xl" />
+					</div>
+				{/if}
 				<div>
 					<h4 class=" font-semibold text-base text-gray-900 my-1 lg:mr-16">
 						{firstName}
@@ -331,10 +352,12 @@
 						@{userName}
 					</h5>
 				</div>
-				<h4 class="text-green text-sm" id="timerCountdown">
-					<i class="fa-solid fa-signal" />
-					{onlineTime}
-				</h4>
+				{#if onlineTime}
+					<h4 class="text-green text-sm" id="timerCountdown">
+						<i class="fa-solid fa-signal" />
+						{onlineTime}
+					</h4>
+				{/if}
 			</div>
 			<!-- birthday - location - bio-->
 			<div class="m-2 p-2">
@@ -353,26 +376,34 @@
 						</h5>
 					{/if}
 				</section>
-				<h5 class="text-sm my-2 ">
-					{bio}
-				</h5>
+				{#if bio}
+					<h5 class="text-sm my-2 ">
+						{bio}
+					</h5>
+				{/if}
 			</div>
 			<!-- posts - friends - friend request or send massage-->
-			<div class="flex justify-evenly w-full items-center p-2">
-				<section class="flex flex-col items-center">
-					<h4>{postCount}</h4>
-					<h3 class="font-semibold">Posts</h3>
+			<div class="flex justify-evenly w-full items-center py-2">
+				<section class="flex w-4/12 justify-between">
+					<section class="flex flex-col items-center">
+						<h4>{postCount}</h4>
+						<h3 class="font-semibold">Posts</h3>
+					</section>
+					<section class="flex flex-col items-center">
+						<h4>{friendCount}</h4>
+						<h3 class="font-semibold">Friends</h3>
+					</section>
 				</section>
-				<section class="flex flex-col items-center">
-					<h4>{friendCount}</h4>
-					<h3 class="font-semibold">Friends</h3>
-				</section>
-				<form action="/friend-request" method="post">
-					<button
-						class="px-2 py-1 border border-main rounded-md  hover:text-main hover:shadow-xl font-semibold"
-						>Add Friend</button
-					>
-				</form>
+				<!-- <button
+					on:click={addFriend}
+					class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
+					>Add Friend</button
+				> -->
+				<button
+					class="px-2 py-1 border border-main-bg rounded-md   bg-main-bg text-white hover:text-main flex items-center "
+				>
+					<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
+				</button>
 			</div>
 		</section>
 		<!--post-->

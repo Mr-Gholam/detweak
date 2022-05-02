@@ -59,13 +59,13 @@
 	<div class="h-12 items-center justify-between relative flex lg:w-10/12 md:mx-auto md:w-11/12">
 		<a href="/" class="mx-2 text-main">Logo</a>
 		<!--search bar-->
-		<section>
+		<section class="lg:ml-2">
 			<form on:submit|preventDefault={search}>
 				<input
 					type="text"
 					bind:value={searchValue}
 					placeholder="search"
-					class="w-42  lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128 "
+					class="w-42  lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128 lg:ml-28  "
 				/>
 			</form>
 		</section>

@@ -82,3 +82,12 @@
 		animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
 	}
 }
+.loader {
+	display: block;
+	position: relative;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	border-color: transparent transparent #fff transparent;
+}

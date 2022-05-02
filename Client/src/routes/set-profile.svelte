@@ -273,7 +273,7 @@
 	let passedName = false;
 	let passedLastName = false;
 	let passedBio = false;
-
+	let hasPic = false;
 	//preview  profile picture
 	function imageChange() {
 		const file = profilePicInput.files[0];
@@ -283,6 +283,7 @@
 				profilePic.setAttribute('src', reader.result);
 			});
 			reader.readAsDataURL(file);
+			hasPic = true;
 			return;
 		}
 	}
@@ -484,12 +485,20 @@
 			<label class="text-base" for="profilePic">Profile Picture</label>
 			<div class="flex items-center justify-evenly my-3   ">
 				<!-- svelte-ignore a11y-img-redundant-alt -->
-				<img
-					class="h-16 w-16 object-cover rounded-full "
-					bind:this={profilePic}
-					src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80"
-					alt="Current profile photo"
-				/>
+				{#if hasPic}
+					<img
+						class="h-16 w-16 object-cover rounded-full "
+						bind:this={profilePic}
+						src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80"
+						alt="Current profile photo"
+					/>
+				{:else}
+					<div
+						class="h-16 w-16 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+					>
+						<i class="fa-solid fa-user text-slate-400 text-2xl" />
+					</div>
+				{/if}
 				<input
 					type="file"
 					name="profilePic"

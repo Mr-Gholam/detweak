@@ -78,7 +78,7 @@
 <div class="flex w-9/12 items-start justify-center md:justify-between">
 	<!--Main part-->
 	<div
-		class="flex  justify-between items-center md:p-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0 xl:max-w-9/12"
+		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0 xl:max-w-9/12"
 	>
 		<!--Creat Post-->
 		<div
@@ -146,11 +146,19 @@
 							<section class="flex gap-2 items-center">
 								<!--profile img-->
 								<a href="/profile/{post.username}" class="ml-2">
-									<img
-										class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-										src="http://localhost:8585/{post.profileImg}"
-										alt="Current profile photo"
-									/>
+									{#if post.profileImg}
+										<img
+											class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
+											src="http://localhost:8585/{post.profileImg}"
+											alt="Current profile photo"
+										/>
+									{:else}
+										<div
+											class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+										>
+											<i class="fa-solid fa-user text-slate-400 text-2xl" />
+										</div>
+									{/if}
 								</a>
 								<!-- Name and username-->
 								<a href="/profile/{post.username}">
