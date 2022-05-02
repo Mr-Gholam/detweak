@@ -20,6 +20,8 @@
 	let friendCount;
 	let location;
 	let myProfile;
+	let isFriend;
+	let sentRequest;
 	let posts = null;
 	let onlineFriends = [
 		{
@@ -68,12 +70,15 @@
 		postCount = data.postCount;
 		friendCount = data.friendCount;
 		location = data.location;
+		isFriend = data.isFriend;
+		sentRequest = data.sentRequest;
 		if (birthday) {
 			day = new Date(birthday).getDate();
 			month = new Date(birthday).getMonth() + 1;
 		}
 		onlineTime = data.onlineTime;
 		posts = JSON.parse(JSON.stringify(data.availablePosts));
+		console.log(isFriend, sentRequest);
 	});
 	async function addFriend() {
 		if (loggedIn) {
@@ -167,10 +172,23 @@
 							<h3 class="font-semibold">Friends</h3>
 						</section>
 						{#if !myProfile}
-							<button
-								class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
-								on:click={addFriend}>Add Friend</button
-							>
+							{#if sentRequest}
+								<button
+									class="px-2 py-1 border border-main-bg rounded-md   bg-main-bg text-white hover:text-main flex items-center "
+								>
+									<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
+								</button>
+							{:else if isFriend}
+								<button
+									class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
+									>Sent Massage</button
+								>
+							{:else}
+								<button
+									class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
+									on:click={addFriend}>Add Friend</button
+								>
+							{/if}
 						{/if}
 					</div>
 				</section>
@@ -323,6 +341,7 @@
 			</section>
 		</div>
 	</div>
+	<!--  NOT logged IN -->
 {:else if !loading}
 	<div class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 mx-auto">
 		<!--profile info-->
@@ -394,16 +413,11 @@
 						<h3 class="font-semibold">Friends</h3>
 					</section>
 				</section>
-				<!-- <button
+				<button
 					on:click={addFriend}
 					class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
 					>Add Friend</button
-				> -->
-				<button
-					class="px-2 py-1 border border-main-bg rounded-md   bg-main-bg text-white hover:text-main flex items-center "
 				>
-					<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
-				</button>
 			</div>
 		</section>
 		<!--post-->
