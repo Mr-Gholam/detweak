@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { User } from '../store';
+	import { goto } from '$app/navigation';
 	let user;
 	User.subscribe((value) => (user = value));
 	let comment;
@@ -85,10 +86,14 @@
 		if (data.added) {
 			likeBtn.classList.add('text-red-600');
 			likeNumber.classList.add('text-red-600');
+			likeBtn.classList.remove('text-gray-400');
+			likeNumber.classList.remove('text-gray-400');
 			likeNumber.innerText = Number(likeNumber.innerText) + 1;
 		} else {
 			likeBtn.classList.remove('text-red-600');
 			likeNumber.classList.remove('text-red-600');
+			likeBtn.classList.add('text-gray-400');
+			likeNumber.classList.add('text-gray-400');
 			likeNumber.innerText = Number(likeNumber.innerText) - 1;
 		}
 	}
@@ -125,7 +130,13 @@
 				postId
 			})
 		});
-		console.log(response);
+		if (response.status == 200) {
+			comment = '';
+		}
+	}
+	// open post page
+	function openPost(postId) {
+		goto(`/post/${postId}`);
 	}
 </script>
 
@@ -277,8 +288,10 @@
 										{post.likes}
 									</p></button
 								>
-								<button class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16" id="comments"
-									><i class="fa-solid fa-comments" /></button
+								<button
+									on:click={openPost(post.postId)}
+									class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16"
+									id="comments"><i class="fa-solid fa-comments" /></button
 								>
 								<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
 									><i class="fa-solid fa-share" /></button
@@ -290,7 +303,9 @@
 							</h6>
 						</section>
 						<!-- comment part -->
-						<section class="flex justify-between items-center w-full  p-2">
+						<section
+							class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
+						>
 							{#if user.profileImg}
 								<img
 									class="h-8 w-8 object-cover rounded-full"
@@ -299,7 +314,7 @@
 								/>
 							{:else}
 								<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
-									<i class="fa-solid fa-user text-slate-400 text-xl" />
+									<i class="fa-solid fa-user text-slate-400 text-lg" />
 								</div>
 							{/if}
 							<form
@@ -314,7 +329,7 @@
 									class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
 								/>
 								<button
-									class="border-2 border-main-bg rounded-md px-2 py-1 hover:bg-main-bg hover:text-white font-semibold"
+									class="border-2 border-main-bg rounded-xl py-1 px-3 hover:bg-main-bg hover:text-white font-semibold"
 									>Post</button
 								>
 							</form>

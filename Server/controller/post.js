@@ -138,3 +138,66 @@ exports.postAddComment = async (req, res, next) => {
         res.status(401)
     }
 }
+// GET a single post
+exports.getAPost = async (req, res, next) => {
+    if (req.UserId) {
+        try {
+
+            let comments = []
+            let postInfo = []
+            const postId = req.params.postId
+            const userId = req.UserId
+            const post = await Post.findOne({ where: { id: postId } })
+            console.log(postId)
+            const postOwner = await User.finOne({ where: { id: post.userId } })
+            const likedPost = await LikedPosts.findOne({ where: { [Op.and]: [{ userId }, { postId }] } })
+            const currentComments = await Comment.findAll({ where: { postId }, attributes: ['userId', 'comment', 'createdAt'] })
+            for (let i = 0; i < currentComments.length; i++) {
+                const comment = currentComments[i];
+                const user = await User.findOne({ where: { id: comment.userId }, attributes: ['profileImgUrl', 'username'] })
+                const pushComment = {
+                    commentContent: comment.comment,
+                    profileImg: user.profileImgUrl,
+                    username: user.username,
+                    createdAt: comment.createdAt
+                }
+                comments.push(pushComment)
+            }
+            if (likedPost) {
+                const pushedPost = {
+                    description: post.description
+                    , postImg: post.imageUrl
+                    , username: postOwner.username
+                    , firstName: postOwner.firstName
+                    , lastName: postOwner.lastName
+                    , profileImg: postOwner.profileImgUrl
+                    , onlineTime: postOwner.onlineTime
+                    , createdAt: post.createdAt
+                    , likes: post.likes
+                    , postId: post.id
+                    , liked: true
+                }
+                postInfo.push(pushedPost)
+            } else {
+                const pushedPost = {
+                    description: post.description
+                    , postImg: post.imageUrl
+                    , username: postOwner.username
+                    , firstName: postOwner.firstName
+                    , lastName: postOwner.lastName
+                    , profileImg: postOwner.profileImgUrl
+                    , onlineTime: postOwner.onlineTime
+                    , createdAt: post.createdAt
+                    , likes: post.likes
+                    , postId: post.id
+                    , liked: false
+                }
+                postInfo.push(pushedPost)
+            }
+            res.json({ postInfo, comments })
+        }
+        catch (err) { console.log(err) }
+    } else {
+        res.status(401)
+    }
+}
