@@ -6,6 +6,8 @@ const User = require('../model/user')
 const Friend = require('../model/friend')
 // importing like posts model 
 const LikedPosts = require('../model/liked-posts')
+// importing comment model 
+const Comment = require('../model/comment')
 const { Op } = require("sequelize");
 // GET for available Posts
 exports.getAvailablePosts = async (req, res, next) => {
@@ -71,7 +73,6 @@ exports.getAvailablePosts = async (req, res, next) => {
     }
     res.status(200).json({ availablePosts })
 }
-
 // POST for creat post
 exports.postCreatePost = async (req, res, next) => {
     let imageUrl
@@ -117,6 +118,22 @@ exports.postLikePost = async (req, res, next) => {
             await LikedPosts.destroy({ where: { [Op.and]: [{ userId }, { postId }] } })
             res.json({ added: false })
         }
+    } else {
+        res.status(401)
+    }
+}
+// POST for Add comment 
+exports.postAddComment = async (req, res, next) => {
+    if (req.UserId) {
+        const userId = req.UserId
+        const postId = req.body.postId
+        const commentContent = req.body.comment
+        await Comment.create({
+            userId,
+            postId,
+            comment: commentContent
+        })
+        res.status(200).end()
     } else {
         res.status(401)
     }

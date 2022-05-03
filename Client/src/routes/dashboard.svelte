@@ -5,7 +5,8 @@
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { User } from '../store';
 	let user;
-	User.subscribe((value) => (user = value.username));
+	User.subscribe((value) => (user = value));
+	let comment;
 	let hasPhoto;
 	let postContent;
 	let imageSrc;
@@ -27,9 +28,9 @@
 	];
 	let suggestion = [
 		{
-			userName: 'mr-gholam',
-			firstName: 'Mehdi',
-			lastName: 'Gholami',
+			userName: 'saleh Dow',
+			firstName: 'saleh',
+			lastName: 'Mirzaeeeee',
 			onlineTime: '1-2 pm'
 		},
 		{
@@ -111,6 +112,20 @@
 		} else {
 			option.classList.add('hidden');
 		}
+	}
+	// add Comment
+	async function addComment(postId) {
+		const response = await fetch('/add-comment', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				comment,
+				postId
+			})
+		});
+		console.log(response);
 	}
 </script>
 
@@ -273,6 +288,36 @@
 							<h6 class="text-xs text-orange mx-2">
 								{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
 							</h6>
+						</section>
+						<!-- comment part -->
+						<section class="flex justify-between items-center w-full  p-2">
+							{#if user.profileImg}
+								<img
+									class="h-8 w-8 object-cover rounded-full"
+									src="http://localhost:8585/{user.profileImg}"
+									alt="Current profile photo"
+								/>
+							{:else}
+								<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
+									<i class="fa-solid fa-user text-slate-400 text-xl" />
+								</div>
+							{/if}
+							<form
+								method="post"
+								on:submit|preventDefault={addComment(post.postId)}
+								class="flex-1 flex justify-between  mx-2"
+							>
+								<input
+									type="text"
+									placeholder="Add a comment..."
+									bind:value={comment}
+									class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
+								/>
+								<button
+									class="border-2 border-main-bg rounded-md px-2 py-1 hover:bg-main-bg hover:text-white font-semibold"
+									>Post</button
+								>
+							</form>
 						</section>
 					</section>
 				</div>

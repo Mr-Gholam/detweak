@@ -78,10 +78,11 @@ exports.postLogin = async (req, res, next) => {
         const matchPassword = await bcrypt.compare(password, emailFound.password)
         // passwords match
         if (matchPassword) {
-            const token = jwt.sign({ id: emailFound.id, email, username: emailFound.username }, 'superSecret')
+            const token = jwt.sign({ id: emailFound.id, email, username: emailFound.username, profileImg: emailFound.profileImgUrl }, 'superSecret')
             res.cookie('jwt', token)
             res.status(200).json({
-                username: emailFound.username
+                username: emailFound.username,
+                profileImg: emailFound.profileImgUrl
             })
         }
         // passwords do not match
@@ -133,14 +134,15 @@ exports.getJWT = async (req, res) => {
     try {
         if (req.cookies?.jwt) {
             const token = req.cookies.jwt
-            const { id, username, email } = jwt.verify(
+            const { id, username, email, profileImg } = jwt.verify(
                 token,
                 'superSecret'
             )
             res.status(200).json({
                 id,
                 username,
-                email
+                email,
+                profileImg
             })
         }
 

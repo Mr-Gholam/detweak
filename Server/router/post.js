@@ -12,5 +12,7 @@ router.get('/availablePosts', isAuth, postController.getAvailablePosts)
 router.post('/create-post', isAuth, postController.postCreatePost)
 // post like post 
 router.post('/like-post', isAuth, postController.postLikePost)
+// post add comment
+router.post('/add-comment', isAuth, postController.postAddComment)
 
 module.exports = router
