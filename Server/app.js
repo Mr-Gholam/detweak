@@ -43,6 +43,7 @@ const Post = require('./model/post')
 const Comment = require('./model/comment')
 const Friend = require('./model/friend')
 const FriendReq = require('./model/friendReq')
+const likedPosts = require('./model/liked-posts');
 
 // Using express middleware
 const app = express()
@@ -70,6 +71,8 @@ User.hasMany(Post)
 User.hasMany(Comment)
 User.hasMany(Friend)
 User.hasMany(FriendReq)
+User.hasMany(likedPosts)
+Post.hasMany(likedPosts)
 Post.hasMany(Comment)
 
 

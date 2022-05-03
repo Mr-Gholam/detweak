@@ -1,4 +1,6 @@
 <script>
+	// @ts-nocheck
+
 	import { onMount } from 'svelte';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { User } from '../store';
@@ -63,6 +65,31 @@
 				availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
 			}
 		});
+	}
+	// like post
+	async function likePost(postId) {
+		const likeBtn = document.getElementById(`like-${postId}`);
+		const likeNumber = document.getElementById(`like-n-${postId}`);
+		const response = await fetch('/like-post', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				postId
+			})
+		});
+		console.log(response, likeBtn, likeNumber);
+		const data = await response.json();
+		if (data.added) {
+			likeBtn.classList.add('text-red-600');
+			likeNumber.classList.add('text-red-600');
+			likeNumber.innerText = Number(likeNumber.innerText) + 1;
+		} else {
+			likeBtn.classList.remove('text-red-600');
+			likeNumber.classList.remove('text-red-600');
+			likeNumber.innerText = Number(likeNumber.innerText) - 1;
+		}
 	}
 	// preview post image
 	function previewImg() {
@@ -225,10 +252,15 @@
 						<section class="flex justify-between w-full items-center px-2">
 							<!-- button  part-->
 							<section class=" flex justify-start  text-lg  gap-2  ">
-								<input type="hidden" value={post.postId} />
-								<button class="text-gray-400 hover:text-red-600 text-2xl p-2 flex items-center w-16"
-									><i class="fa-solid fa-heart" id="likes" />
-									<p class="text-sm ml-2 ">25</p></button
+								<button
+									class="hover:text-red-600 text-2xl p-2 flex items-center w-16 {post.liked
+										? 'text-red-600'
+										: 'text-gray-400'}"
+									on:click={likePost(post.postId)}
+									><i class="fa-solid fa-heart" id="like-{post.postId}" />
+									<p class="text-sm ml-2 " id="like-n-{post.postId}">
+										{post.likes}
+									</p></button
 								>
 								<button class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16" id="comments"
 									><i class="fa-solid fa-comments" /></button
