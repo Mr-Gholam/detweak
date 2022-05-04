@@ -16,7 +16,9 @@
 
 <Navbar />
 {#if $User.username}
-	<main class="flex  xl:w-8/12  lg:w-9/12 mx-auto items-start justify-center md:justify-between">
+	<main
+		class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between "
+	>
 		<LeftSidebar />
 		<slot />
 	</main>

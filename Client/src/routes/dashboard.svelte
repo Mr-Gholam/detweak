@@ -140,7 +140,7 @@
 	}
 </script>
 
-<div class="flex w-9/12 items-start justify-center md:justify-between">
+<div class="flex md:w-9/12 items-start justify-center md:justify-between w-full">
 	<!--Main part-->
 	<div
 		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0 xl:max-w-9/12"
@@ -240,7 +240,7 @@
 								<h6 class="text-xs text-orange mx-2 cursor-default">
 									{post.onlineTime}
 								</h6>
-								{#if post.username == user}
+								{#if post.username == user.username}
 									<div class="relative">
 										<i
 											on:click={postOption(post.postId)}
@@ -248,7 +248,7 @@
 										/>
 										<div
 											id={post.postId}
-											class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2"
+											class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2 z-10"
 										>
 											<button
 												class="text-sm flex items-center w-full justify-start hover:text-main text-white"

@@ -128,12 +128,19 @@ exports.postAddComment = async (req, res, next) => {
         const userId = req.UserId
         const postId = req.body.postId
         const commentContent = req.body.comment
-        await Comment.create({
+        const user = await User.findOne({ where: { id: userId }, attributes: ['profileImgUrl', 'username'] })
+        const newComment = await Comment.create({
             userId,
             postId,
             comment: commentContent
         })
-        res.status(200).end()
+        res.status(200).json({
+            commentContent,
+            profileImg: user.profileImgUrl,
+            username: user.username,
+            createdAt: newComment.createdAt,
+            commentId: newComment.id
+        })
     } else {
         res.status(401)
     }
@@ -147,11 +154,10 @@ exports.getAPost = async (req, res, next) => {
             let postInfo = []
             const postId = req.params.postId
             const userId = req.UserId
-            const post = await Post.findOne({ where: { id: postId } })
-            console.log(postId)
-            const postOwner = await User.finOne({ where: { id: post.userId } })
+            const post = await Post.findOne({ where: { id: postId }, attributes: ['description', 'imageUrl', 'createdAt', 'id', 'likes', 'userId'] })
+            const postOwner = await User.findOne({ where: { id: post.userId } })
             const likedPost = await LikedPosts.findOne({ where: { [Op.and]: [{ userId }, { postId }] } })
-            const currentComments = await Comment.findAll({ where: { postId }, attributes: ['userId', 'comment', 'createdAt'] })
+            const currentComments = await Comment.findAll({ where: { postId }, attributes: ['userId', 'comment', 'createdAt', 'id'] })
             for (let i = 0; i < currentComments.length; i++) {
                 const comment = currentComments[i];
                 const user = await User.findOne({ where: { id: comment.userId }, attributes: ['profileImgUrl', 'username'] })
@@ -159,7 +165,8 @@ exports.getAPost = async (req, res, next) => {
                     commentContent: comment.comment,
                     profileImg: user.profileImgUrl,
                     username: user.username,
-                    createdAt: comment.createdAt
+                    createdAt: comment.createdAt,
+                    commentId: comment.id
                 }
                 comments.push(pushComment)
             }
@@ -196,7 +203,7 @@ exports.getAPost = async (req, res, next) => {
             }
             res.json({ postInfo, comments })
         }
-        catch (err) { console.log(err) }
+        catch (err) { }
     } else {
         res.status(401)
     }
