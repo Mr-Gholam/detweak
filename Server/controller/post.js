@@ -208,3 +208,10 @@ exports.getAPost = async (req, res, next) => {
         res.status(401)
     }
 }
+// POST for delete a comment
+exports.postDeleteComment = async (req, res, next) => {
+    const commentId = req.body.commentId
+    const userId = req.UserId
+    await Comment.destroy({ where: { [Op.and]: [{ userId }, { id: commentId }] } })
+    res.status(200).end()
+}

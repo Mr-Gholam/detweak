@@ -87,10 +87,32 @@
 			comment = '';
 		}
 	}
+	//  delete comment
+	async function deleteComment(commentId) {
+		const comments = document.getElementById('comments');
+		const comment = document.getElementById(`c-${commentId}`);
+		const option = document.getElementById(`${commentId}`);
+		const response = await fetch('/delete-Comment', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				commentId
+			})
+		});
+		if (response.status == 200) {
+			option.classList.add('hidden');
+			comment.classList.add('right-exit');
+			setInterval(() => {
+				comment.parentNode.removeChild(comment);
+			}, 1000);
+		}
+	}
 </script>
 
 <div
-	class="flex items-start justify-center md:justify-between md:py-4  gap-4 flex-col  w-96 lg:w-128  xl:max-w-9/12 md:mx-auto"
+	class="flex items-start justify-center md:justify-between md:py-4  gap-4 flex-col  w-96 lg:w-128  xl:max-w-9/12 md:mx-auto transition duration-1000 ease-out"
 >
 	<!-- post outline-->
 	<div class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2">
@@ -196,10 +218,10 @@
 				</section>
 			{/if}
 			<!-- comments part -->
-			<section class="flex flex-col gap-2 w-full">
+			<section class="flex flex-col gap-2 w-full" id="comments">
 				{#if comments}
 					{#each comments as comment}
-						<div class="flex items-center w-full px-4 my-1">
+						<div class="flex items-center w-full px-4 my-1" id="c-{comment.commentId}">
 							{#if comment.profileImg}
 								<a href="/profile/{comment.username}" class="flex w-fit  items-center ">
 									<img
@@ -239,6 +261,7 @@
 											class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10"
 										>
 											<button
+												on:click={deleteComment(comment.commentId)}
 												class="text-xs flex items-center w-full justify-start hover:text-red-600 text-white"
 											>
 												<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Comment

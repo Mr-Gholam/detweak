@@ -104,3 +104,25 @@
 	border: 2px solid #fff;
 	border-color: transparent transparent #fff transparent;
 }
+.right-exit {
+	animation: exit-right 1s ease-in forwards;
+}
+@keyframes exit-right {
+	100% {
+		opacity: 0;
+		transform: translateX(200px);
+	}
+}
+.comment-added {
+	position: absolute;
+	right: 50%;
+	left: 50%;
+	animation: commentAdded 1s ease-in forwards;
+}
+@keyframes commentAdded {
+	100% {
+		opacity: 0;
+		top: 0;
+		transform: scale(0%);
+	}
+}

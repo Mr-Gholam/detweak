@@ -16,5 +16,7 @@ router.post('/like-post', isAuth, postController.postLikePost)
 router.post('/add-comment', isAuth, postController.postAddComment)
 // get a single post 
 router.get('/post/:postId', isAuth, postController.getAPost)
+// post delete comment
+router.post('/delete-Comment', isAuth, postController.postDeleteComment)
 
 module.exports = router
