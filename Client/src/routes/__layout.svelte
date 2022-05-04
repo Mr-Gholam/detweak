@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	onMount(async () => {
-		const res = await fetch('/jwt');
+		const res = await fetch('/api/jwt');
 		const u = await res.json();
 		if (res.status == 200) {
 			User.set(u);

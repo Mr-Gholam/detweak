@@ -56,7 +56,7 @@
 		if (username === loggedIn) {
 			myProfile = true;
 		}
-		const response = await fetch(`http://localhost:8585/profile/${username}`);
+		const response = await fetch(`/api/profile/${username}`);
 		const data = await response.json();
 		if (data) {
 			loading = false;
@@ -82,7 +82,7 @@
 	});
 	async function addFriend() {
 		if (loggedIn) {
-			const response = await fetch('http://localhost:8585/add-friend', {
+			const response = await fetch('/api/add-friend', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -114,7 +114,7 @@
 						{#if profileImg}
 							<img
 								class="h-20 w-20 object-cover rounded-full lg:mr-16 "
-								src="http://localhost:8585/{profileImg}"
+								src="/api/{profileImg}"
 								alt="Current profile photo"
 							/>
 						{:else}
@@ -206,7 +206,7 @@
 									<a href="/profile/{post.username}" class="ml-2">
 										<img
 											class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-											src="http://localhost:8585/{post.profileImg}"
+											src="/api/{post.profileImg}"
 											alt="Current profile photo"
 										/>
 									</a>
@@ -225,11 +225,7 @@
 							</section>
 							<!-- post-->
 							<section class="w-full h-fit">
-								<img
-									class="w-full h-fit  lg:object-cover"
-									src="http://localhost:8585/{post.postImg}"
-									alt=""
-								/>
+								<img class="w-full h-fit  lg:object-cover" src="/api/{post.postImg}" alt="" />
 								<h3 class="text-base mx-2 my-4">{post.description}</h3>
 							</section>
 							<!--bottom part-->
@@ -354,7 +350,7 @@
 				{#if profileImg}
 					<img
 						class="h-20 w-20 object-cover rounded-full lg:mr-16 "
-						src="http://localhost:8585/{profileImg}"
+						src="/api/{profileImg}"
 						alt="Current profile photo"
 					/>
 				{:else}
@@ -434,7 +430,7 @@
 							<a href="/profile/{post.username}" class="ml-2">
 								<img
 									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-									src="http://localhost:8585/{post.profileImg}"
+									src="/api/{post.profileImg}"
 									alt="Current profile photo"
 								/>
 							</a>
@@ -453,11 +449,7 @@
 					</section>
 					<!-- post-->
 					<section class="w-full h-fit">
-						<img
-							class="w-full h-fit  lg:object-cover"
-							src="http://localhost:8585/{post.postImg}"
-							alt=""
-						/>
+						<img class="w-full h-fit  lg:object-cover" src="/api/{post.postImg}" alt="" />
 						<h3 class="text-base mx-2 my-4">{post.description}</h3>
 					</section>
 					<!--bottom part-->

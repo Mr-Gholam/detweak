@@ -10,7 +10,7 @@
 	User.subscribe((value) => (user = value));
 	onMount(async () => {
 		const postId = $page.params.postId;
-		const response = await fetch(`/post/${postId}`);
+		const response = await fetch(`/api/post/${postId}`);
 		const data = await response.json();
 		post = JSON.parse(JSON.stringify(data.postInfo[0]));
 		comments = JSON.parse(JSON.stringify(data.comments));
@@ -37,7 +37,7 @@
 	async function likePost(postId) {
 		const likeBtn = document.getElementById(`like-${postId}`);
 		const likeNumber = document.getElementById(`like-n-${postId}`);
-		const response = await fetch('/like-post', {
+		const response = await fetch('/api/like-post', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -63,7 +63,7 @@
 	}
 	// add comment
 	async function addComment(postId) {
-		const response = await fetch('/add-comment', {
+		const response = await fetch('/api/add-comment', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -92,7 +92,7 @@
 		const comments = document.getElementById('comments');
 		const comment = document.getElementById(`c-${commentId}`);
 		const option = document.getElementById(`${commentId}`);
-		const response = await fetch('/delete-Comment', {
+		const response = await fetch('/api/delete-Comment', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -128,7 +128,7 @@
 							{#if post.profileImg}
 								<img
 									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-									src="http://localhost:8585/{post.profileImg}"
+									src="/api/{post.profileImg}"
 									alt="Current profile photo"
 								/>
 							{:else}
@@ -181,11 +181,7 @@
 				</section>
 				<!-- post-->
 				<section class="w-full h-fit">
-					<img
-						class="w-full h-fit  md:mx-auto  object-cover"
-						src="http://localhost:8585/{post.postImg}"
-						alt=""
-					/>
+					<img class="w-full h-fit  md:mx-auto  object-cover" src="/api/{post.postImg}" alt="" />
 					<h3 class="text-base mx-2 my-4">{post.description}</h3>
 				</section>
 				<!--bottom part-->
@@ -226,7 +222,7 @@
 								<a href="/profile/{comment.username}" class="flex w-fit  items-center ">
 									<img
 										class="h-6 w-6 object-cover rounded-full"
-										src="http://localhost:8585/{comment.profileImg}"
+										src="/api/{comment.profileImg}"
 										alt="Current profile photo"
 									/>
 									<h4 class="font-semibold text-base ml-1">
@@ -281,7 +277,7 @@
 				{#if user.profileImg}
 					<img
 						class="h-8 w-8 object-cover rounded-full"
-						src="http://localhost:8585/{user.profileImg}"
+						src="/api/{user.profileImg}"
 						alt="Current profile photo"
 					/>
 				{:else}

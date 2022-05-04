@@ -16,7 +16,7 @@
 	});
 	async function addFriend(username) {
 		if (loggedIn) {
-			const response = await fetch('http://localhost:8585/add-friend', {
+			const response = await fetch('/api/add-friend', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -51,7 +51,7 @@
 						{#if suggedtedPeople.profileImg}
 							<img
 								class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-								src="http://localhost:8585/{suggedtedPeople.profileImg}"
+								src="/api/{suggedtedPeople.profileImg}"
 								alt="Current profile photo"
 							/>
 						{:else}

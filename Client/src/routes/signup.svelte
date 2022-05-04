@@ -120,7 +120,7 @@
 	// submit
 	async function submit() {
 		if (passedEmail && passedUsername && passedPassword && passedConfirm && passedPrivacy) {
-			const Response = await fetch('http://localhost:8585/signup', {
+			const Response = await fetch('/api/signup', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -158,7 +158,7 @@
 		}
 	}
 	onMount(async () => {
-		const response = await fetch('http://localhost:8585/signup', { method: 'GET' });
+		const response = await fetch('/api/signup', { method: 'GET' });
 		if (response.status == 200) {
 			goto('/dashboard');
 		}

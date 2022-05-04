@@ -47,7 +47,7 @@
 		}
 	}
 	async function logout() {
-		const response = await fetch('http://localhost:8585/logout', { method: 'POST' });
+		const response = await fetch('/api/logout', { method: 'POST' });
 		if (response.status == 200) {
 			User.set(null);
 			location.replace('/');

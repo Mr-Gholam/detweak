@@ -43,7 +43,7 @@
 	];
 	// onMount
 	onMount(async () => {
-		const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
+		const response = await fetch('/api/availablePosts');
 		const posts = await response.json();
 		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
 	});
@@ -53,7 +53,7 @@
 		const formData = new FormData();
 		formData.append('description', postContent);
 		formData.append('image', postPicInput.files[0]);
-		fetch('http://localhost:8585/create-post', {
+		fetch('/api/create-post', {
 			method: 'POST',
 			body: formData
 		}).then(async (res) => {
@@ -62,7 +62,7 @@
 				postPicInput = null;
 				hasPhoto = false;
 				imageSrc.setAttribute('src', '');
-				const response = await fetch('http://localhost:8585/availablePosts', { method: 'GET' });
+				const response = await fetch('/api/availablePosts');
 				const posts = await response.json();
 				availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
 			}
@@ -72,7 +72,7 @@
 	async function likePost(postId) {
 		const likeBtn = document.getElementById(`like-${postId}`);
 		const likeNumber = document.getElementById(`like-n-${postId}`);
-		const response = await fetch('/like-post', {
+		const response = await fetch('/api/like-post', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -120,7 +120,7 @@
 	}
 	// add Comment
 	async function addComment(postId) {
-		const response = await fetch('/add-comment', {
+		const response = await fetch('/api/add-comment', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -214,7 +214,7 @@
 									{#if post.profileImg}
 										<img
 											class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-											src="http://localhost:8585/{post.profileImg}"
+											src="/api/{post.profileImg}"
 											alt="Current profile photo"
 										/>
 									{:else}
@@ -269,7 +269,7 @@
 						<section class="w-full h-fit">
 							<img
 								class="w-full h-fit  md:mx-auto  object-cover"
-								src="http://localhost:8585/{post.postImg}"
+								src="/api/{post.postImg}"
 								alt=""
 							/>
 							<h3 class="text-base mx-2 my-4">{post.description}</h3>
@@ -309,7 +309,7 @@
 							{#if user.profileImg}
 								<img
 									class="h-8 w-8 object-cover rounded-full"
-									src="http://localhost:8585/{user.profileImg}"
+									src="/api/{user.profileImg}"
 									alt="Current profile photo"
 								/>
 							{:else}

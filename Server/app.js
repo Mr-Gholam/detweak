@@ -54,17 +54,16 @@ app.use(express.json())
 app.use(express.static('../Client/build'))
 // using multer
 app.use(multer({ storage: fileDestination, fileFilter: fileFilter }).single('image'))
-app.use('/images', express.static(path.join(__dirname, 'images')))
-
+app.use('/api/images', express.static(path.join(__dirname, 'images')))
 
 
 
 //using routes 
-app.use(authRouter)
-app.use(profileRouter)
-app.use(postRouter)
-app.use(friendRouter)
-app.use(mainRouter)
+app.use('/api', authRouter)
+app.use('/api', profileRouter)
+app.use('/api', postRouter)
+app.use('/api', friendRouter)
+app.use('/api', mainRouter)
 
 // relation between models
 User.hasMany(Post)

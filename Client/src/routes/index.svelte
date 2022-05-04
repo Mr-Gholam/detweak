@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
-		const response = await fetch('http://localhost:8585', { method: 'POST' });
+		const response = await fetch('/api/', { method: 'POST' });
 		if (response.status == 200) {
 			goto('/dashboard');
 		}

@@ -9,7 +9,7 @@
 		friendRequests = orderedReq.reverse();
 	});
 	async function acceptReq(requestId) {
-		const response = await fetch('/accept-request', {
+		const response = await fetch('/api/accept-request', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -42,7 +42,7 @@
 							<!-- svelte-ignore a11y-img-redundant-alt -->
 							<img
 								class="h-12 lg:w-12 w-16 object-cover rounded-full hover:opacity-90  "
-								src="http://localhost:8585/{friendRequest.profileImg}"
+								src="/api/{friendRequest.profileImg}"
 								alt="Current profile photo"
 							/>
 						</a>
