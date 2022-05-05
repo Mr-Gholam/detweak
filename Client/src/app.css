@@ -115,14 +115,29 @@
 }
 .comment-added {
 	position: absolute;
-	right: 50%;
-	left: 50%;
-	animation: commentAdded 1s ease-in forwards;
+	left: 20%;
+	top: 100%;
+	/* animation: commentAdded 1s ease-in forwards; */
 }
 @keyframes commentAdded {
 	100% {
 		opacity: 0;
 		top: 0;
 		transform: scale(0%);
+	}
+}
+.pulse-icon {
+	animation: pulse 1s ease-in-out backwards;
+}
+@keyframes pulse {
+	25% {
+		color: #1f306e;
+	}
+	50% {
+		transform: scale(1.4, 1.4);
+	}
+	100% {
+		color: rgb(156 163 175);
+		transform: scale(1, 1);
 	}
 }

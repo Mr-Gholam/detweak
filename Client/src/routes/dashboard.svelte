@@ -48,25 +48,29 @@
 		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
 	});
 	//post new content
-	function newPost() {
+	async function newPost() {
+		const postPic = document.getElementById('postPic');
 		if (!postContent) return;
 		const formData = new FormData();
 		formData.append('description', postContent);
-		formData.append('image', postPicInput.files[0]);
-		fetch('/api/create-post', {
+		if (hasPhoto) {
+			formData.append('image', postPicInput.files[0]);
+		}
+		const Response = await fetch('/api/create-post', {
 			method: 'POST',
 			body: formData
-		}).then(async (res) => {
-			if (res.status === 200) {
-				postContent = null;
-				postPicInput = null;
-				hasPhoto = false;
-				imageSrc.setAttribute('src', '');
-				const response = await fetch('/api/availablePosts');
-				const posts = await response.json();
-				availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
-			}
 		});
+		if (Response.status == 200) {
+			if (hasPhoto) {
+				imageSrc.setAttribute('src', '');
+			}
+			postContent = undefined;
+			postPicInput = postPic;
+			hasPhoto = false;
+			const response = await fetch('/api/availablePosts');
+			const posts = await response.json();
+			availablePosts = posts.availablePosts;
+		}
 	}
 	// like post
 	async function likePost(postId) {
@@ -120,6 +124,12 @@
 	}
 	// add Comment
 	async function addComment(postId) {
+		const commentIcon = document.getElementById(`comment-${postId}`);
+		const postBtn = document.getElementById(`postBtn-${postId}`);
+		const sent = document.createElement('i');
+		sent.classList.add('fa-solid', 'fa-check', 'mr-1');
+		const Sent = document.createElement('p');
+		Sent.innerText = 'Sent';
 		const response = await fetch('/api/add-comment', {
 			method: 'POST',
 			headers: {
@@ -131,6 +141,17 @@
 			})
 		});
 		if (response.status == 200) {
+			commentIcon.classList.add('pulse-icon');
+			postBtn.classList.add('flex', 'items-center', 'border-green', 'text-green');
+			postBtn.innerText = '';
+			postBtn.appendChild(sent);
+			postBtn.appendChild(Sent);
+			setInterval(() => {
+				postBtn.removeChild(sent);
+				postBtn.removeChild(Sent);
+				postBtn.classList.remove('flex', 'items-center', 'border-green', 'text-green');
+				postBtn.innerText = 'Post';
+			}, 1400);
 			comment = '';
 		}
 	}
@@ -267,11 +288,13 @@
 						</section>
 						<!-- post-->
 						<section class="w-full h-fit">
-							<img
-								class="w-full h-fit  md:mx-auto  object-cover"
-								src="/api/{post.postImg}"
-								alt=""
-							/>
+							{#if post.postImg}
+								<img
+									class="w-full h-fit  md:mx-auto  object-cover"
+									src="/api/{post.postImg}"
+									alt=""
+								/>
+							{/if}
 							<h3 class="text-base mx-2 my-4">{post.description}</h3>
 						</section>
 						<!--bottom part-->
@@ -290,8 +313,8 @@
 								>
 								<button
 									on:click={openPost(post.postId)}
-									class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16"
-									id="comments"><i class="fa-solid fa-comments" /></button
+									class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16 "
+									id="comment-{post.postId}"><i class="fa-solid fa-comments" /></button
 								>
 								<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
 									><i class="fa-solid fa-share" /></button
@@ -329,6 +352,7 @@
 									class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
 								/>
 								<button
+									id="postBtn-{post.postId}"
 									class="border-2 border-main-bg rounded-xl py-1 px-3 hover:bg-main-bg hover:text-white font-semibold"
 									>Post</button
 								>
