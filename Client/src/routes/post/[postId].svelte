@@ -104,7 +104,7 @@
 		if (response.status == 200) {
 			option.classList.add('hidden');
 			comment.classList.add('right-exit');
-			setInterval(() => {
+			setTimeout(() => {
 				comment.parentNode.removeChild(comment);
 			}, 1000);
 		}

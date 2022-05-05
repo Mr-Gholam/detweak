@@ -85,7 +85,6 @@
 				postId
 			})
 		});
-		console.log(response, likeBtn, likeNumber);
 		const data = await response.json();
 		if (data.added) {
 			likeBtn.classList.add('text-red-600');
@@ -146,7 +145,7 @@
 			postBtn.innerText = '';
 			postBtn.appendChild(sent);
 			postBtn.appendChild(Sent);
-			setInterval(() => {
+			setTimeout(() => {
 				postBtn.removeChild(sent);
 				postBtn.removeChild(Sent);
 				postBtn.classList.remove('flex', 'items-center', 'border-green', 'text-green');
@@ -159,12 +158,32 @@
 	function openPost(postId) {
 		goto(`/post/${postId}`);
 	}
+	async function deletePost(postId) {
+		const main = document.getElementById('main');
+		const postbody = document.getElementById(`body-${postId}`);
+		const response = await fetch('/api/delete-post', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				postId
+			})
+		});
+		if (response.status == 200) {
+			postbody.classList.add('right-exit');
+			setTimeout(() => {
+				main.removeChild(postbody);
+			}, 1000);
+		}
+	}
 </script>
 
 <div class="flex md:w-9/12 items-start justify-center md:justify-between w-full">
 	<!--Main part-->
 	<div
-		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0 xl:max-w-9/12"
+		id="main"
+		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0 xl:max-w-9/12 overflow-x-hidden"
 	>
 		<!--Creat Post-->
 		<div
@@ -223,7 +242,10 @@
 		{#if availablePosts}
 			{#each availablePosts as post}
 				<!-- post outline-->
-				<div class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2">
+				<div
+					id="body-{post.postId}"
+					class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
+				>
 					<!-- svelte-ignore a11y-img-redundant-alt -->
 					<section class=" flex justify-between items-center flex-col ">
 						<!--post info-->
@@ -277,6 +299,7 @@
 												<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
 											</button>
 											<button
+												on:click={deletePost(post.postId)}
 												class="text-sm flex items-center w-full justify-start hover:text-red-600 text-white"
 											>
 												<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post

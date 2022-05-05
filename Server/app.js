@@ -66,13 +66,13 @@ app.use('/api', friendRouter)
 app.use('/api', mainRouter)
 
 // relation between models
-User.hasMany(Post)
-User.hasMany(Comment)
-User.hasMany(Friend)
-User.hasMany(FriendReq)
-User.hasMany(likedPosts)
-Post.hasMany(likedPosts)
-Post.hasMany(Comment)
+User.hasMany(Post, { onDelete: 'cascade' })
+User.hasMany(Comment, { onDelete: 'cascade' })
+User.hasMany(Friend, { onDelete: 'cascade' })
+User.hasMany(FriendReq, { onDelete: 'cascade' })
+User.hasMany(likedPosts, { onDelete: 'cascade' })
+Post.hasMany(likedPosts, { onDelete: 'cascade' })
+Post.hasMany(Comment, { onDelete: 'cascade' })
 
 
 //syncing database

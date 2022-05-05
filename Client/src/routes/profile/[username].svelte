@@ -251,6 +251,13 @@
 						</section>
 					</div>
 				{/each}
+			{:else}
+				<div class="loading">
+					<div />
+					<div />
+					<div />
+					<div />
+				</div>
 			{/if}
 		</div>
 		<!--right part-->
@@ -475,5 +482,12 @@
 				</section>
 			</div>
 		{/each}
+	</div>
+{:else}
+	<div class="loading">
+		<div />
+		<div />
+		<div />
+		<div />
 	</div>
 {/if}
