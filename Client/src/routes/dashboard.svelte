@@ -126,8 +126,9 @@
 		const commentIcon = document.getElementById(`comment-${postId}`);
 		const postBtn = document.getElementById(`postBtn-${postId}`);
 		const sent = document.createElement('i');
-		sent.classList.add('fa-solid', 'fa-check', 'mr-1');
+		sent.classList.add('fa-solid', 'fa-check', 'mr-1', 'text-sm');
 		const Sent = document.createElement('p');
+		Sent.classList.add('text-sm');
 		Sent.innerText = 'Sent';
 		const response = await fetch('/api/add-comment', {
 			method: 'POST',
@@ -175,6 +176,38 @@
 			setTimeout(() => {
 				main.removeChild(postbody);
 			}, 1000);
+		}
+	}
+	// Open Edit post
+	function openEdit(postId) {
+		const des = document.getElementById(`des-${postId}`);
+		const form = document.getElementById(`form-${postId}`);
+		if (form.classList.contains('hidden')) {
+			postOption(postId);
+			form.classList.remove('hidden');
+			des.classList.add('hidden');
+		} else {
+			des.classList.remove('hidden');
+			form.classList.add('hidden');
+		}
+	}
+	async function updatePost(postId) {
+		const updatedDes = document.getElementById(`upDes-${postId}`);
+		const res = await fetch('/api/update-post', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				updatedDes: updatedDes.value,
+				postId
+			})
+		});
+		if (res.status == 200) {
+			openEdit(postId);
+			const response = await fetch('/api/availablePosts');
+			const posts = await response.json();
+			availablePosts = posts.availablePosts;
 		}
 	}
 </script>
@@ -294,6 +327,7 @@
 											class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2 z-10"
 										>
 											<button
+												on:click={openEdit(post.postId)}
 												class="text-sm flex items-center w-full justify-start hover:text-main text-white"
 											>
 												<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
@@ -318,7 +352,27 @@
 									alt=""
 								/>
 							{/if}
-							<h3 class="text-base mx-2 my-4">{post.description}</h3>
+							<h3 class="text-base mx-2 my-4" id="des-{post.postId}">{post.description}</h3>
+							{#if post.username == user.username}
+								<form
+									id="form-{post.postId}"
+									method=" post"
+									class="w-full h-fit hidden "
+									on:submit|preventDefault={updatePost(post.postId)}
+								>
+									<input
+										type="text"
+										id="upDes-{post.postId}"
+										placeholder={post.description}
+										class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit"
+									/>
+									<input
+										type="submit"
+										value="Edit"
+										class="p-1 text-md font-semibold text-main-bg hover:cursor-pointer py-1 px-2 rounded-md hover:text-white hover:bg-main-bg w-16 border border-main-bg float-right mr-4 mb-1"
+									/>
+								</form>
+							{/if}
 						</section>
 						<!--bottom part-->
 						<section class="flex justify-between w-full items-center px-2">
@@ -376,7 +430,7 @@
 								/>
 								<button
 									id="postBtn-{post.postId}"
-									class="border-2 border-main-bg rounded-xl py-1 px-3 hover:bg-main-bg hover:text-white font-semibold"
+									class="border border-main-bg rounded-md py-1 px-3 hover:bg-main-bg hover:text-white font-semibold text-main-bg w-16"
 									>Post</button
 								>
 							</form>

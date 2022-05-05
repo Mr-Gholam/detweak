@@ -20,5 +20,7 @@ router.get('/post/:postId', isAuth, postController.getAPost)
 router.post('/delete-Comment', isAuth, postController.postDeleteComment)
 // post delete post
 router.post('/delete-post', isAuth, postController.postDeletePost)
+// post update post 
+router.post('/update-post', isAuth, postController.postUpdatePost)
 
 module.exports = router

@@ -221,7 +221,25 @@ exports.postDeletePost = async (req, res, next) => {
         const userId = req.UserId
         const postId = req.body.postId
         await Comment.destroy({ where: { postId } })
+        await likedPost.destroy({ where: { postId } })
         await Post.destroy({ where: { [Op.and]: [{ userId }, { id: postId }] } })
+        res.status(200).end()
+    } else {
+        res.status(401)
+    }
+}
+// POST for update a post 
+exports.postUpdatePost = async (req, res, next) => {
+    if (req.UserId) {
+        const userId = req.UserId
+        const postId = req.body.postId
+        const updatedDes = req.body.updatedDes
+        await Post.update({
+            description: updatedDes
+        },
+            { where: { [Op.and]: [{ userId }, { id: postId }] } }
+        )
+
         res.status(200).end()
     } else {
         res.status(401)
