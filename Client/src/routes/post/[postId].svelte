@@ -1,6 +1,9 @@
 <script>
+	// @ts-nocheck
+
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { User } from '../../store';
 	let user;
@@ -12,8 +15,8 @@
 		const postId = $page.params.postId;
 		const response = await fetch(`/api/post/${postId}`);
 		const data = await response.json();
-		post = JSON.parse(JSON.stringify(data.postInfo[0]));
-		comments = JSON.parse(JSON.stringify(data.comments));
+		post = data.postInfo[0];
+		comments = data.comments;
 	});
 	//  open post option
 	function postOption(postId) {
@@ -109,22 +112,81 @@
 			}, 1000);
 		}
 	}
+	// Open Edit post
+	function openEdit(postId) {
+		const des = document.getElementById(`des-${postId}`);
+		const form = document.getElementById(`form-${postId}`);
+		if (form.classList.contains('hidden')) {
+			postOption(postId);
+			form.classList.remove('hidden');
+			des.classList.add('hidden');
+		} else {
+			des.classList.remove('hidden');
+			form.classList.add('hidden');
+		}
+	}
+	async function updatePost(postId) {
+		const updatedDes = document.getElementById(`upDes-${postId}`);
+		const res = await fetch('/api/update-post', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				updatedDes: updatedDes.value,
+				postId
+			})
+		});
+		if (res.status == 200) {
+			openEdit(postId);
+			const response = await fetch(`/api/post/${postId}`);
+			const data = await response.json();
+			post = JSON.parse(JSON.stringify(data.postInfo[0]));
+			comments = JSON.parse(JSON.stringify(data.comments));
+		}
+	}
+	function openPost(postId) {
+		goto(`/post/${postId}`);
+	}
+	async function deletePost(postId) {
+		const main = document.getElementById('main');
+		const postbody = document.getElementById(`body-${postId}`);
+		const response = await fetch('/api/delete-post', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				postId
+			})
+		});
+		if (response.status == 200) {
+			postOption(postId);
+			postbody.classList.add('right-exit');
+			setTimeout(() => {
+				main.removeChild(postbody);
+			}, 1000);
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
 
-<div
-	class="flex items-start justify-center md:justify-between md:py-4  gap-4 flex-col  w-96 lg:w-128  xl:max-w-9/12 md:mx-auto transition duration-1000 ease-out"
->
-	<!-- post outline-->
-	<div class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2">
-		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<section class=" flex justify-between items-center flex-col ">
-			{#if post}
-				<section class="  p-2 flex  items-center gap-2 justify-between w-full ">
-					<!--post info-->
+{#if post}
+	<div
+		class="flex items-start justify-center md:justify-between md:py-4  gap-4 flex-col  w-96 lg:w-128  xl:max-w-9/12 md:mx-auto transition duration-1000 ease-out"
+	>
+		<div
+			class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
+		>
+			<!-- svelte-ignore a11y-img-redundant-alt -->
+			<section class=" flex justify-between items-center flex-col ">
+				<!--post info-->
+				<section
+					class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-gray-200"
+				>
 					<!--name and username-->
 					<section class="flex gap-2 items-center">
 						<!--profile img-->
@@ -158,7 +220,7 @@
 						<h6 class="text-xs text-orange mx-2 cursor-default">
 							{post.onlineTime}
 						</h6>
-						{#if post.username == user}
+						{#if post.username == user.username}
 							<div class="relative">
 								<i
 									on:click={postOption(post.postId)}
@@ -166,14 +228,16 @@
 								/>
 								<div
 									id={post.postId}
-									class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2"
+									class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2 z-10"
 								>
 									<button
+										on:click={openEdit(post.postId)}
 										class="text-sm flex items-center w-full justify-start hover:text-main text-white"
 									>
 										<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
 									</button>
 									<button
+										on:click={deletePost(post.postId)}
 										class="text-sm flex items-center w-full justify-start hover:text-red-600 text-white"
 									>
 										<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
@@ -185,15 +249,46 @@
 				</section>
 				<!-- post-->
 				<section class="w-full h-fit">
-					<img class="w-full h-fit  md:mx-auto  object-cover" src="/api/{post.postImg}" alt="" />
-					<h3 class="text-base mx-2 my-4">{post.description}</h3>
+					{#if post.postImg}
+						<img
+							on:dblclick={likePost(post.postId)}
+							class="w-full h-fit  md:mx-auto  object-cover"
+							src="/api/{post.postImg}"
+							alt=""
+						/>
+					{/if}
+					<h3
+						class="text-base mx-2 my-4"
+						on:dblclick={likePost(post.postId)}
+						id="des-{post.postId}"
+					>
+						{post.description}
+					</h3>
+					{#if post.username == user.username}
+						<form
+							id="form-{post.postId}"
+							method=" post"
+							class="w-full h-fit hidden "
+							on:submit|preventDefault={updatePost(post.postId)}
+						>
+							<input
+								type="text"
+								id="upDes-{post.postId}"
+								placeholder={post.description}
+								class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit"
+							/>
+							<input
+								type="submit"
+								value="Edit"
+								class="p-1 text-md font-semibold text-main-bg hover:cursor-pointer py-1 px-2 rounded-md hover:text-white hover:bg-main-bg w-16 border border-main-bg float-right mr-4 mb-1"
+							/>
+						</form>
+					{/if}
 				</section>
 				<!--bottom part-->
-				<section
-					class="flex justify-between w-full items-center px-2   border-b border-solid border-gray-200"
-				>
+				<section class="flex justify-between w-full items-center px-2">
 					<!-- button  part-->
-					<section class=" flex justify-start  text-lg  gap-2 ">
+					<section class=" flex justify-start  text-lg  gap-2  ">
 						<button
 							class="hover:text-red-600 text-2xl p-2 flex items-center w-16 {post.liked
 								? 'text-red-600'
@@ -204,9 +299,13 @@
 								{post.likes}
 							</p></button
 						>
-						<button class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16" id="comments"
-							><i class="fa-solid fa-comments" /></button
-						>
+						{#if post.allowComments}
+							<button
+								on:click={openPost(post.postId)}
+								class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16 "
+								id="comment-{post.postId}"><i class="fa-solid fa-comments" /></button
+							>
+						{/if}
 						<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
 							><i class="fa-solid fa-share" /></button
 						>
@@ -273,39 +372,42 @@
 						{/each}
 					{/if}
 				</section>
-				<!-- add comment part -->
-				<section
-					class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
-				>
-					{#if user.profileImg}
-						<img
-							class="h-8 w-8 object-cover rounded-full"
-							src="/api/{user.profileImg}"
-							alt="Current profile photo"
-						/>
-					{:else}
-						<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
-							<i class="fa-solid fa-user text-slate-400 text-lg" />
-						</div>
-					{/if}
-					<form
-						method="post"
-						on:submit|preventDefault={addComment(post.postId)}
-						class="flex-1 flex justify-between  mx-2"
+				<!-- comment part -->
+				{#if post.allowComments}
+					<section
+						class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
 					>
-						<input
-							type="text"
-							placeholder="Add a comment..."
-							bind:value={comment}
-							class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
-						/>
-						<button
-							class="border-2 border-main-bg rounded-xl py-1 px-3 hover:bg-main-bg hover:text-white font-semibold"
-							>Post</button
+						{#if user.profileImg}
+							<img
+								class="h-8 w-8 object-cover rounded-full"
+								src="/api/{user.profileImg}"
+								alt="Current profile photo"
+							/>
+						{:else}
+							<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
+								<i class="fa-solid fa-user text-slate-400 text-lg" />
+							</div>
+						{/if}
+						<form
+							method="post"
+							on:submit|preventDefault={addComment(post.postId)}
+							class="flex-1 flex justify-between  mx-2"
 						>
-					</form>
-				</section>
-			{/if}
-		</section>
+							<input
+								type="text"
+								placeholder="Add a comment..."
+								bind:value={comment}
+								class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
+							/>
+							<button
+								id="postBtn-{post.postId}"
+								class="border border-main-bg rounded-md py-1 px-3 hover:bg-main-bg hover:text-white font-semibold text-main-bg w-16"
+								>Post</button
+							>
+						</form>
+					</section>
+				{/if}
+			</section>
+		</div>
 	</div>
-</div>
+{/if}

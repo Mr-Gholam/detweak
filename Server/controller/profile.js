@@ -6,6 +6,8 @@ const Post = require('../model/post')
 const Friend = require('../model/friend')
 // importing friend Req model 
 const FriendReq = require('../model/friendReq')
+//  importing Like post model
+const LikedPosts = require('../model/liked-posts')
 
 const { Op } = require("sequelize");
 
@@ -17,6 +19,7 @@ exports.getProfile = async (req, res, next) => {
     let userId
     let isFriend
     let sentRequest
+    let availablePosts = []
 
     try {
         const user = await User.findOne({ where: { username }, attributes: ['id', 'username', 'firstName', 'lastName', 'profileImgUrl', 'onlineTime', 'bio', 'birthday', 'location'] })
@@ -24,10 +27,13 @@ exports.getProfile = async (req, res, next) => {
         const friend = await Friend.findAll({ where: { userId: user.id } })
         const friendCount = friend.length
         const postCount = Posts.length
-        const availablePosts = Posts.map(
-            post => {
-                return {
+        for (let i = 0; i < Posts.length; i++) {
+            const post = Posts[i];
+            const likedPost = await LikedPosts.findOne({ where: { [Op.and]: [{ userId: user.id }, { postId: post.id }] } })
+            if (likedPost) {
+                const pushedPost = {
                     description: post.description
+                    , allowComments: post.allowComments
                     , postImg: post.imageUrl
                     , username: user.username
                     , firstName: user.firstName
@@ -35,9 +41,31 @@ exports.getProfile = async (req, res, next) => {
                     , profileImg: user.profileImgUrl
                     , onlineTime: user.onlineTime
                     , createdAt: post.createdAt
+                    , likes: post.likes
                     , postId: post.id
+                    , liked: true
                 }
-            })
+                availablePosts.push(pushedPost)
+
+            } else {
+                const pushedPost = {
+                    description: post.description
+                    , allowComments: post.allowComments
+                    , postImg: post.imageUrl
+                    , username: user.username
+                    , firstName: user.firstName
+                    , lastName: user.lastName
+                    , profileImg: user.profileImgUrl
+                    , onlineTime: user.onlineTime
+                    , createdAt: post.createdAt
+                    , likes: post.likes
+                    , postId: post.id
+                    , liked: false
+                }
+                availablePosts.push(pushedPost)
+            }
+        }
+
         if (req.UserId) {
             userId = req.UserId
             const friendReq = await FriendReq.findOne({ where: { [Op.and]: [{ userId }, { targetId: user.id }] } })
@@ -54,6 +82,7 @@ exports.getProfile = async (req, res, next) => {
             }
 
         }
+        availablePosts.sort((a, b) => b.createdAt - a.createdAt)
         res.status(200).json({
             username: username,
             firstName: user.firstName,

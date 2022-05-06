@@ -19,19 +19,24 @@
 
 <Navbar />
 {#if $User.username}
-	<main
-		class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between "
-	>
-		{#if $loading}
-			<div class={$loading ? 'blur-sm' : ''}>
-				<LeftSidebar />
-				<slot />
-			</div>
-			<Loading />
-		{/if}
-		<LeftSidebar />
-		<slot />
-	</main>
+	{#if $loading}
+		<main
+			class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between {$loading
+				? 'blur-sm w-full'
+				: ''}"
+		>
+			<LeftSidebar />
+			<slot />
+		</main>
+		<Loading />
+	{:else}
+		<main
+			class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between "
+		>
+			<LeftSidebar />
+			<slot />
+		</main>
+	{/if}
 {:else}
 	<div class={$loading ? 'blur-sm ' : ''}>
 		<slot />

@@ -44,10 +44,9 @@
 	];
 	// onMount
 	onMount(async () => {
-		$loading = true;
 		const response = await fetch('/api/availablePosts');
 		const posts = await response.json();
-		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
+		availablePosts = posts.availablePosts;
 		$loading = false;
 	});
 	function toggleComment(event) {
@@ -388,12 +387,19 @@
 						<section class="w-full h-fit">
 							{#if post.postImg}
 								<img
+									on:dblclick={likePost(post.postId)}
 									class="w-full h-fit  md:mx-auto  object-cover"
 									src="/api/{post.postImg}"
 									alt=""
 								/>
 							{/if}
-							<h3 class="text-base mx-2 my-4" id="des-{post.postId}">{post.description}</h3>
+							<h3
+								class="text-base mx-2 my-4"
+								on:dblclick={likePost(post.postId)}
+								id="des-{post.postId}"
+							>
+								{post.description}
+							</h3>
 							{#if post.username == user.username}
 								<form
 									id="form-{post.postId}"

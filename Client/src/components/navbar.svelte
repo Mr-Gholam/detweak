@@ -83,19 +83,17 @@
 			<!--menu-->
 			<div class=" p-4   hidden absolute top-10 left-0 bg-main-bg w-full h-fit z-10 " id="menu">
 				<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold  ">
+					<a href="/dashboard" class="hover:text-main">Dashboard</a>
 					<a href="/profile/{username}" class="hover:text-main">My Profile</a>
 					<a href="/notification" class="hover:text-main">Notification</a>
 					<a href="/messages" class="hover:text-main">Messages</a>
 					<a href="/liked-posts" class="hover:text-main"> Liked Posts</a>
 					<a href="/setting" class="hover:text-main">Setting</a>
-					<button
-						class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main"
-						on:click={logout}>Logout</button
-					>
+					<button class="hover:text-main w-fit font-semibold " on:click={logout}>Logout</button>
 				</section>
 			</div>
 			<button
-				class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main"
+				class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main hidden md:block"
 				on:click={logout}>Logout</button
 			>
 		{:else}
