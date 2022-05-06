@@ -31,7 +31,7 @@ exports.getAvailablePosts = async (req, res, next) => {
     ids.push(userId)
     for (let i = 0; i < ids.length; i++) {
         const id = ids[i];
-        const Posts = await Post.findAll({ where: { userId: id }, attributes: ['description', 'imageUrl', 'createdAt', 'id', 'likes'] })
+        const Posts = await Post.findAll({ where: { userId: id }, attributes: ['description', 'imageUrl', 'createdAt', 'id', 'likes', 'allowComments'] })
         const user = await User.findOne({ where: { id }, attributes: ['firstName', 'username', 'lastName', 'profileImgUrl', 'onlineTime'] })
         for (let i = 0; i < Posts.length; i++) {
             const post = Posts[i];
@@ -39,6 +39,7 @@ exports.getAvailablePosts = async (req, res, next) => {
             if (likedPost) {
                 const pushedPost = {
                     description: post.description
+                    , allowComments: post.allowComments
                     , postImg: post.imageUrl
                     , username: user.username
                     , firstName: user.firstName
@@ -55,6 +56,7 @@ exports.getAvailablePosts = async (req, res, next) => {
             } else {
                 const pushedPost = {
                     description: post.description
+                    , allowComments: post.allowComments
                     , postImg: post.imageUrl
                     , username: user.username
                     , firstName: user.firstName
@@ -80,8 +82,10 @@ exports.postCreatePost = async (req, res, next) => {
         imageUrl = req.file.path
     }
     const description = req.body.description
+    const allowComments = req.body.allowComments
     const userId = req.UserId
     Post.create({
+        allowComments,
         description,
         likes: 0,
         imageUrl,
@@ -154,7 +158,7 @@ exports.getAPost = async (req, res, next) => {
             let postInfo = []
             const postId = req.params.postId
             const userId = req.UserId
-            const post = await Post.findOne({ where: { id: postId }, attributes: ['description', 'imageUrl', 'createdAt', 'id', 'likes', 'userId'] })
+            const post = await Post.findOne({ where: { id: postId }, attributes: ['description', 'imageUrl', 'createdAt', 'id', 'likes', 'userId', 'allowComments'] })
             const postOwner = await User.findOne({ where: { id: post.userId } })
             const likedPost = await LikedPosts.findOne({ where: { [Op.and]: [{ userId }, { postId }] } })
             const currentComments = await Comment.findAll({ where: { postId }, attributes: ['userId', 'comment', 'createdAt', 'id'] })
@@ -173,6 +177,7 @@ exports.getAPost = async (req, res, next) => {
             if (likedPost) {
                 const pushedPost = {
                     description: post.description
+                    , allowComments: post.allowComments
                     , postImg: post.imageUrl
                     , username: postOwner.username
                     , firstName: postOwner.firstName
@@ -188,6 +193,7 @@ exports.getAPost = async (req, res, next) => {
             } else {
                 const pushedPost = {
                     description: post.description
+                    , allowComments: post.allowComments
                     , postImg: post.imageUrl
                     , username: postOwner.username
                     , firstName: postOwner.firstName
@@ -221,7 +227,7 @@ exports.postDeletePost = async (req, res, next) => {
         const userId = req.UserId
         const postId = req.body.postId
         await Comment.destroy({ where: { postId } })
-        await likedPost.destroy({ where: { postId } })
+        await LikedPosts.destroy({ where: { postId } })
         await Post.destroy({ where: { [Op.and]: [{ userId }, { id: postId }] } })
         res.status(200).end()
     } else {

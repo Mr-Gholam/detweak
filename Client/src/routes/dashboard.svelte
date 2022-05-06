@@ -8,6 +8,7 @@
 	let user;
 	User.subscribe((value) => (user = value));
 	let comment;
+	let commentChecked = true;
 	let hasPhoto;
 	let postContent;
 	let imageSrc;
@@ -47,11 +48,19 @@
 		const posts = await response.json();
 		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
 	});
+	function toggleComment(event) {
+		const target = event.target;
+
+		const state = target.getAttribute('aria-checked');
+
+		commentChecked = state === 'true' ? false : true;
+	}
 	//post new content
 	async function newPost() {
 		const postPic = document.getElementById('postPic');
 		if (!postContent) return;
 		const formData = new FormData();
+		formData.append('allowComments', commentChecked);
 		formData.append('description', postContent);
 		if (hasPhoto) {
 			formData.append('image', postPicInput.files[0]);
@@ -172,6 +181,7 @@
 			})
 		});
 		if (response.status == 200) {
+			postOption(postId);
 			postbody.classList.add('right-exit');
 			setTimeout(() => {
 				main.removeChild(postbody);
@@ -212,6 +222,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Dashboard</title>
+</svelte:head>
 <div class="flex md:w-9/12 items-start justify-center md:justify-between w-full">
 	<!--Main part-->
 	<div
@@ -247,6 +260,30 @@
 					class=" p-2 focus:outline-hidden focus:outline-none resize-none"
 				/>
 				<section class="flex justify-evenly items-center">
+					<!-- comments option -->
+					<label for="toggleB" class="flex items-center cursor-pointer">
+						<!-- label -->
+						<div class="mr-3 text-gray-700 font-medium">Comments</div>
+						<!-- toggle -->
+						<div class="relative">
+							<!-- input -->
+							<input
+								on:change={toggleComment}
+								type="checkbox"
+								id="toggleB"
+								class="sr-only"
+								checked
+								aria-checked={commentChecked}
+							/>
+							<!-- line -->
+							<div class="block bg-main-bg w-11 h-6 rounded-full" />
+							<!-- dot -->
+							<div
+								class="dot absolute left-0.5 top-0.5 bg-gray-500 w-5 h-5 rounded-full transition"
+							/>
+						</div>
+					</label>
+
 					<!-- file input-->
 					<label for="postPic" class="text-2xl  hover:cursor-pointer hover:text-main "
 						><i class="fa-solid fa-paperclip" /></label
@@ -282,7 +319,9 @@
 					<!-- svelte-ignore a11y-img-redundant-alt -->
 					<section class=" flex justify-between items-center flex-col ">
 						<!--post info-->
-						<section class="  p-2 flex  items-center gap-2 justify-between w-full ">
+						<section
+							class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-gray-200"
+						>
 							<!--name and username-->
 							<section class="flex gap-2 items-center">
 								<!--profile img-->
@@ -388,11 +427,13 @@
 										{post.likes}
 									</p></button
 								>
-								<button
-									on:click={openPost(post.postId)}
-									class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16 "
-									id="comment-{post.postId}"><i class="fa-solid fa-comments" /></button
-								>
+								{#if post.allowComments}
+									<button
+										on:click={openPost(post.postId)}
+										class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16 "
+										id="comment-{post.postId}"><i class="fa-solid fa-comments" /></button
+									>
+								{/if}
 								<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
 									><i class="fa-solid fa-share" /></button
 								>
@@ -403,38 +444,40 @@
 							</h6>
 						</section>
 						<!-- comment part -->
-						<section
-							class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
-						>
-							{#if user.profileImg}
-								<img
-									class="h-8 w-8 object-cover rounded-full"
-									src="/api/{user.profileImg}"
-									alt="Current profile photo"
-								/>
-							{:else}
-								<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
-									<i class="fa-solid fa-user text-slate-400 text-lg" />
-								</div>
-							{/if}
-							<form
-								method="post"
-								on:submit|preventDefault={addComment(post.postId)}
-								class="flex-1 flex justify-between  mx-2"
+						{#if post.allowComments}
+							<section
+								class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
 							>
-								<input
-									type="text"
-									placeholder="Add a comment..."
-									bind:value={comment}
-									class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
-								/>
-								<button
-									id="postBtn-{post.postId}"
-									class="border border-main-bg rounded-md py-1 px-3 hover:bg-main-bg hover:text-white font-semibold text-main-bg w-16"
-									>Post</button
+								{#if user.profileImg}
+									<img
+										class="h-8 w-8 object-cover rounded-full"
+										src="/api/{user.profileImg}"
+										alt="Current profile photo"
+									/>
+								{:else}
+									<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
+										<i class="fa-solid fa-user text-slate-400 text-lg" />
+									</div>
+								{/if}
+								<form
+									method="post"
+									on:submit|preventDefault={addComment(post.postId)}
+									class="flex-1 flex justify-between  mx-2"
 								>
-							</form>
-						</section>
+									<input
+										type="text"
+										placeholder="Add a comment..."
+										bind:value={comment}
+										class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
+									/>
+									<button
+										id="postBtn-{post.postId}"
+										class="border border-main-bg rounded-md py-1 px-3 hover:bg-main-bg hover:text-white font-semibold text-main-bg w-16"
+										>Post</button
+									>
+								</form>
+							</section>
+						{/if}
 					</section>
 				</div>
 			{/each}
@@ -524,3 +567,10 @@
 		</section>
 	</div>
 </div>
+
+<style>
+	input:checked ~ .dot {
+		transform: translateX(100%);
+		background-color: #fff;
+	}
+</style>

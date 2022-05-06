@@ -48,6 +48,10 @@
 	];
 </script>
 
+<svelte:head>
+	<title>Liked Posts</title>
+</svelte:head>
+
 <div class="flex w-9/12 items-start justify-center md:justify-between">
 	<!--posts-->
 	<div

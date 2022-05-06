@@ -97,6 +97,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{userName}</title>
+</svelte:head>
+
 {#if loggedIn}
 	<div class="flex w-9/12 items-start justify-center md:justify-between">
 		<!--main part -->

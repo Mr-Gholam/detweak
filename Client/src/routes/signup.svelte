@@ -165,6 +165,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Sign Up</title>
+</svelte:head>
 <main class="md:flex md:justify-center md:m-auto md:py-8  md:items-center">
 	<form
 		on:submit|preventDefault={submit}

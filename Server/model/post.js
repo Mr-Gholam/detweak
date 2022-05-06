@@ -18,6 +18,9 @@ const Post = sequelize.define('posts', {
     },
     likes: {
         type: Sequelize.INTEGER
+    },
+    allowComments: {
+        type: Sequelize.BOOLEAN
     }
 })
 // exporting model

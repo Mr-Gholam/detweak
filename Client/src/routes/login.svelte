@@ -86,6 +86,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Login</title>
+</svelte:head>
 <main class=" flex justify-center m-auto py-8 md:my-16  items-center">
 	<form
 		action="/login"

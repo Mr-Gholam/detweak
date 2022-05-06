@@ -75,6 +75,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Messages</title>
+</svelte:head>
 <div
 	class="w-96 md:w-10/12 md:my-6  relative md:flex md:border-2 md:border-main-bg md:rounded-md md:mr-4 h-screen lg:h-128"
 >

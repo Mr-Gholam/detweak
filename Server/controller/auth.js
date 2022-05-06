@@ -125,6 +125,9 @@ exports.postSetProfile = async (req, res, next) => {
         birthday,
         profileImgUrl: imageUrl
     }, { where: { email } })
+    const user = await User.findOne({ where: { email } })
+    const token = jwt.sign({ id: user.id, email, username: user.username, profileImg: user.profileImgUrl }, 'superSecret')
+    res.cookie('jwt', token)
     res.status(200).json({
         msg: 'user updated'
     })

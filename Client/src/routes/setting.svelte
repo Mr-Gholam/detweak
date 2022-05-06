@@ -58,6 +58,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Setting</title>
+</svelte:head>
 <div class="md:p-4 my-2 md:w-9/12 ">
 	<section
 		class="w-80 flex border-2 justify-evenly p-3 bg-main-bg rounded-full text-white mx-auto mb-4 "

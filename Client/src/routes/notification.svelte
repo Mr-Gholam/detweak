@@ -3,7 +3,7 @@
 
 	let friendRequests = [];
 	onMount(async () => {
-		const response = await fetch('/friend-requests');
+		const response = await fetch('/api/friend-requests');
 		const data = await response.json();
 		const orderedReq = JSON.parse(JSON.stringify(data.friendRequests));
 		friendRequests = orderedReq.reverse();
@@ -25,6 +25,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Notification</title>
+</svelte:head>
 <div class="w-96 lg:w-9/12 my-2 p-4">
 	<!--Friend requests-->
 	<section class="w-fit">

@@ -10,7 +10,7 @@
 	let suggestion = [];
 	onMount(async () => {
 		const userInput = $page.params.userInput;
-		const response = await fetch(`/search/${userInput}`);
+		const response = await fetch(`/api/search/${userInput}`);
 		const data = await response.json();
 		suggestion = JSON.parse(JSON.stringify(data.usersFound));
 	});
@@ -36,6 +36,10 @@
 		}
 	}
 </script>
+
+<svelte:head>
+	<title>Search</title>
+</svelte:head>
 
 <div class="w-96 p-4 my-2 mx-auto lg:w-128">
 	<div class="flex flex-col">
