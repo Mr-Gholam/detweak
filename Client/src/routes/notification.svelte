@@ -1,12 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
-
+	import { loading } from '../store';
 	let friendRequests = [];
 	onMount(async () => {
+		$loading = true;
 		const response = await fetch('/api/friend-requests');
 		const data = await response.json();
-		const orderedReq = JSON.parse(JSON.stringify(data.friendRequests));
+		const orderedReq = data.friendRequests;
 		friendRequests = orderedReq.reverse();
+		$loading = false;
 	});
 	async function acceptReq(requestId) {
 		const response = await fetch('/api/accept-request', {

@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { User } from '../store';
+	import { loading, User } from '../store';
 
 	let email;
 	let password;
@@ -48,6 +48,7 @@
 		}
 	}
 	async function sumbit() {
+		$loading = true;
 		if (passedEmail && passedPassword) {
 			const response = await fetch('/api/login', {
 				method: 'POST',
@@ -62,6 +63,7 @@
 			const data = await response.json();
 			if (response.status == 200) {
 				User.set(data);
+				$loading = false;
 				goto('/dashboard');
 			}
 			// handleing invalid email
@@ -72,6 +74,7 @@
 				error.innerHTML = 'Email is not vaild';
 				el.classList.add('border-error');
 				el.parentNode.insertBefore(error, el.previousElementSibling);
+				$loading = false;
 			}
 			// handleing invalid password
 			if (response.status == 403 && data.passwordErr) {
@@ -81,6 +84,7 @@
 				error.innerHTML = 'Password is not vaild';
 				el.classList.add('border-error');
 				el.parentNode.insertBefore(error, el.previousElementSibling);
+				$loading = false;
 			}
 		}
 	}

@@ -22,11 +22,15 @@
 	<main
 		class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between "
 	>
-		<div class={$loading ? 'blur-sm' : ''}>
-			<LeftSidebar />
-			<slot />
-		</div>
-		<Loading />
+		{#if $loading}
+			<div class={$loading ? 'blur-sm' : ''}>
+				<LeftSidebar />
+				<slot />
+			</div>
+			<Loading />
+		{/if}
+		<LeftSidebar />
+		<slot />
 	</main>
 {:else}
 	<div class={$loading ? 'blur-sm ' : ''}>

@@ -3,16 +3,18 @@
 
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { User } from '../../store';
+	import { loading, User } from '../../store';
 	import { goto } from '$app/navigation';
 	let loggedIn;
 	User.subscribe((value) => (loggedIn = value.username));
 	let suggestion = [];
 	onMount(async () => {
+		$loading = true;
 		const userInput = $page.params.userInput;
 		const response = await fetch(`/api/search/${userInput}`);
 		const data = await response.json();
 		suggestion = JSON.parse(JSON.stringify(data.usersFound));
+		$loading = false;
 	});
 	async function addFriend(username) {
 		if (loggedIn) {

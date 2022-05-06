@@ -3,7 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
-	import { User } from '../store';
+	import { loading, User } from '../store';
 	import { goto } from '$app/navigation';
 	let user;
 	User.subscribe((value) => (user = value));
@@ -44,9 +44,11 @@
 	];
 	// onMount
 	onMount(async () => {
+		$loading = true;
 		const response = await fetch('/api/availablePosts');
 		const posts = await response.json();
 		availablePosts = JSON.parse(JSON.stringify(posts.availablePosts));
+		$loading = false;
 	});
 	function toggleComment(event) {
 		const target = event.target;

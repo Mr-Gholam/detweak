@@ -1,12 +1,12 @@
 <script>
 	import { page } from '$app/stores';
-	import { User } from '../../store';
+	import { loading, User } from '../../store';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	let loggedIn;
 	User.subscribe((value) => (loggedIn = value.username));
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	let loading = true;
+	let Loading = true;
 	let firstName;
 	let month;
 	let day;
@@ -52,6 +52,7 @@
 		}
 	];
 	onMount(async () => {
+		$loading = true;
 		const username = $page.params.username;
 		if (username === loggedIn) {
 			myProfile = true;
@@ -59,7 +60,7 @@
 		const response = await fetch(`/api/profile/${username}`);
 		const data = await response.json();
 		if (data) {
-			loading = false;
+			Loading = false;
 		}
 		firstName = data.firstName;
 		lastName = data.lastName;
@@ -78,7 +79,7 @@
 		}
 		onlineTime = data.onlineTime;
 		posts = JSON.parse(JSON.stringify(data.availablePosts));
-		console.log(isFriend, sentRequest);
+		$loading = false;
 	});
 	async function addFriend() {
 		if (loggedIn) {
@@ -107,7 +108,7 @@
 		<div
 			class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0"
 		>
-			{#if !loading}
+			{#if !Loading}
 				<!--profile info-->
 				<section
 					class="w-full flex flex-col h-fit my-2  shadow-lg border-solid border-slate-500/30 md:border  rounded-md"
@@ -342,7 +343,7 @@
 		</div>
 	</div>
 	<!--  NOT logged IN -->
-{:else if !loading}
+{:else if !Loading}
 	<div class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 mx-auto">
 		<!--profile info-->
 		<section

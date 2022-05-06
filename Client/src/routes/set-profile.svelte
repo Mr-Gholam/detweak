@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-
+	import { loading } from '../store';
 	let userId;
 	let firstName;
 	let lastName;
@@ -352,6 +352,7 @@
 		if (passedName) {
 			if (timelineSelected) {
 				if (amPm) {
+					$loading = true;
 					const formData = new FormData();
 					formData.append('firstName', firstName);
 					formData.append('lastName', lastName);
@@ -365,8 +366,8 @@
 						body: formData
 					});
 					const data = await response.json();
-					console.log(data);
 					if (response.ok) {
+						$loading = false;
 						goto('/dashboard');
 					}
 				} else {
