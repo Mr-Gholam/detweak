@@ -1,7 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { User } from '../store';
+	import { loading, User } from '../store';
 
 	let email;
 	let username;
@@ -120,6 +120,7 @@
 	// submit
 	async function submit() {
 		if (passedEmail && passedUsername && passedPassword && passedConfirm && passedPrivacy) {
+			$loading = true;
 			const Response = await fetch('/api/signup', {
 				method: 'POST',
 				headers: {
@@ -134,11 +135,13 @@
 			});
 			const data = await Response.json();
 			if (Response.status == 200) {
+				$loading = false;
 				User.set({ username });
 				goto('/set-profile');
 			}
 			// handleing duplicate email
 			if (Response.status == 403 && data.emailErr) {
+				$loading = false;
 				const error = document.createElement('p');
 				const el = document.getElementById('email');
 				error.innerHTML = 'This Email has been used before';
@@ -148,6 +151,7 @@
 			}
 			// handleing duplicate username
 			if (Response.status == 403 && data.UsernameErr) {
+				$loading = false;
 				const error = document.createElement('p');
 				const el = document.getElementById('username');
 				error.innerHTML = 'This Username has been used before';

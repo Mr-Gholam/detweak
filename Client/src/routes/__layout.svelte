@@ -1,10 +1,13 @@
 <script>
-	import { User } from '../store';
+	import { loading, User } from '../store';
 	import '../app.css';
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
+	import Loading from '../components/loading.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/stores';
+	$: $loading = !!$navigating;
 	onMount(async () => {
 		const res = await fetch('/api/jwt');
 		const u = await res.json();
@@ -19,9 +22,15 @@
 	<main
 		class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between "
 	>
-		<LeftSidebar />
-		<slot />
+		<div class={$loading ? 'blur-sm' : ''}>
+			<LeftSidebar />
+			<slot />
+		</div>
+		<Loading />
 	</main>
 {:else}
-	<slot />
+	<div class={$loading ? 'blur-sm ' : ''}>
+		<slot />
+	</div>
+	<Loading />
 {/if}
