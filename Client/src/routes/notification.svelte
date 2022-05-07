@@ -3,7 +3,6 @@
 	import { loading } from '../store';
 	let friendRequests = [];
 	onMount(async () => {
-		$loading = true;
 		const response = await fetch('/api/friend-requests');
 		const data = await response.json();
 		const orderedReq = data.friendRequests;

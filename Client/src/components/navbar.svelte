@@ -5,7 +5,8 @@
 	let username;
 	User.subscribe((value) => (username = value.username));
 	let searchValue;
-
+	import { page } from '$app/stores';
+	const path = $page.url.pathname;
 	let humberguer = false;
 	function openHumberguer() {
 		const firstBurger = document.getElementById('firstBurger');
@@ -83,13 +84,41 @@
 			<!--menu-->
 			<div class=" p-4   hidden absolute top-10 left-0 bg-main-bg w-full h-fit z-10 " id="menu">
 				<section class=" flex justify-evenly flex-col text-lg gap-2 p-2 font-semibold  ">
-					<a href="/dashboard" class="hover:text-main">Dashboard</a>
-					<a href="/profile/{username}" class="hover:text-main">My Profile</a>
-					<a href="/notification" class="hover:text-main">Notification</a>
-					<a href="/messages" class="hover:text-main">Messages</a>
-					<a href="/liked-posts" class="hover:text-main"> Liked Posts</a>
-					<a href="/setting" class="hover:text-main">Setting</a>
-					<button class="hover:text-main w-fit font-semibold " on:click={logout}>Logout</button>
+					<a
+						href="/dashboard"
+						on:click={openHumberguer}
+						class=" {$page.url.pathname === '/dashboard' ? 'text-main' : ''}">Dashboard</a
+					>
+					<a
+						on:click={openHumberguer}
+						href="/profile/{username}"
+						class={$page.url.pathname === `/profile/${username}` ? 'text-main' : ''}>My Profile</a
+					>
+					<a
+						on:click={openHumberguer}
+						href="/notification"
+						class={$page.url.pathname === '/notification' ? 'text-main' : ''}>Notification</a
+					>
+					<a
+						href="/messages"
+						on:click={openHumberguer}
+						class={$page.url.pathname === '/messages' ? 'text-main' : ''}>Messages</a
+					>
+					<a
+						on:click={openHumberguer}
+						href="/liked-posts"
+						class=" {$page.url.pathname === '/liked-posts' ? 'text-main' : ''}"
+					>
+						Liked Posts</a
+					>
+					<a
+						href="/setting"
+						on:click={openHumberguer}
+						class=" {$page.url.pathname === '/setting' ? 'text-main' : ''}">Setting</a
+					>
+					<button class=" w-fit font-semibold " on:click={openHumberguer} on:click={logout}
+						>Logout</button
+					>
 				</section>
 			</div>
 			<button
