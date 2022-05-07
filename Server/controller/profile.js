@@ -24,7 +24,7 @@ exports.getProfile = async (req, res, next) => {
     try {
         const user = await User.findOne({ where: { username }, attributes: ['id', 'username', 'firstName', 'lastName', 'profileImgUrl', 'onlineTime', 'bio', 'birthday', 'location'] })
         const Posts = await Post.findAll({ where: { userId: user.id } })
-        const friend = await Friend.findAll({ where: { userId: user.id } })
+        const friend = await Friend.findAll({ where: { [Op.or]: [{ userId: user.id }, { targetId: user.id }] } })
         const friendCount = friend.length
         const postCount = Posts.length
         for (let i = 0; i < Posts.length; i++) {
