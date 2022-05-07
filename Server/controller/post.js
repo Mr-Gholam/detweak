@@ -251,3 +251,44 @@ exports.postUpdatePost = async (req, res, next) => {
         res.status(401)
     }
 }
+exports.getLikedPosts = async (req, res, next) => {
+    if (req.UserId) {
+        try {
+            let likedPosts = []
+            let postIds = []
+            const userId = req.UserId
+            const posts = await LikedPosts.findAll({ where: { userId }, attributes: ['postId'] })
+            for (let i = 0; i < posts.length; i++) {
+                const id = posts[i];
+                postIds.push(id.postId)
+            }
+            for (let i = 0; i < postIds.length; i++) {
+                const postId = postIds[i];
+                const likedTime = await LikedPosts.findOne({ where: { postId }, attributes: ['createdAt'] })
+                const post = await Post.findOne({ where: { id: postId }, attributes: ['description', 'imageUrl', 'createdAt', 'id', 'likes', 'allowComments', 'userId'] })
+                const user = await User.findOne({ where: { id: post.userId }, attributes: ['firstName', 'username', 'lastName', 'profileImgUrl', 'onlineTime'] })
+                const pushedPost = {
+                    description: post.description
+                    , allowComments: post.allowComments
+                    , postImg: post.imageUrl
+                    , username: user.username
+                    , firstName: user.firstName
+                    , lastName: user.lastName
+                    , profileImg: user.profileImgUrl
+                    , onlineTime: user.onlineTime
+                    , createdAt: post.createdAt
+                    , likes: post.likes
+                    , postId: post.id
+                    , likeTime: likedTime.createdAt
+                    , liked: true
+                }
+                likedPosts.push(pushedPost)
+            }
+            likedPosts.sort((a, b) => b.likeTime - a.likeTime)
+            res.json({ likedPosts })
+        }
+        catch (err) { console.log(err) }
+    } else {
+        res.status(401).end()
+    }
+}

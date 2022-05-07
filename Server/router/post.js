@@ -22,5 +22,7 @@ router.post('/delete-Comment', isAuth, postController.postDeleteComment)
 router.post('/delete-post', isAuth, postController.postDeletePost)
 // post update post 
 router.post('/update-post', isAuth, postController.postUpdatePost)
+// get Liked posts 
+router.get('/liked-posts', isAuth, postController.getLikedPosts)
 
 module.exports = router

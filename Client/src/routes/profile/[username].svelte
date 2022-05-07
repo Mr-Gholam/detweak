@@ -227,7 +227,7 @@
 </script>
 
 <svelte:head>
-	<title>{userName}</title>
+	<title>{userName ? userName : 'profile'}</title>
 </svelte:head>
 <div class="flex md:w-9/12 items-start justify-center md:justify-between w-full">
 	<!--Main part-->

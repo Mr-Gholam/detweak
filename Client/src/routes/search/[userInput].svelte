@@ -9,7 +9,6 @@
 	User.subscribe((value) => (loggedIn = value.username));
 	let suggestion = [];
 	onMount(async () => {
-		$loading = true;
 		const userInput = $page.params.userInput;
 		const response = await fetch(`/api/search/${userInput}`);
 		const data = await response.json();

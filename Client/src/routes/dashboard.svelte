@@ -82,6 +82,18 @@
 			availablePosts = posts.availablePosts;
 		}
 	}
+	// preview post image
+	function previewImg() {
+		const file = postPicInput.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.addEventListener('load', () => {
+				imageSrc.setAttribute('src', reader.result);
+			});
+			reader.readAsDataURL(file);
+			hasPhoto = true;
+		}
+	}
 	// like post
 	async function likePost(postId) {
 		const likeBtn = document.getElementById(`like-${postId}`);
@@ -110,18 +122,7 @@
 			likeNumber.innerText = Number(likeNumber.innerText) - 1;
 		}
 	}
-	// preview post image
-	function previewImg() {
-		const file = postPicInput.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.addEventListener('load', () => {
-				imageSrc.setAttribute('src', reader.result);
-			});
-			reader.readAsDataURL(file);
-			hasPhoto = true;
-		}
-	}
+
 	//  open post option
 	function postOption(postId) {
 		const option = document.getElementById(`${postId}`);
