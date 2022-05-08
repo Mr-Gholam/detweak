@@ -227,7 +227,7 @@
 <svelte:head>
 	<title>Dashboard</title>
 </svelte:head>
-<div class="flex md:w-9/12 items-start justify-center md:justify-between w-full">
+<div class="flex md:w-9/12 items-start justify-center md:justify-between w-full my-2">
 	<!--Main part-->
 	<div
 		id="main"
