@@ -46,7 +46,7 @@
 	border-width: 1px;
 	border-radius: 4px 4px 0px 4px;
 	background-color: #1f306e;
-	width: 50%;
+	width: fit-content;
 	height: fit-content;
 	padding: 0.4rem 0.75rem;
 	color: white;
@@ -65,6 +65,15 @@
 	border-bottom: 0px solid #1f306e;
 	transform: rotate(-90deg);
 	border-width: 6px;
+}
+.loading-msg {
+	display: block;
+	border-width: 1px;
+	border-radius: 4px;
+	padding: 0.4rem 0.75rem;
+	color: white;
+	position: relative;
+	margin: 4px;
 }
 .right-bounce {
 	animation: bounce 2.5s infinite;
@@ -200,5 +209,17 @@
 	}
 	100% {
 		transform: translate(24px, 0);
+	}
+}
+.loading-pulse {
+	animation: loading-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes loading-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.7;
 	}
 }

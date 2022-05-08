@@ -9,7 +9,7 @@ const Chat = sequelize.define('chat', {
         primaryKey: true,
         allowNull: false
     },
-    massage: {
+    message: {
         type: Sequelize.STRING,
         allowNull: false
     },
