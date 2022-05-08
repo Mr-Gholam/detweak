@@ -6,6 +6,8 @@ const Post = require('../model/post')
 const Friend = require('../model/friend')
 // importing friend Req model
 const FriendReq = require('../model/friendReq')
+// importing socket io 
+const Ws = require('../socket')
 const { Op } = require("sequelize");
 const res = require('express/lib/response')
 
@@ -29,7 +31,6 @@ exports.postAddFriend = async (req, res, next) => {
                 res.status(400).json({ errMsg: 'they are in friend request list' })
             }
         }
-
     } catch (err) {
         console.log(err)
     }

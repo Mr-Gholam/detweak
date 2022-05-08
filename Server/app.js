@@ -57,7 +57,6 @@ app.use(multer({ storage: fileDestination, fileFilter: fileFilter }).single('ima
 app.use('/api/images', express.static(path.join(__dirname, 'images')))
 
 
-
 //using routes 
 app.use('/api', authRouter)
 app.use('/api', profileRouter)
@@ -76,7 +75,10 @@ Post.hasMany(Comment, { onDelete: 'cascade' })
 
 
 //syncing database
-sequelize.sync().then(result => {
-    // console.log(result)
-    app.listen('8585')
-}).catch(err => { console.log(err) })
+sequelize.sync()
+    .then(result => {
+
+        const server = app.listen(8585)
+        const io = require('./socket').init(server)
+    })
+    .catch(err => { console.log(err) })

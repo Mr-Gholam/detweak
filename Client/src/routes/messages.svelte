@@ -1,4 +1,6 @@
 <script>
+	import { io } from 'socket.io-client';
+	import { onMount } from 'svelte';
 	let contacts = [
 		{
 			userName: 'mehdi-gh',
@@ -15,6 +17,10 @@
 	let textInput;
 	let showList = true;
 	let bouncing = false;
+	onMount(() => {
+		const socket = io('http://localhost:8585');
+		console.log(socket);
+	});
 	function createSendMessage(input) {
 		const middePart = document.getElementById('middlePart');
 		const messageParent = document.createElement('div');
