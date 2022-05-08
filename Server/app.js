@@ -33,6 +33,7 @@ const authRouter = require('./router/auth')
 const postRouter = require('./router/post')
 const profileRouter = require('./router/profile')
 const friendRouter = require('./router/friend')
+const chatRouter = require('./router/chat')
 //importing database 
 const sequelize = require('./database/sequelize')
 
@@ -44,6 +45,8 @@ const Comment = require('./model/comment')
 const Friend = require('./model/friend')
 const FriendReq = require('./model/friendReq')
 const likedPosts = require('./model/liked-posts');
+const Chat = require('./model/chat')
+const ChatRoom = require('./model/chatroom')
 
 // Using express middleware
 const app = express()
@@ -62,16 +65,19 @@ app.use('/api', authRouter)
 app.use('/api', profileRouter)
 app.use('/api', postRouter)
 app.use('/api', friendRouter)
+app.use('/api', chatRouter)
 app.use('/api', mainRouter)
 
 // relation between models
-User.hasMany(Post, { onDelete: 'cascade' })
-User.hasMany(Comment, { onDelete: 'cascade' })
-User.hasMany(Friend, { onDelete: 'cascade' })
-User.hasMany(FriendReq, { onDelete: 'cascade' })
-User.hasMany(likedPosts, { onDelete: 'cascade' })
-Post.hasMany(likedPosts, { onDelete: 'cascade' })
-Post.hasMany(Comment, { onDelete: 'cascade' })
+User.hasMany(Post)
+User.hasMany(ChatRoom)
+User.hasMany(Comment)
+User.hasMany(Friend)
+User.hasMany(FriendReq)
+User.hasMany(likedPosts)
+ChatRoom.hasMany(Chat)
+Post.hasMany(likedPosts)
+Post.hasMany(Comment)
 
 
 //syncing database

@@ -224,6 +224,9 @@
 			posts = Posts.availablePosts;
 		}
 	}
+	function openChat(username) {
+		goto(`/messages?username=${username}`);
+	}
 </script>
 
 <svelte:head>
@@ -314,7 +317,7 @@
 						{:else if isFriend}
 							<button
 								class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
-								>Sent Massage</button
+								on:click={openChat(userName)}>Sent Massage</button
 							>
 						{:else}
 							<button
