@@ -18,7 +18,7 @@
 .send-message {
 	display: block;
 	border-width: 1px;
-	border-radius: 4px 4px 0px 4px;
+	border-radius: 16px;
 	background-color: #f5487f;
 	width: fit-content;
 	max-width: 50%;
@@ -32,19 +32,19 @@
 .send-message::before {
 	content: '';
 	position: absolute;
-	bottom: 0px;
-	right: -12px;
+	bottom: -1px;
+	right: -7px;
 	border-top: 0px solid transparent;
 	border-left: 0px solid transparent;
 	border-right: 0px solid transparent;
 	border-bottom: 0px solid #f5487f;
-	transform: rotate(90deg);
+	transform: rotate(123deg);
 	border-width: 6px;
 }
 .receive-message {
 	display: block;
 	border-width: 1px;
-	border-radius: 4px 4px 0px 4px;
+	border-radius: 16px;
 	background-color: #1f306e;
 	width: fit-content;
 	height: fit-content;
@@ -53,17 +53,18 @@
 	float: left;
 	position: relative;
 	margin: 4px;
+	margin-bottom: 0.65rem;
 }
 .receive-message::before {
 	content: '';
 	position: absolute;
-	bottom: 1px;
-	left: -11px;
+	bottom: -2px;
+	left: -6px;
 	border-top: 0px solid transparent;
 	border-left: 0px solid transparent;
 	border-right: 0px solid transparent;
 	border-bottom: 0px solid #1f306e;
-	transform: rotate(-90deg);
+	transform: rotate(231deg);
 	border-width: 6px;
 }
 .loading-msg {

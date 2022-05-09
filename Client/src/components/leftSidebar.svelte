@@ -29,12 +29,12 @@
 		>
 		<a
 			href="/messages"
-			class="hover:text-main pl-2  py-2{$page.url.pathname === '/messages' ? 'text-main' : ''}"
+			class="hover:text-main pl-2  py-2 {$page.url.pathname === '/messages' ? 'text-main' : ''}"
 			><i class="fa-solid fa-comments" /> Messages</a
 		>
 		<a
 			href="/liked-posts"
-			class="hover:text-main pl-2  py-2{$page.url.pathname === '/liked-posts' ? 'text-main' : ''}"
+			class="hover:text-main pl-2  py-2 {$page.url.pathname === '/liked-posts' ? 'text-main' : ''}"
 		>
 			<i class="fa-solid fa-thumbs-up mr-1" /> Liked Posts</a
 		>

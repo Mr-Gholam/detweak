@@ -2,6 +2,7 @@
 	import { io } from 'socket.io-client';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	let contacts = [];
 	let currentChat = [];
 	let currentChatInfo;
@@ -17,7 +18,22 @@
 		contacts = data.contacts;
 		if (targetUsername) {
 			const foundUser = contacts.find((contact) => contact.username == targetUsername);
-			if (!foundUser) {
+			console.log(foundUser);
+			if (foundUser) {
+				const response = await fetch('/api/get-chat', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						chatRoomId: foundUser.chatRoomId
+					})
+				});
+				const data = await response.json();
+				currentChatInfo = data.chatInfo;
+				currentChat = data.currentChat;
+				loading = false;
+			} else {
 				const result = await fetch('/api/create-room', {
 					method: 'POST',
 					headers: {
@@ -201,7 +217,12 @@
 					{currentChatInfo.firstName}
 					{currentChatInfo.lastName}
 				</h4>
-				<h5 class="text-xs text-orange mx-2 cursor-default">{currentChatInfo.onlineTime}</h5>
+				<div class="flex items-center">
+					<h5 class="text-xs text-orange mx-2 cursor-default">{currentChatInfo.onlineTime}</h5>
+					<i
+						class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main-bg"
+					/>
+				</div>
 			{:else}
 				<div class="flex items-center w-full loading-pulse">
 					<div
@@ -225,9 +246,41 @@
 			{#if !loading}
 				{#each currentChat as chat}
 					<section class="w-full">
-						<h1 class={chat.receive ? 'receive-message' : 'send-message'}>
-							{chat.message}
-						</h1>
+						{#if chat.receive}
+							<div class="flex items-end">
+								{#if currentChatInfo.profileImg}
+									<!-- svelte-ignore a11y-img-redundant-alt -->
+									<img
+										class="h-8 w-8 object-cover rounded-full  "
+										src="/api/{currentChatInfo.profileImg}"
+										alt="Current profile photo"
+									/>
+								{:else}
+									<div
+										class="h-8 w-8 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+									>
+										<i class="fa-solid fa-user text-slate-400 text-2xl" />
+									</div>
+								{/if}
+								<div class={chat.receive ? 'receive-message' : 'send-message'}>
+									<h1>
+										{chat.message}
+									</h1>
+									<p class="text-xs float-right">
+										{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
+									</p>
+								</div>
+							</div>
+						{:else}
+							<div class={chat.receive ? 'receive-message' : 'send-message'}>
+								<h1>
+									{chat.message}
+								</h1>
+								<p class="text-xs float-left">
+									{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
+								</p>
+							</div>
+						{/if}
 					</section>
 				{/each}
 			{:else}
@@ -242,20 +295,26 @@
 			<form
 				action=""
 				method="post"
-				class="flex m-2 gap-2 items-center"
+				class="flex m-2 gap-2 items-center border-2 border-main rounded-full p-1"
 				on:submit|preventDefault={sendMessage}
 			>
 				<input
 					on:focus={typing}
 					bind:value={textInput}
 					type="text"
-					class="flex-1 p-2  border-2 border-main rounded-full focus:outline-none foucs:border-main {loading
+					class="flex-1 p-2   focus:outline-none  rounded-full foucs:border-main {loading
 						? 'loading-pulse'
 						: ''}"
 					placeholder="Say Hello"
 				/>
+				<label
+					for="postPic"
+					class="text-2xl  hover:cursor-pointer hover:text-main mx-2 flex items-center "
+					><i class="fa-solid fa-paperclip" /></label
+				>
+				<input type="file" name="image" id="postPic" class="hidden" />
 				<button
-					class="font-semibold rounded-full bg-main py-2  px-4 w-11 h-11 {loading
+					class="font-semibold rounded-full bg-main 	justify-center w-11 h-11 mx-2 flex items-center {loading
 						? 'loading-pulse'
 						: ''}"
 					id="sendBtn"><i class="fas fa-chevron-right" /></button
