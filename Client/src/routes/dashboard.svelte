@@ -394,13 +394,18 @@
 									alt=""
 								/>
 							{/if}
-							<h3
-								class="text-base mx-2 my-4"
-								on:dblclick={likePost(post.postId)}
-								id="des-{post.postId}"
-							>
-								{post.description}
-							</h3>
+							<div class="flex items-center my-4 mx-2">
+								<a href="/profile/{post.username} ">
+									<h3 class="font-semibold">{post.username}</h3>
+								</a>
+								<h3
+									class="text-base mx-2 "
+									on:dblclick={likePost(post.postId)}
+									id="des-{post.postId}"
+								>
+									{post.description}
+								</h3>
+							</div>
 							{#if post.username == user.username}
 								<form
 									id="form-{post.postId}"

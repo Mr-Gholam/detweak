@@ -262,21 +262,21 @@
 										<i class="fa-solid fa-user text-slate-400 text-2xl" />
 									</div>
 								{/if}
-								<div class={chat.receive ? 'receive-message' : 'send-message'}>
-									<h1>
+								<div class="{chat.receive ? 'receive-message' : 'send-message'} flex items-end">
+									<h1 class="p-1">
 										{chat.message}
 									</h1>
-									<p class="text-xs float-right">
+									<p class="text-xs float-right mx-2">
 										{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
 									</p>
 								</div>
 							</div>
 						{:else}
-							<div class={chat.receive ? 'receive-message' : 'send-message'}>
-								<h1>
+							<div class="{chat.receive ? 'receive-message' : 'send-message'} flex items-end">
+								<h1 class="p-1">
 									{chat.message}
 								</h1>
-								<p class="text-xs float-left">
+								<p class="text-xs float-left mx-2">
 									{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
 								</p>
 							</div>

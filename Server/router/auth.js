@@ -36,6 +36,10 @@ router.post('/login',
 
 // post set profile
 router.post('/set-profile', isAuth, authController.postSetProfile)
+// Get UserInfo 
+router.get('/userInfo', isAuth, authController.getUserInfo)
+// post Update profile
+router.post('/update-profile', isAuth, authController.postUpdateProfile)
 // post logout 
 router.post('/logout', authController.postLogout)
 

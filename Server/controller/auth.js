@@ -132,6 +132,38 @@ exports.postSetProfile = async (req, res, next) => {
         msg: 'user updated'
     })
 }
+// get UserInfo
+exports.getUserInfo = async (req, res, next) => {
+    const userId = req.UserId
+    const user = await User.findOne({ where: { id: userId }, attributes: ['username', 'firstName', 'lastName', 'profileImgUrl', 'onlineTime', 'email', 'birthday', 'location', 'bio'] })
+    res.json({ user })
+}
+// post update profile 
+exports.postUpdateProfile = async (req, res, next) => {
+    const userId = req.UserId
+    const firstName = req.body.firstName
+    const lastName = req.body.lastName
+    const bio = req.body.bio
+    const onlineTime = req.body.onlineTime
+    const birthday = req.body.birthday
+    const location = req.body.location
+    console.log(req.body)
+    let imageUrl
+    imageUrl = req.body.imageUrl
+    if (req.file) {
+        imageUrl = req.file.path
+    }
+    await User.update({
+        firstName,
+        lastName,
+        bio,
+        onlineTime,
+        location,
+        birthday,
+        profileImgUrl: imageUrl
+    }, { where: { id: userId } })
+    res.status(200).end()
+}
 // get Jwt 
 exports.getJWT = async (req, res) => {
     try {
