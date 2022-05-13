@@ -5,6 +5,7 @@
 
 * {
 	font-family: 'Roboto', sans-serif;
+	background-color: #0f172a;
 }
 
 .error {
@@ -88,7 +89,7 @@
 	border-top: 0px solid transparent;
 	border-left: 0px solid transparent;
 	border-right: 0px solid transparent;
-	border-bottom: 0px solid #1f306e;
+	border-bottom: 0px solid #7f8487;
 	transform: rotate(0deg);
 	border-width: 6px;
 }

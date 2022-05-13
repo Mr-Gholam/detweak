@@ -50,23 +50,26 @@
 	async function logout() {
 		const response = await fetch('/api/logout', { method: 'POST' });
 		if (response.status == 200) {
+			console.log(response);
 			User.set(null);
 			location.replace('/');
 		}
 	}
 </script>
 
-<nav class=" bg-main-bg">
-	<div class="h-12 items-center justify-between relative flex lg:w-10/12 md:mx-auto md:w-11/12">
-		<a href="/" class="mx-2 text-main">Logo</a>
+<nav class=" bg-main-bg border-b border-border sticky top-0 z-10">
+	<div
+		class="h-16 items-center justify-between relative flex lg:w-10/12 md:mx-auto md:w-11/12 bg-inherit xl:w-8/12 "
+	>
+		<a href="/" class="mx-2 text-main bg-inherit">Logo</a>
 		<!--search bar-->
-		<section class="lg:ml-2">
-			<form on:submit|preventDefault={search}>
+		<section class="lg:ml-2 bg-inherit">
+			<form on:submit|preventDefault={search} class="bg-inherit">
 				<input
 					type="text"
 					bind:value={searchValue}
 					placeholder="search"
-					class="w-42  lg:w-96 md:w-72 border-2 rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128 lg:ml-28  "
+					class="w-42  lg:w-96 md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-20 "
 				/>
 			</form>
 		</section>
@@ -122,7 +125,7 @@
 				</section>
 			</div>
 			<button
-				class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main hidden md:block"
+				class=" md:rounded-lg  md:mx-2 m md:px-2 md:py-1  md:text-base md:text-gray-300   hover:text-main hidden md:block text-text"
 				on:click={logout}>Logout</button
 			>
 		{:else}

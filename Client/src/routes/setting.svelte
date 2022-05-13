@@ -346,6 +346,7 @@
 	}
 	async function submitAccount() {
 		const response = await fetch('/api/update-account', {
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -354,6 +355,26 @@
 				username
 			})
 		});
+		if (response.status == 200) {
+			switchAccount();
+			load();
+		}
+	}
+	async function changePassword() {
+		const response = await fetch('/api/change-password', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				currentPassword,
+				newPassword: password,
+				newConfirm: confirmPassword
+			})
+		});
+		if (response.status == 200) {
+			load();
+		}
 	}
 </script>
 
@@ -559,7 +580,7 @@
 					bind:value={currentPassword}
 					type="password"
 					name="password"
-					id="password"
+					id="currentPassword"
 					class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				/>
 			</section>

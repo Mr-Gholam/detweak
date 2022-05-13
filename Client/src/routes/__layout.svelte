@@ -4,6 +4,7 @@
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
 	import Loading from '../components/loading.svelte';
+	import RightSidebar from '../components/rightSidebar.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/stores';
@@ -21,20 +22,20 @@
 {#if $User.username}
 	{#if $loading}
 		<main
-			class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between {$loading
+			class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start  {$loading
 				? 'blur-sm w-full'
 				: ''}"
 		>
 			<LeftSidebar />
 			<slot />
+			<RightSidebar />
 		</main>
 		<Loading />
 	{:else}
-		<main
-			class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start md:justify-center md:justify-between "
-		>
+		<main class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start 2xl:justify-between ">
 			<LeftSidebar />
 			<slot />
+			<RightSidebar />
 		</main>
 	{/if}
 {:else}

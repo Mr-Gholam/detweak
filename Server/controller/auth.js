@@ -164,6 +164,21 @@ exports.postUpdateProfile = async (req, res, next) => {
     }, { where: { id: userId } })
     res.status(200).end()
 }
+//  post update account 
+exports.postUpdateAccount = async (req, res, next) => {
+    const userId = req.UserId
+    const email = req.body.email
+    const username = req.body.username
+    await User.update({
+        email,
+        username
+    }, {
+        where: {
+            id: userId
+        }
+    })
+    res.status(200).end()
+}
 // get Jwt 
 exports.getJWT = async (req, res) => {
     try {

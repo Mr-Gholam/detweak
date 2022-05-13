@@ -3,12 +3,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'main': '#f5487f',
+        'main': '#E23E57',
         'green': '#27AB64',
-        'main-purple': '#553772',
-        'main-bg': '#1f306e',
+        'main-bg': '#0f172a',
+        'text-hover': '#6db0d1',
+        'border': '#413F42',
+        'text': '#7F8487',
         'error': '#FF3333',
-        'orange': '#eb9114'
+        'orange': '#413F42'
       },
       width: {
         '128': '32rem',
