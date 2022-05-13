@@ -42,11 +42,11 @@
 	<title>Search</title>
 </svelte:head>
 
-<div class="w-96 p-4 my-2 mx-auto lg:w-128">
+<div class="w-96 py-4 my-2 lg:ml-32 lg:mx-auto lg:w-128">
 	<div class="flex flex-col">
 		{#each suggestion as suggedtedPeople}
 			<section
-				class="  py-2 px-3 flex my-2 items-center  justify-between w-full border-2 border-main-bg rounded-md "
+				class="  py-2 px-3 flex my-2 items-center  justify-between w-full border-2 border-border rounded-md "
 			>
 				<!--name and username-->
 				<section class="flex  items-center w-8/12 ">
@@ -69,31 +69,24 @@
 					</a>
 					<!-- Name and username-->
 					<a href="/profile/{suggedtedPeople.username}" class="mx-2 w-9/12">
-						<h4 class=" font-semibold text-sm text-gray-900 hover:text-gray-500 ">
+						<h4 class=" font-semibold text-sm text-text hover:text-text-hover ">
 							{suggedtedPeople.firstName}
 							{suggedtedPeople.lastName}
 						</h4>
-						<h5 class=" text-xs  text-gray-900 hover:text-gray-500">
+						<h5 class=" text-xs  text-text hover:text-text-hover">
 							@{suggedtedPeople.username}
 						</h5>
 					</a>
 				</section>
 				{#if !suggedtedPeople.myProfile}
 					{#if suggedtedPeople.sentRequest}
-						<button
-							class="px-2 py-1 border border-main-bg rounded-md   bg-main-bg text-white hover:text-main flex items-center "
-						>
+						<button class="main-btn ">
 							<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
 						</button>
 					{:else if suggedtedPeople.isFriend}
-						<button
-							class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
-							>Sent Massage</button
-						>
+						<button class="main-btn">Sent Massage</button>
 					{:else}
-						<button
-							on:click={addFriend(suggedtedPeople.username)}
-							class=" bg-main-bg hover:text-main hover:shadow-xl py-3 px-3 mx-auto rounded-xl  py-1.5 text-white"
+						<button on:click={addFriend(suggedtedPeople.username)} class=" main-btn"
 							>Add Friend
 						</button>
 					{/if}

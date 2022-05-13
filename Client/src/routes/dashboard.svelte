@@ -483,11 +483,7 @@
 										id="cm-{post.postId}"
 										class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none text-text bg-inherit"
 									/>
-									<button
-										id="postBtn-{post.postId}"
-										class="border border-border rounded-md py-1 px-3 hover:border-main hover:text-main font-semibold text-text w-16 "
-										>Post</button
-									>
+									<button id="postBtn-{post.postId}" class="main-btn w-16">Post</button>
 								</form>
 							</section>
 						{/if}

@@ -2,6 +2,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer components {
+	.main-btn {
+		@apply px-2 py-1 border border-border rounded-md hover:text-main hover:border-main  text-text;
+	}
+}
 
 * {
 	font-family: 'Roboto', sans-serif;
@@ -19,12 +24,12 @@
 .send-message {
 	border-width: 1px;
 	border-radius: 16px;
-	background-color: #f5487f;
+	background-color: #6db0d1;
 	width: fit-content;
 	max-width: 50%;
 	height: fit-content;
 	padding: 0.4rem 0.75rem;
-	color: white;
+	color: #000;
 	float: right;
 	position: relative;
 	margin: 4px;
@@ -37,7 +42,7 @@
 	border-top: 0px solid transparent;
 	border-left: 0px solid transparent;
 	border-right: 0px solid transparent;
-	border-bottom: 0px solid #f5487f;
+	border-bottom: 0px solid #6db0d1;
 	transform: rotate(123deg);
 	border-width: 6px;
 }

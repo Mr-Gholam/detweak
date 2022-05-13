@@ -69,7 +69,7 @@
 					type="text"
 					bind:value={searchValue}
 					placeholder="search"
-					class="w-42  lg:w-96 md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-20 "
+					class="w-42  lg:w-96 md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-20 text-text"
 				/>
 			</form>
 		</section>

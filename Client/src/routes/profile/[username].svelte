@@ -204,21 +204,21 @@
 <svelte:head>
 	<title>{userName ? userName : 'profile'}</title>
 </svelte:head>
-<div class="flex md:w-9/12 items-start justify-center md:justify-between w-full">
+<div class="  md:w-fit w-full lg:w-128 my-2">
 	<!--Main part-->
 	<div
 		id="main"
-		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0 xl:max-w-9/12 overflow-x-hidden"
+		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-full overflow-x-hidden"
 	>
 		<div
 			class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-96 lg:w-128 md:mr-32 lg:mr-0"
 		>
 			<section
-				class="w-full flex flex-col h-fit my-2  shadow-lg border-solid border-slate-500/30 md:border  rounded-md"
+				class="w-full flex flex-col h-fit my-2  shadow-lg border-solid border-border md:border-2	  rounded-md"
 			>
 				<!-- svelte-ignore a11y-img-redundant-alt -->
 				<!-- profile img - first name - last name - online time -->
-				<div class="flex items-center w-full justify-evenly border-b border-slate-500/30 p-2">
+				<div class="flex items-center w-full justify-evenly border-b border-border p-2">
 					{#if profileImg}
 						<img
 							class="h-20 w-20 object-cover rounded-full lg:mr-16 "
@@ -231,71 +231,80 @@
 						</div>
 					{/if}
 					<div>
-						<h4 class=" font-semibold text-base text-gray-900 my-1 lg:mr-16">
+						<h4 class=" font-semibold text-base text-text my-1 lg:mr-16">
 							{firstName}
 							{lastName}
 						</h4>
-						<h5 class=" text-xs  text-gray-900 font-semibold  my-1  ">
+						<h5 class=" text-xs  text-text font-semibold  my-1  ">
 							@{userName}
 						</h5>
 					</div>
-					{#if onlineTime}
-						<h4 class="text-green text-sm" id="timerCountdown">
-							<i class="fa-solid fa-signal" />
-							{onlineTime}
+					<div>
+						<h4 class="text-text">
+							<i class="fa-solid fa-code" />
+							Front-end
 						</h4>
-					{/if}
+					</div>
+				</div>
+				<div class="m-2 px-2  flex justify-between items-center">
+					<section class="  text-2xl text-text font-semibold  my-1">
+						<i class="fa-brands fa-js" />
+						<i class="fa-brands fa-php" />
+					</section>
+					<section class=" text-xl  text-text font-semibold  my-1">
+						<a href="https://github.com/Mr-Gholam">
+							<i class="fa-brands fa-github" />
+						</a>
+					</section>
 				</div>
 				<!-- birthday - location - bio-->
-				<div class="m-2 p-2">
+				<div class="m-x2 px-2">
+					{#if bio}
+						<h5 class="text-sm my-4 text-text ">
+							{bio}
+						</h5>
+					{/if}
 					<!--birthday - location -->
-					<section class="flex w-6/12 justify-between lg:w-7/12">
+					<section class="flex w-full justify-between 	">
 						{#if birthday}
-							<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+							<h5 class=" text-xs  text-text font-semibold  my-1">
 								<i class="fa-solid fa-cake-candles" />
 								{month}/{day}
 							</h5>
 						{/if}
 						{#if location}
-							<h5 class=" text-xs  text-gray-900 font-semibold  my-1">
+							<h5 class=" text-xs  text-text font-semibold  my-1">
 								<i class="fa-solid fa-location-dot" />
 								{location}
 							</h5>
 						{/if}
-					</section>
-					{#if bio}
-						<h5 class="text-sm my-2 ">
-							{bio}
+						<h5 class=" text-xs  text-text font-semibold  my-1">
+							<i class="fa-solid fa-business-time" />
+							5 years
 						</h5>
-					{/if}
+					</section>
 				</div>
 				<!-- posts - friends - friend request or send massage-->
 				<div class="flex justify-evenly w-full items-center p-2">
-					<section class="flex flex-col items-center">
-						<h4>{postCount}</h4>
+					<section class="flex flex-col items-center text-text">
+						<h4>
+							{postCount}
+						</h4>
 						<h3 class="font-semibold">Posts</h3>
 					</section>
-					<section class="flex flex-col items-center">
+					<section class="flex flex-col items-center text-text">
 						<h4>{friendCount}</h4>
 						<h3 class="font-semibold">Friends</h3>
 					</section>
 					{#if !myProfile}
 						{#if sentRequest}
-							<button
-								class="px-2 py-1 border border-main-bg rounded-md   bg-main-bg text-white hover:text-main flex items-center "
-							>
+							<button class="main-btn ">
 								<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
 							</button>
 						{:else if isFriend}
-							<button
-								class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
-								on:click={openChat(userName)}>Sent Massage</button
-							>
+							<button class="main-btn" on:click={openChat(userName)}>Sent Massage</button>
 						{:else}
-							<button
-								class="px-2 py-1 border border-main-bg rounded-md   hover:bg-main-bg hover:text-white text-main-bg"
-								on:click={addFriend}>Add Friend</button
-							>
+							<button class="main-btn" on:click={addFriend}>Add Friend</button>
 						{/if}
 					{/if}
 				</div>
@@ -306,13 +315,13 @@
 					<!-- post outline-->
 					<div
 						id="body-{post.postId}"
-						class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
+						class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
 					>
 						<!-- svelte-ignore a11y-img-redundant-alt -->
 						<section class=" flex justify-between items-center flex-col ">
 							<!--post info-->
 							<section
-								class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-gray-200"
+								class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-border"
 							>
 								<!--name and username-->
 								<section class="flex gap-2 items-center">
@@ -326,7 +335,7 @@
 											/>
 										{:else}
 											<div
-												class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+												class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
 											>
 												<i class="fa-solid fa-user text-slate-400 text-2xl" />
 											</div>
@@ -334,28 +343,25 @@
 									</a>
 									<!-- Name and username-->
 									<a href="/profile/{post.username}">
-										<h4 class="mx-2 font-semibold text-gray-900 hover:text-gray-500">
+										<h4 class="mx-2 font-semibold text-text hover:text-text-hover">
 											{post.firstName}
 											{post.lastName}
 										</h4>
-										<h5 class=" text-sm  text-gray-900 hover:text-gray-500 mx-2 ">
+										<h5 class=" text-sm  text-text hover:text-text-hover mx-2 ">
 											@{post.username}
 										</h5>
 									</a>
 								</section>
 								<section class="flex items-center ">
-									<h6 class="text-xs text-orange mx-2 cursor-default">
-										{post.onlineTime}
-									</h6>
 									{#if post.username == user.username}
-										<div class="relative">
+										<div class="relative text-text hover:text-main">
 											<i
 												on:click={postOption(post.postId)}
-												class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main-bg"
+												class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main"
 											/>
 											<div
 												id={post.postId}
-												class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2 z-10"
+												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 											>
 												<button
 													on:click={openEdit(post.postId)}
@@ -365,7 +371,7 @@
 												</button>
 												<button
 													on:click={deletePost(post.postId)}
-													class="text-sm flex items-center w-full justify-start hover:text-red-600 text-white"
+													class="text-sm flex items-center w-full justify-start hover:text-main text-white"
 												>
 													<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
 												</button>
@@ -384,13 +390,18 @@
 										alt=""
 									/>
 								{/if}
-								<h3
-									class="text-base mx-2 my-4"
-									on:dblclick={likePost(post.postId)}
-									id="des-{post.postId}"
-								>
-									{post.description}
-								</h3>
+								<div class="flex items-center my-4 mx-2">
+									<a href="/profile/{post.username} ">
+										<h3 class="font-semibold hover:text-text-hover text-text">{post.username}</h3>
+									</a>
+									<h3
+										class="text-base mx-2 text-text"
+										on:dblclick={likePost(post.postId)}
+										id="des-{post.postId}"
+									>
+										{post.description}
+									</h3>
+								</div>
 								{#if post.username == user.username}
 									<form
 										id="form-{post.postId}"
@@ -417,9 +428,9 @@
 								<!-- button  part-->
 								<section class=" flex justify-start  text-lg  gap-2  ">
 									<button
-										class="hover:text-red-600 text-2xl p-2 flex items-center w-16 {post.liked
-											? 'text-red-600'
-											: 'text-gray-400'}"
+										class="hover:text-main text-2xl p-2 flex items-center w-16 {post.liked
+											? 'text-main'
+											: 'text-text'}"
 										on:click={likePost(post.postId)}
 										><i class="fa-solid fa-heart" id="like-{post.postId}" />
 										<p class="text-sm ml-2 " id="like-n-{post.postId}">
@@ -429,23 +440,23 @@
 									{#if post.allowComments}
 										<button
 											on:click={openPost(post.postId)}
-											class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16 "
-											id="comment-{post.postId}"><i class="fa-solid fa-comments" /></button
+											class="text-text hover:text-border text-2xl p-2 w-16 "
+											id="comment-{post.postId}"><i class="fa-solid fa-comment" /></button
 										>
 									{/if}
-									<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
+									<button class="text-text hover:text-gray-800 text-2xl p-2 w-16" id="share"
 										><i class="fa-solid fa-share" /></button
 									>
 								</section>
 								<!--time-->
-								<h6 class="text-xs text-orange mx-2">
+								<h6 class="text-xs text-text mx-2">
 									{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
 								</h6>
 							</section>
 							<!-- comment part -->
 							{#if post.allowComments}
 								<section
-									class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
+									class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 								>
 									{#if user.profileImg}
 										<img
@@ -466,14 +477,10 @@
 										<input
 											type="text"
 											placeholder="Add a comment..."
-											bind:value={comment}
-											class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
+											id="cm-{post.postId}"
+											class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none text-text bg-inherit"
 										/>
-										<button
-											id="postBtn-{post.postId}"
-											class="border border-main-bg rounded-md py-1 px-3 hover:bg-main-bg hover:text-white font-semibold text-main-bg w-16"
-											>Post</button
-										>
+										<button id="postBtn-{post.postId}" class="main-btn w-16 ">Post</button>
 									</form>
 								</section>
 							{/if}

@@ -1,4 +1,5 @@
 <script>
+	import { page } from '$app/stores';
 	let onlineFriends = [
 		{
 			firstName: 'Sohrab',
@@ -30,14 +31,21 @@
 </script>
 
 <!--Right part-->
-<div class=" h-fit p-4 my-2 hidden 2xl:block xl:max-w-3/12">
+<div
+	class=" h-fit p-4 my-2  xl:max-w-3/12 {$page.url.pathname === '/dashboard' ||
+	$page.url.pathname === '/liked-posts' ||
+	$page.params.username ||
+	$page.params.postId
+		? '2xl:block'
+		: 'hidden'}"
+>
 	<!--online friends-->
 	<section>
-		<h3 class="text-center text-lg font-semibold my-2 ">Online Friends</h3>
+		<h3 class="text-center text-lg font-semibold my-2 text-white ">Online Friends</h3>
 		<section class="flex justify-between gap-4 flex-col">
 			{#each onlineFriends as onlinefriend}
 				<section
-					class="  py-2 px-3 flex my-2 items-center  justify-between xl:w-72 border-2 border-main-bg rounded-md "
+					class="  py-2 px-3 flex my-2 items-center  justify-between xl:w-72 border-2 border-border rounded-md "
 				>
 					<!--name and username-->
 					<section class="flex  items-center w-8/12 ">
@@ -51,29 +59,28 @@
 							/>
 						</a>
 						<!-- Name and username-->
-						<a href="/{onlinefriend.userName}" class="mx-2 w-full">
-							<h4 class=" font-semibold text-sm text-gray-900 hover:text-gray-500 ">
+						<a href="/profile/{onlinefriend.userName}" class="mx-2 w-full">
+							<h4 class=" font-semibold text-sm text-text hover:text-text-hover ">
 								{onlinefriend.firstName}
 								{onlinefriend.lastName}
 							</h4>
-							<h5 class=" text-xs  text-gray-900 hover:text-gray-500  ">
+							<h5 class=" text-xs  text-text hover:text-text-hover  ">
 								@{onlinefriend.userName}
 							</h5>
 						</a>
 					</section>
-					<h5 class="text-xs text-orange mx-2 cursor-default">{onlinefriend.timeRemian}</h5>
 				</section>
 			{/each}
 		</section>
 	</section>
 	<!--Suggestion-->
 	<section class="my-4">
-		<h3 class="text-center text-lg font-semibold my-2 ">People you might know</h3>
+		<h3 class="text-center text-lg font-semibold my-2 text-white">People you might know</h3>
 		<!--suggestion box-->
 		<section class="flex justify-between gap-4 flex-col">
 			{#each suggestion as suggedtedPeople}
 				<section
-					class="  py-2 px-3 flex my-2 items-center  justify-between lg:w-72 border-2 border-main-bg rounded-md "
+					class="  py-2 px-3 flex my-2 items-center  justify-between lg:w-72 border-2 border-border rounded-md "
 				>
 					<!--name and username-->
 					<section class="flex  items-center w-8/12 ">
@@ -88,11 +95,11 @@
 						</a>
 						<!-- Name and username-->
 						<a href="/profile/{suggedtedPeople.userName}" class="mx-2 w-full">
-							<h4 class=" font-semibold text-sm text-gray-900 hover:text-gray-500 ">
+							<h4 class=" font-semibold text-sm text-text hover:text-text-hover ">
 								{suggedtedPeople.firstName}
 								{suggedtedPeople.lastName}
 							</h4>
-							<h5 class=" text-xs  text-gray-900 hover:text-gray-500  ">
+							<h5 class=" text-xs  text-text hover:text-text-hover   ">
 								@{suggedtedPeople.userName}
 							</h5>
 						</a>
@@ -102,10 +109,7 @@
 						method="post"
 						class="text-xs font-semibold   text-center  w-4/12 "
 					>
-						<button
-							class=" bg-main-bg hover:text-main hover:shadow-xl py-3 px-3 mx-auto rounded-xl  py-1.5 text-white"
-							>Add Friend
-						</button>
+						<button class=" main-btn  py-3 px-3  py-1.5 ">Add Friend </button>
 					</form>
 				</section>
 			{/each}

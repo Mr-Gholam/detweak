@@ -29,7 +29,7 @@
 	}
 	//  open post option comment
 	function postOptionComment(commentId) {
-		const option = document.getElementById(`${commentId}`);
+		const option = document.getElementById(`cm-${commentId}`);
 		if (option.classList.contains('hidden')) {
 			option.classList.remove('hidden');
 		} else {
@@ -175,17 +175,17 @@
 </svelte:head>
 
 {#if post}
-	<div
-		class="flex items-start justify-center md:justify-between md:py-4  gap-4 flex-col  w-96 lg:w-128  xl:max-w-9/12 md:mx-auto transition duration-1000 ease-out"
-	>
+	<div class="  md:w-fit w-full lg:w-128 my-2">
+		<!-- post outline-->
 		<div
-			class="md:border-2 border-solid border-gray-200  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
+			id="body-{post.postId}"
+			class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
 		>
 			<!-- svelte-ignore a11y-img-redundant-alt -->
 			<section class=" flex justify-between items-center flex-col ">
 				<!--post info-->
 				<section
-					class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-gray-200"
+					class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-border"
 				>
 					<!--name and username-->
 					<section class="flex gap-2 items-center">
@@ -199,7 +199,7 @@
 								/>
 							{:else}
 								<div
-									class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+									class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
 								>
 									<i class="fa-solid fa-user text-slate-400 text-2xl" />
 								</div>
@@ -207,28 +207,25 @@
 						</a>
 						<!-- Name and username-->
 						<a href="/profile/{post.username}">
-							<h4 class="mx-2 font-semibold text-gray-900 hover:text-gray-500">
+							<h4 class="mx-2 font-semibold text-text hover:text-text-hover">
 								{post.firstName}
 								{post.lastName}
 							</h4>
-							<h5 class=" text-sm  text-gray-900 hover:text-gray-500 mx-2 ">
+							<h5 class=" text-sm  text-text hover:text-text-hover mx-2 ">
 								@{post.username}
 							</h5>
 						</a>
 					</section>
 					<section class="flex items-center ">
-						<h6 class="text-xs text-orange mx-2 cursor-default">
-							{post.onlineTime}
-						</h6>
 						{#if post.username == user.username}
-							<div class="relative">
+							<div class="relative text-text hover:text-main">
 								<i
 									on:click={postOption(post.postId)}
-									class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main-bg"
+									class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main"
 								/>
 								<div
 									id={post.postId}
-									class="hidden absolute bg-main-bg w-28 flex flex-col items-center  rounded p-3  option gap-2 z-10"
+									class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 								>
 									<button
 										on:click={openEdit(post.postId)}
@@ -238,7 +235,7 @@
 									</button>
 									<button
 										on:click={deletePost(post.postId)}
-										class="text-sm flex items-center w-full justify-start hover:text-red-600 text-white"
+										class="text-sm flex items-center w-full justify-start hover:text-main text-white"
 									>
 										<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
 									</button>
@@ -257,13 +254,18 @@
 							alt=""
 						/>
 					{/if}
-					<h3
-						class="text-base mx-2 my-4"
-						on:dblclick={likePost(post.postId)}
-						id="des-{post.postId}"
-					>
-						{post.description}
-					</h3>
+					<div class="flex items-center my-4 mx-2">
+						<a href="/profile/{post.username} ">
+							<h3 class="font-semibold hover:text-text-hover text-text">{post.username}</h3>
+						</a>
+						<h3
+							class="text-base mx-2 text-text"
+							on:dblclick={likePost(post.postId)}
+							id="des-{post.postId}"
+						>
+							{post.description}
+						</h3>
+					</div>
 					{#if post.username == user.username}
 						<form
 							id="form-{post.postId}"
@@ -290,9 +292,9 @@
 					<!-- button  part-->
 					<section class=" flex justify-start  text-lg  gap-2  ">
 						<button
-							class="hover:text-red-600 text-2xl p-2 flex items-center w-16 {post.liked
-								? 'text-red-600'
-								: 'text-gray-400'}"
+							class="hover:text-main text-2xl p-2 flex items-center w-16 {post.liked
+								? 'text-main'
+								: 'text-text'}"
 							on:click={likePost(post.postId)}
 							><i class="fa-solid fa-heart" id="like-{post.postId}" />
 							<p class="text-sm ml-2 " id="like-n-{post.postId}">
@@ -302,20 +304,20 @@
 						{#if post.allowComments}
 							<button
 								on:click={openPost(post.postId)}
-								class="text-gray-400 hover:text-main-bg text-2xl p-2 w-16 "
-								id="comment-{post.postId}"><i class="fa-solid fa-comments" /></button
+								class="text-text hover:text-border text-2xl p-2 w-16 "
+								id="comment-{post.postId}"><i class="fa-solid fa-comment" /></button
 							>
 						{/if}
-						<button class="text-gray-400 hover:text-gray-800 text-2xl p-2 w-16" id="share"
+						<button class="text-text hover:text-gray-800 text-2xl p-2 w-16" id="share"
 							><i class="fa-solid fa-share" /></button
 						>
 					</section>
 					<!--time-->
-					<h6 class="text-xs text-orange mx-2">
+					<h6 class="text-xs text-text mx-2">
 						{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
 					</h6>
 				</section>
-				<!-- comments part -->
+				<!-- comments -->
 				<section class="flex flex-col gap-2 w-full" id="comments">
 					{#if comments}
 						{#each comments as comment}
@@ -327,7 +329,7 @@
 											src="/api/{comment.profileImg}"
 											alt="Current profile photo"
 										/>
-										<h4 class="font-semibold text-base ml-1">
+										<h4 class="font-semibold text-base ml-1 text-text hover:text-text-hover">
 											{comment.username}
 										</h4>
 									</a>
@@ -336,12 +338,12 @@
 										<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
 											<i class="fa-solid fa-user text-slate-400 text-sm" />
 										</div>
-										<h4 class="font-semibold text-base ml-1">
+										<h4 class="font-semibold text-base ml-1 text-text hover:text-text-hover">
 											{comment.username}
 										</h4>
 									</a>
 								{/if}
-								<h4 class="flex-1 text-sm mx-2 ">
+								<h4 class="flex-1 text-sm mx-2 text-text  ">
 									{comment.commentContent}
 								</h4>
 								<section class="flex items-center ">
@@ -352,10 +354,10 @@
 										<div class="relative">
 											<i
 												on:click={postOptionComment(comment.commentId)}
-												class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main-bg"
+												class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main text-text "
 											/>
 											<div
-												id={comment.commentId}
+												id="cm-{comment.commentId}"
 												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10"
 											>
 												<button
@@ -372,10 +374,11 @@
 						{/each}
 					{/if}
 				</section>
+
 				<!-- comment part -->
 				{#if post.allowComments}
 					<section
-						class="flex justify-between items-center w-full  p-2 border-t border-solid border-gray-200 "
+						class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 					>
 						{#if user.profileImg}
 							<img
@@ -396,14 +399,10 @@
 							<input
 								type="text"
 								placeholder="Add a comment..."
-								bind:value={comment}
-								class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none"
+								id="cm-{post.postId}"
+								class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none text-text bg-inherit"
 							/>
-							<button
-								id="postBtn-{post.postId}"
-								class="border border-main-bg rounded-md py-1 px-3 hover:bg-main-bg hover:text-white font-semibold text-main-bg w-16"
-								>Post</button
-							>
+							<button id="postBtn-{post.postId}" class="main-btn w-16">Post</button>
 						</form>
 					</section>
 				{/if}

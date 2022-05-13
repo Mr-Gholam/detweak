@@ -176,11 +176,11 @@
 
 						<!-- Name and username-->
 						<div class="mx-2 w-9/12 ">
-							<h4 class=" font-semibold text-sm text-gray-900  ">
+							<h4 class=" font-semibold text-sm text-text  ">
 								{contact.firstName}
 								{contact.lastName}
 							</h4>
-							<h5 class=" text-xs  text-gray-900   ">@{contact.username}</h5>
+							<h5 class=" text-xs  text-text   ">@{contact.username}</h5>
 						</div>
 					</section>
 				</section>
@@ -188,9 +188,9 @@
 		</section>
 	</section>
 	<!--Main Chat -->
-	<section class="md:w-9/12 flex flex-col w-full ">
+	<section class="md:w-9/12 flex flex-col w-full border-2 border-border rounded ">
 		<!--top part-->
-		<section class="flex items-center w-full border-b-main-bg border-2 py-2 px-3  ">
+		<section class="flex items-center w-full border-border border-b-2 py-2 px-3  ">
 			<!--Mobile back-->
 			<button class="mr-8 md:hidden" on:click={showNameList}
 				><i class="fas fa-chevron-left" /></button
@@ -213,30 +213,26 @@
 						</div>
 					{/if}
 				</a>
-				<h4 class=" font-semibold text-sm text-gray-900 mx-4 flex-1">
+				<h4 class=" font-semibold text-sm text-text mx-4 flex-1">
 					{currentChatInfo.firstName}
 					{currentChatInfo.lastName}
 				</h4>
 				<div class="flex items-center">
-					<h5 class="text-xs text-orange mx-2 cursor-default">{currentChatInfo.onlineTime}</h5>
 					<i
-						class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main-bg"
+						class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main text-text"
 					/>
 				</div>
 			{:else}
 				<div class="flex items-center w-full loading-pulse">
 					<div
-						class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+						class="h-12 w-12 rounded-full hover:opacity-90  flex items-center justify-center border-2 border-text"
 					>
-						<i class="fa-solid fa-user text-slate-400 text-2xl" />
+						<i class="fa-solid fa-user text-text text-2xl" />
 					</div>
 
 					<div class="  text-sm  mx-4 flex-1 h-2 flex items-center">
-						<div class="h-full w-16 bg-main-bg  rounded mx-1 " />
-						<div class="h-full w-16 bg-main-bg  rounded mx-1 " />
-					</div>
-					<div class=" mx-2 cursor-default h-2  flex items-center">
-						<div class="h-full w-16 bg-main-bg  rounded " />
+						<div class="h-full w-16 bg-text  rounded mx-1 " />
+						<div class="h-full w-16 bg-text  rounded mx-1 " />
 					</div>
 				</div>
 			{/if}
@@ -262,21 +258,25 @@
 										<i class="fa-solid fa-user text-slate-400 text-2xl" />
 									</div>
 								{/if}
-								<div class="{chat.receive ? 'receive-message' : 'send-message'} flex items-end">
-									<h1 class="p-1">
+								<div
+									class="{chat.receive
+										? 'receive-message'
+										: 'send-message'} flex items-end bg-inherit"
+								>
+									<h1 class="p-1 bg-inherit">
 										{chat.message}
 									</h1>
-									<p class="text-xs float-right mx-2">
+									<p class="text-xs float-right mx-2 bg-inherit">
 										{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
 									</p>
 								</div>
 							</div>
 						{:else}
-							<div class="{chat.receive ? 'receive-message' : 'send-message'} flex items-end">
-								<h1 class="p-1">
+							<div class="{chat.receive ? 'receive-message' : 'send-message'} flex items-end ">
+								<h1 class="p-1 bg-inherit">
 									{chat.message}
 								</h1>
-								<p class="text-xs float-left mx-2">
+								<p class="text-xs float-left mx-2 bg-inherit">
 									{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
 								</p>
 							</div>
@@ -291,33 +291,33 @@
 			{/if}
 		</section>
 		<!--bottom part-->
-		<section class="">
+		<section class="border-t-2 border-border">
 			<form
 				action=""
 				method="post"
-				class="flex m-2 gap-2 items-center border-2 border-main rounded-full p-1"
+				class="flex m-2 gap-2 items-center  rounded-full p-1"
 				on:submit|preventDefault={sendMessage}
 			>
 				<input
 					on:focus={typing}
 					bind:value={textInput}
 					type="text"
-					class="flex-1 p-2   focus:outline-none  rounded-full foucs:border-main {loading
+					class="flex-1 p-2   focus:outline-none  rounded-full foucs:border-main text-text {loading
 						? 'loading-pulse'
 						: ''}"
 					placeholder="Say Hello"
 				/>
 				<label
 					for="postPic"
-					class="text-2xl  hover:cursor-pointer hover:text-main mx-2 flex items-center "
+					class="text-2xl  hover:cursor-pointer hover:text-main mx-2 flex items-center text-text "
 					><i class="fa-solid fa-paperclip" /></label
 				>
 				<input type="file" name="image" id="postPic" class="hidden" />
 				<button
-					class="font-semibold rounded-full bg-main 	justify-center w-11 h-11 mx-2 flex items-center {loading
+					class="font-semibold rounded-full border border-main bg-inherit 	justify-center w-11 h-11 mx-2 flex items-center {loading
 						? 'loading-pulse'
 						: ''}"
-					id="sendBtn"><i class="fas fa-chevron-right" /></button
+					id="sendBtn"><i class="fas fa-chevron-right text-main bg-inherit" /></button
 				>
 			</form>
 		</section>
