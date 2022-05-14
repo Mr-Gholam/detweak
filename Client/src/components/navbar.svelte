@@ -125,7 +125,7 @@
 				</section>
 			</div>
 			<button
-				class=" md:rounded-lg  md:mx-2 m md:px-2 md:py-1  md:text-base md:text-gray-300   hover:text-main hidden md:block text-text"
+				class=" md:rounded-lg  md:mx-2 m md:px-2 md:py-1  md:text-base    hover:text-main hidden md:block text-text"
 				on:click={logout}>Logout</button
 			>
 		{:else}
@@ -138,14 +138,14 @@
 					class="flex flex-col md:flex-row justify-between md:justify-end gap-2 p-2 text-lg font-semibold md:p-0"
 				>
 					<a
-						href="/signup"
-						class=" md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main"
-						>Sign up</a
+						href="/login"
+						class=" md:rounded-lg  md md:mx-2 border-2 border-main-bg	  md:px-2 md:py-1  md:text-base  hover:text-main text-text  hover:border-main"
+						>Login</a
 					>
 					<a
-						href="/login"
-						class="md:rounded-lg md:border-main md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base md:text-gray-300 md:hover:bg-gray-800 md:hover:shadow-xl hover:text-main"
-						>Login</a
+						href="/signup"
+						class="md:rounded-lg md:border-slate-400 md:border-solid md:mx-2 md:border-2 md:px-2 md:py-1  md:text-base text-slate-400   hover:text-main hover:border-main"
+						>Sign up</a
 					>
 				</section>
 			</section>

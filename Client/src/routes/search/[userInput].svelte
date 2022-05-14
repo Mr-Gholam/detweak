@@ -42,7 +42,7 @@
 	<title>Search</title>
 </svelte:head>
 
-<div class="w-96 py-4 my-2 lg:ml-32 lg:mx-auto lg:w-128">
+<div class="w-96 py-4 my-2  lg:mx-auto lg:w-128 {$User.username ? 'lg:ml-32' : 'lg:ml-72'}">
 	<div class="flex flex-col">
 		{#each suggestion as suggedtedPeople}
 			<section

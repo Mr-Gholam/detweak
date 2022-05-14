@@ -65,7 +65,7 @@ exports.getSearch = async (req, res, next) => {
                 lastName: user.lastName,
                 profileImg: user.profileImgUrl,
                 id: user.id,
-                myProfile,
+                myProfile: false,
                 isFriend: false,
                 sentRequest: false
             }

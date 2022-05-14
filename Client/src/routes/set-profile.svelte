@@ -395,19 +395,20 @@
 		class="flex flex-col justify-between lg:mr-56  p-4 gap-4 items-center"
 		enctype="multipart/form-data"
 	>
+		<h4 class="text-white text-xl text-center my-2">Personal Information</h4>
 		<section class="w-80">
-			<label class="text-base" for="firstName">First Name</label>
+			<label class="text-base text-text" for="firstName">First Name *</label>
 			<input
 				type="text"
 				name="firstName"
 				id="firstName"
 				bind:value={firstName}
 				on:change={checkFirstName}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border text-text border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="lastName">Last Name</label>
+			<label class="text-base text-text" for="lastName">Last Name *</label>
 
 			<input
 				type="text"
@@ -415,11 +416,11 @@
 				id="lastName"
 				bind:value={lastName}
 				on:change={checkLastName}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
+				class="outline-none border-2 border-border text-text border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="bio">Bio</label>
+			<label class="text-base text-text" for="bio">Bio *</label>
 			<textarea
 				name="bio"
 				id="bio"
@@ -427,27 +428,27 @@
 				rows="5"
 				bind:value={bio}
 				on:change={checkBio}
-				class="outline-none border-2 border-main-bg border-solid
+				class="outline-none border-2 border-border text-text border-solid
                  rounded-lg px-2.5 mx-auto block w-11/12 my-3 p-2 resize-none
                  "
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="birthday">Bithday</label>
+			<label class="text-base text-text" for="birthday">Bithday</label>
 			<input
 				type="date"
 				name="birthday"
 				id=""
 				bind:value={birthday}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
+				class="outline-none border-2 border-border text-text border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
 			/>
 			<section class="w-80">
-				<label for="online-time" class="text-base">Select your country</label>
+				<label for="online-time" class="text-base text-text">Select your country</label>
 				<section class="flex justify-center">
 					<select
 						id="online-time"
 						bind:value={countrySelected}
-						class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3 p-1"
+						class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
 					>
 						<option selected disabled value=""> Country</option>
 						{#each countries as country}
@@ -459,47 +460,21 @@
 				</section>
 			</section>
 		</section>
+
 		<section class="w-80">
-			<label for="online-time" class="text-base">Choose daily online time</label>
-			<section class="flex justify-center">
-				<select
-					id="online-time"
-					bind:value={timelineSelected}
-					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3"
-				>
-					<option selected disabled value=""> hour</option>
-					{#each timelines as timeline}
-						<option value={timeline.value}>
-							{timeline.value}
-						</option>
-					{/each}
-				</select>
-				<select
-					bind:value={amPm}
-					name="am-pm"
-					id="am-pm"
-					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3"
-				>
-					<option selected disabled value=""> Am-PM</option>
-					<option value="AM">AM</option>
-					<option value="PM">PM</option>
-				</select>
-			</section>
-		</section>
-		<section class="w-80">
-			<label class="text-base" for="profilePic">Profile Picture</label>
+			<label class="text-base text-text" for="profilePic">Profile Picture</label>
 			<div class="flex items-center justify-evenly my-3   ">
 				<!-- svelte-ignore a11y-img-redundant-alt -->
 				{#if hasPic}
 					<img
 						class="h-16 w-16 object-cover rounded-full "
 						bind:this={profilePic}
-						src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1361&q=80"
+						src=""
 						alt="Current profile photo"
 					/>
 				{:else}
 					<div
-						class="h-16 w-16 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+						class="h-16 w-16 rounded-full hover:opacity-90 bg-main-bg  border-2 border-border flex items-center justify-center"
 					>
 						<i class="fa-solid fa-user text-slate-400 text-2xl" />
 					</div>
@@ -514,12 +489,12 @@
 					class="block w-4/6 text-sm text-gray-500
                 file:mr-3 file:py-2 file:px-3 
                 file:text-sm file:font-semibold
-                file:bg-violet-50 file:text-main-bg
-                file:border-main-bg file:border-2
+                file:bg-main-bg file:text-text
+                file:border-border  file:border-2
                 file:border-solid
                 file:rounded-full
-                file:hover:bg-main
-		
+                file:hover:text-main
+				file:hover:border-main
                 file:hover:cursor-pointer"
 				/>
 			</div>
@@ -528,7 +503,7 @@
 			<input
 				type="submit"
 				value="Next"
-				class="cursor-pointer text-lg rounded-lg hover:text-main text-white bg-main-bg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl hover:bg-main-darker  "
+				class=" text-lg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl main-btn  "
 			/>
 		</section>
 	</form>

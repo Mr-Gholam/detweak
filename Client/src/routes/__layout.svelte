@@ -7,7 +7,7 @@
 	import RightSidebar from '../components/rightSidebar.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { navigating } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	$: $loading = !!$navigating;
 	onMount(async () => {
 		const res = await fetch('/api/jwt');
@@ -32,15 +32,15 @@
 		</main>
 		<Loading />
 	{:else}
-		<main class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start 2xl:justify-between ">
+		<main class="md:flex  xl:w-8/12  lg:w-9/12 md:mx-auto md:items-start 2xl:justify-between">
 			<LeftSidebar />
 			<slot />
 			<RightSidebar />
 		</main>
 	{/if}
 {:else}
-	<div class={$loading ? 'blur-sm ' : ''}>
+	<main class="{$loading ? 'blur-sm ' : ''}{$page.params.userInput ? 'xl:w-8/12 mx-auto' : ''} ">
 		<slot />
-	</div>
+	</main>
 	<Loading />
 {/if}

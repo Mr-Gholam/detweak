@@ -101,34 +101,34 @@
 		class="flex flex-col justify-between items-center  md:mr-56  md:p-4 gap-4"
 	>
 		<section class="w-80">
-			<label class="text-base" for="email">Email</label>
+			<label class="text-base text-text" for="email">Email</label>
 			<input
 				bind:value={email}
 				on:change={checkEmail}
 				type="email"
 				name="email"
 				id="email"
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text"
 				placeholder="Email"
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-lg" for="password">Password</label>
+			<label class="text-lg text-text" for="password">Password</label>
 			<input
 				bind:value={password}
 				on:change={checkPassword}
 				type="password"
 				name="password"
 				id="password"
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border text-text rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				placeholder="Password"
 			/>
 		</section>
 		<section class="my-3">
-			<h4 class="text-base">
+			<h4 class="text-base text-text">
 				Forgot your Password? <a
 					href="/reset-password"
-					class="text-lg text-main  mx-1 hover:text-main-bg">Reset Password</a
+					class="text-lg hover:text-main  mx-1 text-white">Reset Password</a
 				>
 			</h4>
 		</section>
@@ -136,13 +136,12 @@
 			<input
 				type="submit"
 				value="Login"
-				class="cursor-pointer text-lg rounded-lg bg-main-bg py-2 hover:text-main px-20 hover:shadow-xl mx-auto block w-11/12 text-white"
+				class="main-btn py-2  px-20  mx-auto block w-11/12  font-semibold border-2"
 			/>
 		</section>
-		<h4 class="text-base my-5">
-			Not a member yet?<a
-				href="/signup"
-				class="text-lg text-main font-medium mx-1 hover:text-main-bg">Sign up</a
+		<h4 class="text-base my-5 text-text">
+			Not a member yet?<a href="/signup" class="text-lg hover:text-main font-medium mx-1 text-white"
+				>Sign up</a
 			>
 		</h4>
 	</form>

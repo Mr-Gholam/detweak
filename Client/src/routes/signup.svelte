@@ -180,58 +180,64 @@
 		class="flex flex-col justify-between md:mr-56 p-4 gap-3 items-center"
 	>
 		<section class="w-80 ">
-			<label class="text-base" for="email">Email</label>
+			<label class="text-base text-text" for="email">Email</label>
 			<input
 				bind:value={email}
 				on:change={checkEmail}
 				type="email"
 				name="email"
 				id="email"
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text"
 			/>
 		</section>
 		<section class="w-80 ">
-			<label class="text-base" for="username">Username</label>
+			<label class="text-base text-text" for="username">Username</label>
 			<input
 				bind:value={username}
 				on:change={checkUsername}
 				type="text"
 				name="username"
 				id="username"
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text "
 			/>
 		</section>
 		<section class="w-80 ">
-			<label class="text-base" for="password">Password</label>
+			<label class="text-base text-text" for="password">Password</label>
 			<input
 				bind:value={password}
 				on:change={checkPassword}
 				type="password"
 				name="password"
 				id="password"
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text "
 			/>
 			<ul class=" px-4">
-				<li class="text-sm my-1" id="uppercase"><p>At least one uppercase letter</p></li>
-				<li class="text-sm my-1" id="lowercase"><p>At least one lowercase letter</p></li>
-				<li class="text-sm my-1" id="number"><p>contain at least one number</p></li>
-				<li class="text-sm my-1" id="length"><p>should be more than 8 character</p></li>
+				<li class="text-xs my-1 text-text" id="uppercase"><p>At least one uppercase letter</p></li>
+				<li class="text-xs my-1 text-text" id="lowercase"><p>At least one lowercase letter</p></li>
+				<li class="text-xs my-1 text-text" id="number"><p>contain at least one number</p></li>
+				<li class="text-xs my-1 text-text" id="length"><p>should be more than 8 character</p></li>
 			</ul>
 		</section>
 		<section class="w-80 ">
-			<label class="text-base" for="confirmPassword">Confirm Password</label>
+			<label class="text-base text-text" for="confirmPassword">Confirm Password</label>
 			<input
 				bind:value={confirmPassword}
 				on:change={checkConfrimPassword}
 				type="password"
 				name="confirmPassword"
 				id="confirmPassword"
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text"
 			/>
 		</section>
-		<section class="m-2 w-80 px-4">
+		<section class="m-2 w-80 px-4 text-text">
 			<label for="privacy" on:click={checkPrivacy}>
-				<input bind:checked={privacy} type="checkbox" name="privacy" id="" />
+				<input
+					bind:checked={privacy}
+					type="checkbox"
+					name="privacy"
+					id=""
+					class="border-border bg-main-bg"
+				/>
 				Privacy Bullshit
 			</label>
 		</section>
@@ -239,11 +245,11 @@
 			<input
 				type="submit"
 				value="Sign Up"
-				class="cursor-pointer text-lg rounded-lg  bg-main-bg hover:text-main py-2 px-20 mx-auto block w-11/12 hover:shadow-xl text-white "
+				class="main-btn   py-2 px-20 mx-auto block w-11/12 hover:shadow-xl text-text text-lg"
 			/>
 		</section>
-		<h5 class="text-base text-center">
-			Already a member?<a href="/login" class="text-lg text-main mx-1">Login</a>
+		<h5 class="text-base text-center text-text">
+			Already a member?<a href="/login" class="text-lg hover:text-main mx-1 text-white">Login</a>
 		</h5>
 	</form>
 	<h1 class="md:ml-56 md:p-4 hidden">There will be pic here</h1>
