@@ -4,8 +4,15 @@
 	let frontEndFrameWorks = ['React', 'Vue', 'Svelte', 'Anguler'];
 </script>
 
-<div>
-	<form action="" class="flex flex-col justify-between lg:mr-56  p-4 gap-4 items-center">
+<svelte:head>
+	<title>Set Resume</title>
+</svelte:head>
+
+<div class=" md:flex md:justify-center md:m-auto md:py-8  md:items-center">
+	<form action="" class="flex flex-col justify-between  p-4 gap-4 items-center">
+		<section class="w-80">
+			<h4 class="text-white text-xl text-center my-2">Perfessional Information</h4>
+		</section>
 		<section class="w-80">
 			<label for="felid" class="text-base text-text">Your Github username </label>
 			<input
@@ -18,7 +25,7 @@
 			<select
 				name=""
 				id=""
-				class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
+				class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
 			>
 				{#each feilds as feild}
 					<option value={feild}>{feild}</option>
@@ -30,7 +37,7 @@
 			<select
 				name=""
 				id=""
-				class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
+				class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
 			>
 				{#each languages as language}
 					<option value="language">{language}</option>
@@ -42,12 +49,19 @@
 			<select
 				name=""
 				id=""
-				class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
+				class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
 			>
 				{#each frontEndFrameWorks as frameWork}
 					<option value={frameWork}>{frameWork}</option>
 				{/each}
 			</select>
+		</section>
+		<section class="w-80">
+			<input
+				type="submit"
+				value="Next"
+				class=" text-lg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl main-btn my-3 border-2  "
+			/>
 		</section>
 	</form>
 </div>

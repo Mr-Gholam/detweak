@@ -387,15 +387,17 @@
 	<title>Set Profile</title>
 </svelte:head>
 
-<main class=" md:flex md:justify-center md:m-auto md:py-8  md:items-center">
+<div class=" md:flex md:justify-center md:m-auto md:py-8  md:items-center">
 	<form
 		on:submit|preventDefault={submit}
 		action="/set-profile"
 		method="post"
-		class="flex flex-col justify-between lg:mr-56  p-4 gap-4 items-center"
+		class="flex flex-col justify-between   p-4 gap-4 items-center"
 		enctype="multipart/form-data"
 	>
-		<h4 class="text-white text-xl text-center my-2">Personal Information</h4>
+		<section class="w-80">
+			<h4 class="text-white text-xl text-center my-2">Personal Information</h4>
+		</section>
 		<section class="w-80">
 			<label class="text-base text-text" for="firstName">First Name *</label>
 			<input
@@ -508,4 +510,4 @@
 		</section>
 	</form>
 	<h1 class="md:ml-56  md:p-4 hidden">There will be pic here</h1>
-</main>
+</div>
