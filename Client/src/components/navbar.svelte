@@ -49,9 +49,9 @@
 	}
 	async function logout() {
 		const response = await fetch('/api/logout', { method: 'POST' });
-		if (response.status == 200) {
-			console.log(response);
+		if (response.ok) {
 			User.set(null);
+			console.log($User);
 			location.replace('/');
 		}
 	}

@@ -134,13 +134,14 @@
 				})
 			});
 			const data = await Response.json();
-			if (Response.status == 200) {
+			if (Response.status == 201) {
+				console.log($User);
 				$loading = false;
 				User.set({ username });
 				goto('/set-profile');
 			}
 			// handleing duplicate email
-			if (Response.status == 403 && data.emailErr) {
+			if (Response.status == 401 && data.emailErr) {
 				$loading = false;
 				const error = document.createElement('p');
 				const el = document.getElementById('email');
@@ -162,10 +163,10 @@
 		}
 	}
 	onMount(async () => {
-		const response = await fetch('/api/signup', { method: 'GET' });
-		if (response.status == 200) {
-			goto('/dashboard');
-		}
+		// const response = await fetch('/api/signup', { method: 'GET' });
+		// if (response.status == 200) {
+		// 	goto('/dashboard');
+		// }
 	});
 </script>
 

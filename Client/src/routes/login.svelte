@@ -62,6 +62,7 @@
 			});
 			const data = await response.json();
 			if (response.status == 200) {
+				console.log(data);
 				User.set(data);
 				$loading = false;
 				goto('/dashboard');

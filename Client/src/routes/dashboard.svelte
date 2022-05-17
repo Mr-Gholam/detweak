@@ -43,6 +43,9 @@
 	];
 	// onMount
 	onMount(async () => {
+		if (!$User) {
+			goto('/');
+		}
 		const response = await fetch('/api/availablePosts');
 		const posts = await response.json();
 		availablePosts = posts.availablePosts;

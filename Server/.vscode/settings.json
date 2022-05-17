@@ -3,7 +3,8 @@
         "detweak",
         "gorm",
         "mehdi",
-        "signup"
+        "signup",
+        "supersectect"
     ],
     "files.exclude":{
         "**/.git": true,
