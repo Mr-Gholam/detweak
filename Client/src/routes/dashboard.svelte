@@ -5,8 +5,6 @@
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { loading, User } from '../store';
 	import { goto } from '$app/navigation';
-	let user;
-	User.subscribe((value) => (user = value));
 	let commentChecked = true;
 	let hasPhoto;
 	let postContent;

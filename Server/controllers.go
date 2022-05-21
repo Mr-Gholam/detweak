@@ -36,6 +36,10 @@ type ErrorRespone struct {
 type ErrorMessage struct {
 	Message string `json:"message,omitempty"`
 }
+type UserJson struct {
+	Username string `json:"username,omitempty"`
+	ImgUrl   string `json:"imgUrl,omitempty"`
+}
 
 func (user *User) json(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
@@ -101,6 +105,9 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusCreated)
+	e, err := json.Marshal(UserJson{Username: user.Username, ImgUrl: ""})
+	handleError(err)
+	w.Write(e)
 }
 func post_login(w http.ResponseWriter, r *http.Request) {
 	var user User
@@ -132,9 +139,29 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(UserJson{Username: username, ImgUrl: ""})
+	handleError(err)
+	w.Write(e)
 }
 func post_set_profile(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r)
+	var userData User
+	userData.json(r)
+	userId := getIdFromCookie(w, r)
+	if userData.Firstname == "" || userData.Lastname == "" || userData.Bio == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Firstname , Lastname, Bio"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	if userId == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+
 }
 func post_set_resume(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r)

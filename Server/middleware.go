@@ -45,3 +45,21 @@ func authMiddleware(next http.Handler) http.Handler {
 		w.WriteHeader(http.StatusUnauthorized)
 	})
 }
+
+func getIdFromCookie(w http.ResponseWriter, r *http.Request) uint {
+	cookie, err := r.Cookie("jwt")
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return 0
+	}
+	token, _ := jwt.Parse(cookie.Value,
+		func(token *jwt.Token) (interface{}, error) {
+			return jwtSecret, nil
+		},
+	)
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		return uint(claims["id"].(float64))
+	}
+	return 0
+}

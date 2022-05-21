@@ -360,7 +360,6 @@
 					formData.append('birthday', birthday);
 					formData.append('image', profilePicInput.files[0]);
 					formData.append('location', countrySelected);
-					formData.append('onlineTime', timelineSelected + amPm);
 					const response = await fetch('/api/set-profile', {
 						method: 'POST',
 						body: formData

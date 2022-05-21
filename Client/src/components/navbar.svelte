@@ -2,8 +2,6 @@
 	import { goto } from '$app/navigation';
 	// @ts-nocheck
 	import { User } from '../store';
-	let username;
-	User.subscribe((value) => (username = value.username));
 	let searchValue;
 	import { page } from '$app/stores';
 	const path = $page.url.pathname;
@@ -49,9 +47,9 @@
 	}
 	async function logout() {
 		const response = await fetch('/api/logout', { method: 'POST' });
+		console.log(response);
 		if (response.ok) {
-			User.set(null);
-			console.log($User);
+			$User.username = null;
 			location.replace('/');
 		}
 	}
@@ -69,7 +67,7 @@
 					type="text"
 					bind:value={searchValue}
 					placeholder="search"
-					class="w-42  lg:w-96 md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-20 text-text"
+					class="w-42  md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-20 text-text"
 				/>
 			</form>
 		</section>
@@ -94,8 +92,9 @@
 					>
 					<a
 						on:click={openHumberguer}
-						href="/profile/{username}"
-						class={$page.url.pathname === `/profile/${username}` ? 'text-main' : ''}>My Profile</a
+						href="/profile/{$User.username}"
+						class={$page.url.pathname === `/profile/${$User.username}` ? 'text-main' : ''}
+						>My Profile</a
 					>
 					<a
 						on:click={openHumberguer}

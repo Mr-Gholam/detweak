@@ -1,5 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
+	import da from 'date-fns/locale/da';
 	import { onMount } from 'svelte';
 	import { loading, User } from '../store';
 
@@ -135,9 +136,9 @@
 			});
 			const data = await Response.json();
 			if (Response.status == 201) {
-				console.log($User);
 				$loading = false;
-				User.set({ username });
+				$User = data;
+				console.log($User);
 				goto('/set-profile');
 			}
 			// handleing duplicate email

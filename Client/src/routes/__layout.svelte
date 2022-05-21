@@ -13,7 +13,7 @@
 		const res = await fetch('/api/jwt');
 		const u = await res.json();
 		if (res.status == 200) {
-			User.set(u);
+			$User = u;
 		}
 	});
 </script>
