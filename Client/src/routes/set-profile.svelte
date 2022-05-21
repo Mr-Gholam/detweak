@@ -1,29 +1,13 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { loading } from '../store';
-	let userId;
 	let firstName;
 	let lastName;
 	let bio;
 	let profilePic;
 	let profilePicInput;
-	let timelineSelected;
 	let birthday;
-	let amPm;
-	let timelines = [
-		{ id: 0, value: '0-1' },
-		{ id: 1, value: '1-2' },
-		{ id: 2, value: '2-3' },
-		{ id: 3, value: '3-4' },
-		{ id: 4, value: '4-5' },
-		{ id: 5, value: '5-6' },
-		{ id: 6, value: '6-7' },
-		{ id: 7, value: '7-8' },
-		{ id: 8, value: '8-9' },
-		{ id: 9, value: '9-10' },
-		{ id: 10, value: '10-11' },
-		{ id: 11, value: '11-12' }
-	];
+
 	let countries = [
 		{ text: 'Afghanistan', value: 'AF' },
 		{ text: 'Åland Islands', value: 'AX' },
@@ -350,30 +334,22 @@
 	//submit
 	async function submit() {
 		if (passedName) {
-			if (timelineSelected) {
-				if (amPm) {
-					$loading = true;
-					const formData = new FormData();
-					formData.append('firstName', firstName);
-					formData.append('lastName', lastName);
-					formData.append('bio', bio);
-					formData.append('birthday', birthday);
-					formData.append('image', profilePicInput.files[0]);
-					formData.append('location', countrySelected);
-					const response = await fetch('/api/set-profile', {
-						method: 'POST',
-						body: formData
-					});
-					const data = await response.json();
-					if (response.ok) {
-						$loading = false;
-						goto('/dashboard');
-					}
-				} else {
-					document.getElementById('am-pm').classList.add('border-error');
-				}
-			} else {
-				document.getElementById('online-time').classList.add('border-error');
+			$loading = true;
+			const formData = new FormData();
+			formData.append('firstName', firstName);
+			formData.append('lastName', lastName);
+			formData.append('bio', bio);
+			formData.append('birthday', birthday);
+			formData.append('image', profilePicInput.files[0]);
+			formData.append('location', countrySelected);
+			const response = await fetch('/api/set-profile', {
+				method: 'POST',
+				body: formData
+			});
+			const data = await response.json();
+			if (response.ok) {
+				$loading = false;
+				goto('/dashboard');
 			}
 		} else {
 			document.getElementById('firstName').classList.add('border-error');

@@ -40,6 +40,14 @@ type UserJson struct {
 	Username string `json:"username,omitempty"`
 	ImgUrl   string `json:"imgUrl,omitempty"`
 }
+type setProfile struct {
+	firstname string
+	lastname  string
+	Bio       string
+	location  string
+	birthday  int
+	image     []byte
+}
 
 func (user *User) json(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
@@ -97,9 +105,9 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	// hasing the password
+	// hashing the password
 	user.encryptPassword()
-	// creating the user in datebase
+	// creating the user in database
 	db.Create(&user)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": user.Username, "id": user.ID, "email": user.Email})
 	tokenStr, _ := token.SignedString(jwtSecret)
@@ -127,8 +135,8 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	worngPassword := user.validatePassword(foundPassword, user.Password)
-	if worngPassword {
+	wrongPassword := user.validatePassword(foundPassword, user.Password)
+	if wrongPassword {
 		w.WriteHeader(http.StatusBadRequest)
 		e, err := json.Marshal(ErrorRespone{ErrorMessage{"incorrect password"}})
 		handleError(err)
@@ -144,7 +152,7 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 func post_set_profile(w http.ResponseWriter, r *http.Request) {
-	var userData User
+	var userData *User
 	userData.json(r)
 	userId := getIdFromCookie(w, r)
 	if userData.Firstname == "" || userData.Lastname == "" || userData.Bio == "" {
@@ -161,7 +169,12 @@ func post_set_profile(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-
+	imgUrl, err := FileUpload(r)
+	if err != nil {
+		fmt.Println(err)
+	}
+	userData.ImgUrl = imgUrl
+	fmt.Println(userData)
 }
 func post_set_resume(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r)

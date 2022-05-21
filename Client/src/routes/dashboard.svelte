@@ -357,7 +357,7 @@
 								</a>
 							</section>
 							<section class="flex items-center ">
-								{#if post.username == user.username}
+								{#if post.username == $User.username}
 									<div class="relative text-text hover:text-main">
 										<i
 											on:click={postOption(post.postId)}

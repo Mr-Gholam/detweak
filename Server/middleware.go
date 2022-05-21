@@ -2,7 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -62,4 +66,27 @@ func getIdFromCookie(w http.ResponseWriter, r *http.Request) uint {
 		return uint(claims["id"].(float64))
 	}
 	return 0
+}
+func FileUpload(r *http.Request) (string, error) {
+	r.ParseMultipartForm(32 << 20)
+
+	file, handler, err := r.FormFile("image") // Retrieve the file from form data
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close() // Close the file when we finish
+	JavascriptISOString := "2006-01-02T15-04-05.999Z07-00"
+	currentTime := time.Now().UTC().Format(JavascriptISOString)
+	imgUrl := currentTime + "-" + handler.Filename
+	f, err := os.OpenFile("./images/"+imgUrl, os.O_WRONLY|os.O_CREATE, 0666)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Copy the file to the destination path
+	io.Copy(f, file)
+
+	return imgUrl, nil
 }
