@@ -333,23 +333,36 @@
 	 */
 	//submit
 	async function submit() {
+		console.log(location);
 		if (passedName) {
 			$loading = true;
 			const formData = new FormData();
-			formData.append('firstName', firstName);
-			formData.append('lastName', lastName);
-			formData.append('bio', bio);
-			formData.append('birthday', birthday);
 			formData.append('image', profilePicInput.files[0]);
-			formData.append('location', countrySelected);
 			const response = await fetch('/api/set-profile', {
 				method: 'POST',
-				body: formData
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					firstname: firstName,
+					lastname: lastName,
+					bio,
+					birthday,
+					location: countrySelected
+				})
 			});
-			const data = await response.json();
 			if (response.ok) {
-				$loading = false;
-				goto('/dashboard');
+				console.log(response);
+				if (hasPic) {
+					const sendImage = await fetch('/api/set-profileImg', {
+						method: 'POST',
+						body: formData
+					});
+					if (sendImage.ok) {
+						goto('/set-resume');
+					}
+				}
+				goto('/set-resume');
 			}
 		} else {
 			document.getElementById('firstName').classList.add('border-error');

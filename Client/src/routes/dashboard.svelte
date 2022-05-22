@@ -406,7 +406,7 @@
 									{post.description}
 								</h3>
 							</div>
-							{#if post.username == user.username}
+							{#if post.username == $User.username}
 								<form
 									id="form-{post.postId}"
 									method=" post"
@@ -462,10 +462,10 @@
 							<section
 								class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 							>
-								{#if user.profileImg}
+								{#if $User.profileImg}
 									<img
 										class="h-8 w-8 object-cover rounded-full"
-										src="/api/{user.profileImg}"
+										src="/api/{$User.profileImg}"
 										alt="Current profile photo"
 									/>
 								{:else}

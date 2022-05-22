@@ -23,10 +23,10 @@ type User struct {
 	Bio       string `json:"bio,omitempty"`
 	Location  string `json:"location,omitempty"`
 	ImgUrl    string
-	Field     string    `json:"field,omitempty"`
-	Language  string    `json:"language,omitempty"`
-	FrameWork string    `json:"framework,omitempty"`
-	Birthday  time.Time `json:"birthday,omitempty"`
+	Field     string `json:"field,omitempty"`
+	Language  string `json:"language,omitempty"`
+	FrameWork string `json:"framework,omitempty"`
+	Birthday  string `json:"birthday,omitempty"`
 }
 
 type ErrorRespone struct {
@@ -39,14 +39,6 @@ type ErrorMessage struct {
 type UserJson struct {
 	Username string `json:"username,omitempty"`
 	ImgUrl   string `json:"imgUrl,omitempty"`
-}
-type setProfile struct {
-	firstname string
-	lastname  string
-	Bio       string
-	location  string
-	birthday  int
-	image     []byte
 }
 
 func (user *User) json(r *http.Request) {
@@ -152,7 +144,7 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 func post_set_profile(w http.ResponseWriter, r *http.Request) {
-	var userData *User
+	var userData User
 	userData.json(r)
 	userId := getIdFromCookie(w, r)
 	if userData.Firstname == "" || userData.Lastname == "" || userData.Bio == "" {
@@ -169,12 +161,8 @@ func post_set_profile(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	imgUrl, err := FileUpload(r)
-	if err != nil {
-		fmt.Println(err)
-	}
-	userData.ImgUrl = imgUrl
-	fmt.Println(userData)
+	db.Model(&userData).Where("id = ?", userId).Updates(User{Firstname: userData.Firstname, Lastname: userData.Lastname, Bio: userData.Bio, Birthday: userData.Birthday, Location: userData.Location})
+	w.WriteHeader(http.StatusOK)
 }
 func post_set_resume(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r)
