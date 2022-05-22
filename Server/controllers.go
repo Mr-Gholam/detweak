@@ -150,7 +150,7 @@ func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
 	}
 	imgUrl, err := FileUpload(r)
 	handleError(err)
-	username := getUsernameById(userId)
+	username := findUsernameById(userId)
 	db.Model(&User{}).Where("id = ?", userId).Updates(User{ImgUrl: imgUrl})
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: imgUrl})
@@ -192,9 +192,21 @@ func post_create_post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	post.OwnerId = userId
+	username, firstname, lastname, profileImg := findUserById(userId)
 	db.Create(&post)
 	w.WriteHeader(http.StatusCreated)
-	e, err := json.Marshal(PostJSON{PostId: post.ID})
+	e, err := json.Marshal(
+		PostJSON{
+			PostId:        post.ID,
+			Description:   post.Description,
+			AllowComments: post.AllowComments,
+			Likes:         post.Likes,
+			CreatedAt:     post.CreatedAt,
+			ProfileImg:    profileImg,
+			Username:      username,
+			Firstname:     firstname,
+			Lastname:      lastname,
+		})
 	handleError(err)
 	w.Write(e)
 }
@@ -204,4 +216,7 @@ func post_create_post_img(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	db.Model(&Post{}).Where("id = ?", postId).Updates(Post{PostImgUrl: imgUrl})
 	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(PostImg{ImgUrl: imgUrl})
+	handleError(err)
+	w.Write(e)
 }

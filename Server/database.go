@@ -45,8 +45,13 @@ func findDuplicateUsername(username string) bool {
 		return false
 	}
 }
-func getUsernameById(userId uint) string {
+func findUsernameById(userId uint) string {
 	var user User
 	db.Where("id = ?", userId).First(&user)
 	return user.Username
+}
+func findUserById(userId uint) (string, string, string, string) {
+	var user User
+	db.Where("id = ?", userId).First(&user)
+	return user.Username, user.Firstname, user.Lastname, user.ImgUrl
 }

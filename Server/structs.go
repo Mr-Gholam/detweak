@@ -41,5 +41,18 @@ type UserJSON struct {
 	ImgUrl   string `json:"imgUrl,omitempty"`
 }
 type PostJSON struct {
-	PostId uint
+	PostId        uint
+	Description   string
+	AllowComments bool
+	Likes         int
+	PostImgUrl    string
+	CreatedAt     time.Time
+	Username      string
+	Firstname     string
+	Lastname      string
+	ProfileImg    string
+	Liked         bool
+}
+type PostImg struct {
+	ImgUrl string
 }

@@ -10,7 +10,7 @@
 	let postContent;
 	let imageSrc;
 	let postPicInput;
-	let availablePosts = null;
+	let availablePosts = [];
 	let onlineFriends = [
 		{
 			firstName: 'Sohrab',
@@ -74,14 +74,16 @@
 				allowComments: commentChecked
 			})
 		});
-		const postId = await Response.json();
-		console.log(`/api/create-postImg/${postId.PostId}`);
+		const post = await Response.json();
 		if (Response.status == 201) {
 			if (hasPhoto) {
-				const sendImage = await fetch(`/api/create-postImg/${postId.PostId}`, {
+				const sendImage = await fetch(`/api/create-postImg/${post.PostId}`, {
 					method: 'POST',
 					body: formData
 				});
+				const postImgUrl = await sendImage.json();
+				post.PostImgUrl = postImgUrl.ImgUrl;
+
 				if (sendImage.ok) {
 					imageSrc.setAttribute('src', '');
 				}
@@ -89,6 +91,8 @@
 			postContent = undefined;
 			postPicInput = postPic;
 			hasPhoto = false;
+			availablePosts.unshift(post);
+			availablePosts = availablePosts;
 		}
 	}
 	// preview post image
@@ -327,7 +331,7 @@
 			{#each availablePosts as post}
 				<!-- post outline-->
 				<div
-					id="body-{post.postId}"
+					id="body-{post.PostId}"
 					class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
 				>
 					<!-- svelte-ignore a11y-img-redundant-alt -->
@@ -339,12 +343,12 @@
 							<!--name and username-->
 							<section class="flex gap-2 items-center">
 								<!--profile img-->
-								<a href="/profile/{post.username}" class="ml-2">
-									{#if post.profileImg}
+								<a href="/profile/{post.Username}" class="ml-2">
+									{#if post.ProfileImg}
 										<img
 											class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-											src="/api/{post.profileImg}"
-											alt="Current profile photo"
+											src="/api/{post.ProfileImg}"
+											alt="Profile photo"
 										/>
 									{:else}
 										<div
@@ -355,21 +359,21 @@
 									{/if}
 								</a>
 								<!-- Name and username-->
-								<a href="/profile/{post.username}">
+								<a href="/profile/{post.Username}">
 									<h4 class="mx-2 font-semibold text-text hover:text-text-hover">
-										{post.firstName}
-										{post.lastName}
+										{post.Firstname}
+										{post.Lastname}
 									</h4>
 									<h5 class=" text-sm  text-text hover:text-text-hover mx-2 ">
-										@{post.username}
+										@{post.Username}
 									</h5>
 								</a>
 							</section>
 							<section class="flex items-center ">
-								{#if post.username == $User.username}
+								{#if post.Username == $User.username}
 									<div class="relative text-text hover:text-main">
 										<i
-											on:click={postOption(post.postId)}
+											on:click={postOption(post.PostId)}
 											class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main"
 										/>
 										<div
@@ -377,13 +381,13 @@
 											class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 										>
 											<button
-												on:click={openEdit(post.postId)}
+												on:click={openEdit(post.PostId)}
 												class="text-sm flex items-center w-full justify-start hover:text-main text-white"
 											>
 												<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
 											</button>
 											<button
-												on:click={deletePost(post.postId)}
+												on:click={deletePost(post.PostId)}
 												class="text-sm flex items-center w-full justify-start hover:text-main text-white"
 											>
 												<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
@@ -395,37 +399,37 @@
 						</section>
 						<!-- post-->
 						<section class="w-full h-fit">
-							{#if post.postImg}
+							{#if post.PostImgUrl}
 								<img
-									on:dblclick={likePost(post.postId)}
+									on:dblclick={likePost(post.PostId)}
 									class="w-full h-fit  md:mx-auto  object-cover"
-									src="/api/{post.postImg}"
+									src="/api/{post.PostImgUrl}"
 									alt=""
 								/>
 							{/if}
 							<div class="flex items-center my-4 mx-2">
-								<a href="/profile/{post.username} ">
-									<h3 class="font-semibold hover:text-text-hover text-text">{post.username}</h3>
+								<a href="/profile/{post.Username} ">
+									<h3 class="font-semibold hover:text-text-hover text-text">{post.Username}</h3>
 								</a>
 								<h3
 									class="text-base mx-2 text-text"
-									on:dblclick={likePost(post.postId)}
-									id="des-{post.postId}"
+									on:dblclick={likePost(post.PostId)}
+									id="des-{post.PostId}"
 								>
-									{post.description}
+									{post.Description}
 								</h3>
 							</div>
-							{#if post.username == $User.username}
+							{#if post.Username == $User.username}
 								<form
-									id="form-{post.postId}"
+									id="form-{post.PostId}"
 									method=" post"
 									class="w-full h-fit hidden "
-									on:submit|preventDefault={updatePost(post.postId)}
+									on:submit|preventDefault={updatePost(post.PostId)}
 								>
 									<input
 										type="text"
-										id="upDes-{post.postId}"
-										placeholder={post.description}
+										id="upDes-{post.PostId}"
+										placeholder={post.Description}
 										class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit"
 									/>
 									<input
@@ -441,20 +445,20 @@
 							<!-- button  part-->
 							<section class=" flex justify-start  text-lg  gap-2  ">
 								<button
-									class="hover:text-main text-2xl p-2 flex items-center w-16 {post.liked
+									class="hover:text-main text-2xl p-2 flex items-center w-16 {post.Liked
 										? 'text-main'
 										: 'text-text'}"
-									on:click={likePost(post.postId)}
-									><i class="fa-solid fa-heart" id="like-{post.postId}" />
-									<p class="text-sm ml-2 " id="like-n-{post.postId}">
-										{post.likes}
+									on:click={likePost(post.PostId)}
+									><i class="fa-solid fa-heart" id="like-{post.PostId}" />
+									<p class="text-sm ml-2 " id="like-n-{post.PostId}">
+										{post.Likes}
 									</p></button
 								>
-								{#if post.allowComments}
+								{#if post.AllowComments}
 									<button
-										on:click={openPost(post.postId)}
+										on:click={openPost(post.PostId)}
 										class="text-text hover:text-border text-2xl p-2 w-16 "
-										id="comment-{post.postId}"><i class="fa-solid fa-comment" /></button
+										id="comment-{post.PostId}"><i class="fa-solid fa-comment" /></button
 									>
 								{/if}
 								<button class="text-text hover:text-gray-800 text-2xl p-2 w-16" id="share"
@@ -462,12 +466,12 @@
 								>
 							</section>
 							<!--time-->
-							<h6 class="text-xs text-text mx-2">
+							<!-- <h6 class="text-xs text-text mx-2">
 								{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-							</h6>
+							</h6> -->
 						</section>
 						<!-- comment part -->
-						{#if post.allowComments}
+						{#if post.AllowComments}
 							<section
 								class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 							>
@@ -490,10 +494,10 @@
 									<input
 										type="text"
 										placeholder="Add a comment..."
-										id="cm-{post.postId}"
+										id="cm-{post.PostId}"
 										class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none text-text bg-inherit"
 									/>
-									<button id="postBtn-{post.postId}" class="main-btn w-16">Post</button>
+									<button id="postBtn-{post.PostId}" class="main-btn w-16">Post</button>
 								</form>
 							</section>
 						{/if}
