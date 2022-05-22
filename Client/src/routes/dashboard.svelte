@@ -61,25 +61,34 @@
 		const postPic = document.getElementById('postPic');
 		if (!postContent) return;
 		const formData = new FormData();
-		formData.append('allowComments', commentChecked);
-		formData.append('description', postContent);
 		if (hasPhoto) {
 			formData.append('image', postPicInput.files[0]);
 		}
 		const Response = await fetch('/api/create-post', {
 			method: 'POST',
-			body: formData
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				description: postContent,
+				allowComments: commentChecked
+			})
 		});
-		if (Response.status == 200) {
+		const postId = await Response.json();
+		console.log(`/api/create-postImg/${postId.PostId}`);
+		if (Response.status == 201) {
 			if (hasPhoto) {
-				imageSrc.setAttribute('src', '');
+				const sendImage = await fetch(`/api/create-postImg/${postId.PostId}`, {
+					method: 'POST',
+					body: formData
+				});
+				if (sendImage.ok) {
+					imageSrc.setAttribute('src', '');
+				}
 			}
 			postContent = undefined;
 			postPicInput = postPic;
 			hasPhoto = false;
-			const response = await fetch('/api/availablePosts');
-			const posts = await response.json();
-			availablePosts = posts.availablePosts;
 		}
 	}
 	// preview post image

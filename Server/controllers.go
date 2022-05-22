@@ -3,47 +3,21 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var jwtSecret = []byte("detweak")
 
-type User struct {
-	ID             uint   `gorm:"primaryKey"`
-	Email          string `json:"email,omitempty"`
-	Username       string `json:"username,omitempty"`
-	Password       string `json:"password,omitempty"`
-	Firstname      string `json:"firstname,omitempty"`
-	Lastname       string `json:"lastname,omitempty"`
-	Bio            string `json:"bio,omitempty"`
-	GitHubUsername string `json:"githubUsername,omitempty"`
-	Field          string `json:"field,omitempty"`
-	Language       string `json:"language,omitempty"`
-	FrameWork      string `json:"framework,omitempty"`
-	Birthday       string `json:"birthday,omitempty"`
-	Location       string `json:"location,omitempty"`
-	ImgUrl         string
-	CreatedAt      time.Time
-}
-
-type ErrorRespone struct {
-	Error ErrorMessage `json:"error,omitempty"`
-}
-
-type ErrorMessage struct {
-	Message string `json:"message,omitempty"`
-}
-type UserJson struct {
-	Username string `json:"username,omitempty"`
-	ImgUrl   string `json:"imgUrl,omitempty"`
-}
-
-func (user *User) json(r *http.Request) {
+func (user *User) jsonUser(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	handleError(decoder.Decode(&user))
+}
+func (post *Post) jsonPost(r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	handleError(decoder.Decode(&post))
 }
 func (user *User) encryptPassword() {
 	password := []byte(user.Password)
@@ -56,6 +30,7 @@ func (user *User) validatePassword(hashedPassword string, password string) bool 
 	return err != nil
 }
 
+// auth controllers
 func get_jwt(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(*User)
 	res, err := json.Marshal(user)
@@ -70,7 +45,7 @@ func get_logOut(w http.ResponseWriter, r *http.Request) {
 func post_signup(w http.ResponseWriter, r *http.Request) {
 
 	var user User
-	user.json(r)
+	user.jsonUser(r)
 
 	// invalid input
 	if user.Username == "" || user.Email == "" || user.Password == "" {
@@ -105,13 +80,13 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusCreated)
-	e, err := json.Marshal(UserJson{Username: user.Username, ImgUrl: ""})
+	e, err := json.Marshal(UserJSON{Username: user.Username, ImgUrl: ""})
 	handleError(err)
 	w.Write(e)
 }
 func post_login(w http.ResponseWriter, r *http.Request) {
 	var user User
-	user.json(r)
+	user.jsonUser(r)
 	FoundEmail, foundPassword, id, username := findUserByEmail(user.Email)
 	if user.Email == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -139,13 +114,13 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(UserJson{Username: username, ImgUrl: ""})
+	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: ""})
 	handleError(err)
 	w.Write(e)
 }
 func post_set_profile(w http.ResponseWriter, r *http.Request) {
 	var userData User
-	userData.json(r)
+	userData.jsonUser(r)
 	userId := getIdFromCookie(w, r)
 	if userData.Firstname == "" || userData.Lastname == "" || userData.Bio == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -178,13 +153,13 @@ func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
 	username := getUsernameById(userId)
 	db.Model(&User{}).Where("id = ?", userId).Updates(User{ImgUrl: imgUrl})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(UserJson{Username: username, ImgUrl: imgUrl})
+	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: imgUrl})
 	handleError(err)
 	w.Write(e)
 }
 func post_set_resume(w http.ResponseWriter, r *http.Request) {
 	var userData User
-	userData.json(r)
+	userData.jsonUser(r)
 	userId := getIdFromCookie(w, r)
 	if userId == 0 {
 		w.WriteHeader(http.StatusBadRequest)
@@ -194,5 +169,39 @@ func post_set_resume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db.Model(&User{}).Where("id = ?", userId).Updates(User{GitHubUsername: userData.GitHubUsername, Language: userData.Language, FrameWork: userData.FrameWork, Field: userData.Field})
+	w.WriteHeader(http.StatusOK)
+}
+
+// post controllers
+func post_create_post(w http.ResponseWriter, r *http.Request) {
+	var post Post
+	post.jsonPost(r)
+	userId := getIdFromCookie(w, r)
+	if userId == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	if post.Description == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Description"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	post.OwnerId = userId
+	db.Create(&post)
+	w.WriteHeader(http.StatusCreated)
+	e, err := json.Marshal(PostJSON{PostId: post.ID})
+	handleError(err)
+	w.Write(e)
+}
+func post_create_post_img(w http.ResponseWriter, r *http.Request) {
+	postId := mux.Vars(r)["postId"]
+	imgUrl, err := FileUpload(r)
+	handleError(err)
+	db.Model(&Post{}).Where("id = ?", postId).Updates(Post{PostImgUrl: imgUrl})
 	w.WriteHeader(http.StatusOK)
 }

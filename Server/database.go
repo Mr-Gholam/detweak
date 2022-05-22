@@ -12,7 +12,7 @@ func connectDb() {
 	var err error
 	dsn := "root:mehdi007@tcp(127.0.0.1:3306)/detweak?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &Post{})
 	if err != nil {
 		panic(err)
 	}
