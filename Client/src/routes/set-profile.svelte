@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { loading } from '../store';
+	import { loading, User } from '../store';
 	let firstName;
 	let lastName;
 	let bio;
@@ -333,7 +333,6 @@
 	 */
 	//submit
 	async function submit() {
-		console.log(location);
 		if (passedName) {
 			$loading = true;
 			const formData = new FormData();
@@ -352,13 +351,15 @@
 				})
 			});
 			if (response.ok) {
-				console.log(response);
 				if (hasPic) {
 					const sendImage = await fetch('/api/set-profileImg', {
 						method: 'POST',
 						body: formData
 					});
+					const data = await sendImage.json();
 					if (sendImage.ok) {
+						$User = data;
+						console.log($User);
 						goto('/set-resume');
 					}
 				}

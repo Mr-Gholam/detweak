@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -13,20 +12,21 @@ import (
 var jwtSecret = []byte("detweak")
 
 type User struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	Email     string `json:"email,omitempty"`
-	Username  string `json:"username,omitempty"`
-	Password  string `json:"password,omitempty"`
-	Firstname string `json:"firstname,omitempty"`
-	Lastname  string `json:"lastname,omitempty"`
-	Bio       string `json:"bio,omitempty"`
-	Location  string `json:"location,omitempty"`
-	ImgUrl    string
-	Field     string `json:"field,omitempty"`
-	Language  string `json:"language,omitempty"`
-	FrameWork string `json:"framework,omitempty"`
-	Birthday  string `json:"birthday,omitempty"`
+	ID             uint   `gorm:"primaryKey"`
+	Email          string `json:"email,omitempty"`
+	Username       string `json:"username,omitempty"`
+	Password       string `json:"password,omitempty"`
+	Firstname      string `json:"firstname,omitempty"`
+	Lastname       string `json:"lastname,omitempty"`
+	Bio            string `json:"bio,omitempty"`
+	GitHubUsername string `json:"githubUsername,omitempty"`
+	Field          string `json:"field,omitempty"`
+	Language       string `json:"language,omitempty"`
+	FrameWork      string `json:"framework,omitempty"`
+	Birthday       string `json:"birthday,omitempty"`
+	Location       string `json:"location,omitempty"`
+	ImgUrl         string
+	CreatedAt      time.Time
 }
 
 type ErrorRespone struct {
@@ -80,9 +80,9 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	foundEmail, _, _, _ := findEmail(user.Email)
+	foundEmail := findDuplicateEmail(user.Email)
 	// find duplicate email
-	if len(foundEmail) != 0 {
+	if foundEmail {
 		w.WriteHeader(http.StatusBadRequest)
 		e, err := json.Marshal(ErrorRespone{ErrorMessage{"email already exists"}})
 		handleError(err)
@@ -90,7 +90,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// find duplicate username
-	if findUsername(user.Username) {
+	if findDuplicateUsername(user.Username) {
 		w.WriteHeader(http.StatusBadRequest)
 		e, err := json.Marshal(ErrorRespone{ErrorMessage{"username already exists"}})
 		handleError(err)
@@ -112,7 +112,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 func post_login(w http.ResponseWriter, r *http.Request) {
 	var user User
 	user.json(r)
-	FoundEmail, foundPassword, id, username := findEmail(user.Email)
+	FoundEmail, foundPassword, id, username := findUserByEmail(user.Email)
 	if user.Email == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid email or password"}})
@@ -164,6 +164,35 @@ func post_set_profile(w http.ResponseWriter, r *http.Request) {
 	db.Model(&userData).Where("id = ?", userId).Updates(User{Firstname: userData.Firstname, Lastname: userData.Lastname, Bio: userData.Bio, Birthday: userData.Birthday, Location: userData.Location})
 	w.WriteHeader(http.StatusOK)
 }
+func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	if userId == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	imgUrl, err := FileUpload(r)
+	handleError(err)
+	username := getUsernameById(userId)
+	db.Model(&User{}).Where("id = ?", userId).Updates(User{ImgUrl: imgUrl})
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(UserJson{Username: username, ImgUrl: imgUrl})
+	handleError(err)
+	w.Write(e)
+}
 func post_set_resume(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r)
+	var userData User
+	userData.json(r)
+	userId := getIdFromCookie(w, r)
+	if userId == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	db.Model(&User{}).Where("id = ?", userId).Updates(User{GitHubUsername: userData.GitHubUsername, Language: userData.Language, FrameWork: userData.FrameWork, Field: userData.Field})
+	w.WriteHeader(http.StatusOK)
 }

@@ -18,7 +18,16 @@ func connectDb() {
 	}
 
 }
-func findEmail(email string) (string, string, uint, string) {
+func findDuplicateEmail(email string) bool {
+	var user User
+	db.Where("email = ?", email).First(&user)
+	if len(user.Email) > 0 {
+		return true
+	} else {
+		return false
+	}
+}
+func findUserByEmail(email string) (string, string, uint, string) {
 	var user User
 	db.Where("email = ?", email).First(&user)
 	if len(user.Email) > 0 {
@@ -27,7 +36,7 @@ func findEmail(email string) (string, string, uint, string) {
 		return "", "", 0, ""
 	}
 }
-func findUsername(username string) bool {
+func findDuplicateUsername(username string) bool {
 	var user User
 	db.Where("username = ?", username).First(&user)
 	if len(user.Username) > 0 {
@@ -35,4 +44,9 @@ func findUsername(username string) bool {
 	} else {
 		return false
 	}
+}
+func getUsernameById(userId uint) string {
+	var user User
+	db.Where("id = ?", userId).First(&user)
+	return user.Username
 }
