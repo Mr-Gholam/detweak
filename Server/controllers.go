@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"sort"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
@@ -231,6 +232,17 @@ func post_create_post_img(w http.ResponseWriter, r *http.Request) {
 	db.Model(&Post{}).Where("id = ?", postId).Updates(Post{PostImgUrl: imgUrl})
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(PostImg{ImgUrl: imgUrl})
+	handleError(err)
+	w.Write(e)
+}
+func get_available_posts(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	availablePosts := getPostsByUserId(userId)
+	sort.Slice(availablePosts, func(i, j int) bool {
+		return availablePosts[j].PostId < availablePosts[i].PostId
+	})
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(availablePosts)
 	handleError(err)
 	w.Write(e)
 }

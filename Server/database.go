@@ -18,6 +18,8 @@ func connectDb() {
 	}
 
 }
+
+// user
 func findDuplicateEmail(email string) bool {
 	var user User
 	db.Where("email = ?", email).First(&user)
@@ -54,4 +56,27 @@ func findUserById(userId uint) (string, string, string, string) {
 	var user User
 	db.Where("id = ?", userId).First(&user)
 	return user.Username, user.Firstname, user.Lastname, user.ImgUrl
+}
+
+// post
+func getPostsByUserId(ownerId uint) []PostJSON {
+	var postsInfo []Post
+	db.Where("owner_id = ?", ownerId).Find(&postsInfo)
+	username, firstname, lastname, userImgUrl := findUserById(ownerId)
+	var posts []PostJSON
+	for i := 0; i < len(postsInfo); i++ {
+		var post PostJSON
+		post.AllowComments = postsInfo[i].AllowComments
+		post.CreatedAt = postsInfo[i].CreatedAt
+		post.Description = postsInfo[i].Description
+		post.PostImgUrl = postsInfo[i].PostImgUrl
+		post.Likes = postsInfo[i].Likes
+		post.PostId = postsInfo[i].ID
+		post.Username = username
+		post.Firstname = firstname
+		post.Lastname = lastname
+		post.ProfileImg = userImgUrl
+		posts = append(posts, post)
+	}
+	return posts
 }

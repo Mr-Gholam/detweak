@@ -10,7 +10,7 @@ func routerSetup(router *mux.Router) {
 
 	router.Use(corsMiddleware)
 	router.Use(authMiddleware)
-
+	// img handler
 	router.Handle("/api/images/{imgUrl}", http.HandlerFunc(sendFileToClient)).Methods("GET")
 	// auth routes
 	router.Handle("/api/jwt", http.HandlerFunc(get_jwt)).Methods("GET")
@@ -23,4 +23,6 @@ func routerSetup(router *mux.Router) {
 	// post routes
 	router.Handle("/api/create-post", http.HandlerFunc(post_create_post)).Methods("POST")
 	router.Handle("/api/create-postImg/{postId}", http.HandlerFunc(post_create_post_img)).Methods("POST")
+	router.Handle("/api/availablePosts", http.HandlerFunc(get_available_posts)).Methods("GET")
+
 }

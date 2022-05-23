@@ -46,7 +46,8 @@
 		}
 		const response = await fetch('/api/availablePosts');
 		const posts = await response.json();
-		availablePosts = posts.availablePosts;
+		console.log(posts);
+		availablePosts = posts;
 		$loading = false;
 	});
 	function toggleComment(event) {
@@ -232,9 +233,9 @@
 		});
 		if (res.status == 200) {
 			openEdit(postId);
-			const response = await fetch('/api/availablePosts');
-			const posts = await response.json();
-			availablePosts = posts.availablePosts;
+			// const response = await fetch('/api/availablePosts');
+			// const posts = await response.json();
+			// availablePosts = posts.availablePosts;
 		}
 	}
 </script>
@@ -242,271 +243,273 @@
 <svelte:head>
 	<title>Dashboard</title>
 </svelte:head>
-<div class="  md:w-fit w-full lg:w-128 my-2">
-	<!--Main part-->
-	<div
-		id="main"
-		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-full   overflow-x-hidden	 "
-	>
-		<!--Creat Post-->
+{#if $User}
+	<div class="  md:w-fit w-full lg:w-128 my-2">
+		<!--Main part-->
 		<div
-			class="md:border-2 md:border-solid md:border-border shadow-xl w-full rounded-md my-2 overflow-hidden"
+			id="main"
+			class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-full   overflow-x-hidden	 "
 		>
-			<form
-				action="/create-post"
-				method="post"
-				class="flex-col flex"
-				on:submit|preventDefault={newPost}
+			<!--Creat Post-->
+			<div
+				class="md:border-2 md:border-solid md:border-border shadow-xl w-full rounded-md my-2 overflow-hidden"
 			>
-				{#if hasPhoto}
-					<img
-						src=""
-						bind:this={imageSrc}
-						alt=""
-						class="w-full h-fit rounded-sm mx-auto my-1 object-cover"
-					/>
-				{/if}
+				<form
+					action="/create-post"
+					method="post"
+					class="flex-col flex"
+					on:submit|preventDefault={newPost}
+				>
+					{#if hasPhoto}
+						<img
+							src=""
+							bind:this={imageSrc}
+							alt=""
+							class="w-full h-fit rounded-sm mx-auto my-1 object-cover"
+						/>
+					{/if}
 
-				<textarea
-					name="postContent"
-					id="postContent"
-					bind:value={postContent}
-					cols="20"
-					rows="7"
-					placeholder="What's up"
-					class=" p-2 focus:outline-hidden focus:outline-none resize-none text-text"
-				/>
-				<section class="flex justify-evenly items-center">
-					<!-- comments option -->
-					<label for="toggleB" class="flex items-center cursor-pointer">
-						<!-- label -->
-						<div class="mr-3 text-text font-medium">Comments</div>
-						<!-- toggle -->
-						<div class="relative">
-							<!-- input -->
-							<input
-								on:change={toggleComment}
-								type="checkbox"
-								id="toggleB"
-								class="sr-only"
-								checked
-								aria-checked={commentChecked}
-							/>
-							<!-- line -->
-							<div class="block bg-main-bg w-11 h-6 rounded-full border border-border" />
-							<!-- dot -->
-							<div
-								class="dot absolute left-0.5 top-0.5 bg-gray-500 w-5 h-5 rounded-full transition"
-							/>
-						</div>
-					</label>
-
-					<!-- file input-->
-					<label for="postPic" class="text-2xl  hover:cursor-pointer hover:text-main  text-text"
-						><i class="fa-solid fa-paperclip" /></label
-					>
-					<input
-						bind:this={postPicInput}
-						type="file"
-						name="image"
-						on:change={previewImg}
-						id="postPic"
-						class="hidden"
+					<textarea
+						name="postContent"
+						id="postContent"
+						bind:value={postContent}
+						cols="20"
+						rows="7"
+						placeholder="What's up"
+						class=" p-2 focus:outline-hidden focus:outline-none resize-none text-text"
 					/>
-					<!--Submit button-->
-					<input
-						type="submit"
-						value="Post "
-						class="p-1 text-xl font-semibold hover:cursor-pointer py-2 px-5 
+					<section class="flex justify-evenly items-center">
+						<!-- comments option -->
+						<label for="toggleB" class="flex items-center cursor-pointer">
+							<!-- label -->
+							<div class="mr-3 text-text font-medium">Comments</div>
+							<!-- toggle -->
+							<div class="relative">
+								<!-- input -->
+								<input
+									on:change={toggleComment}
+									type="checkbox"
+									id="toggleB"
+									class="sr-only"
+									checked
+									aria-checked={commentChecked}
+								/>
+								<!-- line -->
+								<div class="block bg-main-bg w-11 h-6 rounded-full border border-border" />
+								<!-- dot -->
+								<div
+									class="dot absolute left-0.5 top-0.5 bg-gray-500 w-5 h-5 rounded-full transition"
+								/>
+							</div>
+						</label>
+
+						<!-- file input-->
+						<label for="postPic" class="text-2xl  hover:cursor-pointer hover:text-main  text-text"
+							><i class="fa-solid fa-paperclip" /></label
+						>
+						<input
+							bind:this={postPicInput}
+							type="file"
+							name="image"
+							on:change={previewImg}
+							id="postPic"
+							class="hidden"
+						/>
+						<!--Submit button-->
+						<input
+							type="submit"
+							value="Post "
+							class="p-1 text-xl font-semibold hover:cursor-pointer py-2 px-5 
 						text-text
 						m-2 rounded-md 
 						hover:text-main
 						w-24"
-					/>
-				</section>
-			</form>
-		</div>
-		<!--post-->
-		{#if availablePosts}
-			{#each availablePosts as post}
-				<!-- post outline-->
-				<div
-					id="body-{post.PostId}"
-					class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
-				>
-					<!-- svelte-ignore a11y-img-redundant-alt -->
-					<section class=" flex justify-between items-center flex-col ">
-						<!--post info-->
-						<section
-							class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-border"
-						>
-							<!--name and username-->
-							<section class="flex gap-2 items-center">
-								<!--profile img-->
-								<a href="/profile/{post.Username}" class="ml-2">
-									{#if post.ProfileImg}
-										<img
-											class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-											src="/api/images/{post.ProfileImg}"
-											alt="Profile photo"
-										/>
-									{:else}
-										<div
-											class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
-										>
-											<i class="fa-solid fa-user text-slate-400 text-2xl" />
+						/>
+					</section>
+				</form>
+			</div>
+			<!--post-->
+			{#if availablePosts}
+				{#each availablePosts as post}
+					<!-- post outline-->
+					<div
+						id="body-{post.PostId}"
+						class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden"
+					>
+						<!-- svelte-ignore a11y-img-redundant-alt -->
+						<section class=" flex justify-between items-center flex-col ">
+							<!--post info-->
+							<section
+								class="  p-2 flex  items-center gap-2 justify-between w-full border-b border-solid border-border"
+							>
+								<!--name and username-->
+								<section class="flex gap-2 items-center">
+									<!--profile img-->
+									<a href="/profile/{post.Username}" class="ml-2">
+										{#if post.ProfileImg}
+											<img
+												class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
+												src="/api/images/{post.ProfileImg}"
+												alt="Profile photo"
+											/>
+										{:else}
+											<div
+												class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
+											>
+												<i class="fa-solid fa-user text-slate-400 text-2xl" />
+											</div>
+										{/if}
+									</a>
+									<!-- Name and username-->
+									<a href="/profile/{post.Username}">
+										<h4 class="mx-2 font-semibold text-text hover:text-text-hover">
+											{post.Firstname}
+											{post.Lastname}
+										</h4>
+										<h5 class=" text-sm  text-text hover:text-text-hover mx-2 ">
+											@{post.Username}
+										</h5>
+									</a>
+								</section>
+								<section class="flex items-center ">
+									{#if post.Username == $User.username}
+										<div class="relative text-text hover:text-main">
+											<i
+												on:click={postOption(post.PostId)}
+												class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main"
+											/>
+											<div
+												id={post.postId}
+												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
+											>
+												<button
+													on:click={openEdit(post.PostId)}
+													class="text-sm flex items-center w-full justify-start hover:text-main text-white"
+												>
+													<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
+												</button>
+												<button
+													on:click={deletePost(post.PostId)}
+													class="text-sm flex items-center w-full justify-start hover:text-main text-white"
+												>
+													<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
+												</button>
+											</div>
 										</div>
 									{/if}
-								</a>
-								<!-- Name and username-->
-								<a href="/profile/{post.Username}">
-									<h4 class="mx-2 font-semibold text-text hover:text-text-hover">
-										{post.Firstname}
-										{post.Lastname}
-									</h4>
-									<h5 class=" text-sm  text-text hover:text-text-hover mx-2 ">
-										@{post.Username}
-									</h5>
-								</a>
+								</section>
 							</section>
-							<section class="flex items-center ">
-								{#if post.Username == $User.username}
-									<div class="relative text-text hover:text-main">
-										<i
-											on:click={postOption(post.PostId)}
-											class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main"
-										/>
-										<div
-											id={post.postId}
-											class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
-										>
-											<button
-												on:click={openEdit(post.PostId)}
-												class="text-sm flex items-center w-full justify-start hover:text-main text-white"
-											>
-												<i class="fa-solid fa-pen-to-square mr-1 text-xs" /> Edit Post
-											</button>
-											<button
-												on:click={deletePost(post.PostId)}
-												class="text-sm flex items-center w-full justify-start hover:text-main text-white"
-											>
-												<i class="fa-solid fa-trash mr-1 text-xs" /> Delete Post
-											</button>
-										</div>
-									</div>
-								{/if}
-							</section>
-						</section>
-						<!-- post-->
-						<section class="w-full h-fit">
-							{#if post.PostImgUrl}
-								<img
-									on:dblclick={likePost(post.PostId)}
-									class="w-full h-fit  md:mx-auto  object-cover"
-									src="/api/images/{post.PostImgUrl}"
-									alt=""
-								/>
-							{/if}
-							<div class="flex items-center my-4 mx-2">
-								<a href="/profile/{post.Username} ">
-									<h3 class="font-semibold hover:text-text-hover text-text">{post.Username}</h3>
-								</a>
-								<h3
-									class="text-base mx-2 text-text"
-									on:dblclick={likePost(post.PostId)}
-									id="des-{post.PostId}"
-								>
-									{post.Description}
-								</h3>
-							</div>
-							{#if post.Username == $User.username}
-								<form
-									id="form-{post.PostId}"
-									method=" post"
-									class="w-full h-fit hidden "
-									on:submit|preventDefault={updatePost(post.PostId)}
-								>
-									<input
-										type="text"
-										id="upDes-{post.PostId}"
-										placeholder={post.Description}
-										class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit"
-									/>
-									<input
-										type="submit"
-										value="Edit"
-										class="p-1 text-md font-semibold text-main-bg hover:cursor-pointer py-1 px-2 rounded-md hover:text-white hover:bg-main-bg w-16 border border-main-bg float-right mr-4 mb-1"
-									/>
-								</form>
-							{/if}
-						</section>
-						<!--bottom part-->
-						<section class="flex justify-between w-full items-center px-2">
-							<!-- button  part-->
-							<section class=" flex justify-start  text-lg  gap-2  ">
-								<button
-									class="hover:text-main text-2xl p-2 flex items-center w-16 {post.Liked
-										? 'text-main'
-										: 'text-text'}"
-									on:click={likePost(post.PostId)}
-									><i class="fa-solid fa-heart" id="like-{post.PostId}" />
-									<p class="text-sm ml-2 " id="like-n-{post.PostId}">
-										{post.Likes}
-									</p></button
-								>
-								{#if post.AllowComments}
-									<button
-										on:click={openPost(post.PostId)}
-										class="text-text hover:text-border text-2xl p-2 w-16 "
-										id="comment-{post.PostId}"><i class="fa-solid fa-comment" /></button
-									>
-								{/if}
-								<button class="text-text hover:text-gray-800 text-2xl p-2 w-16" id="share"
-									><i class="fa-solid fa-share" /></button
-								>
-							</section>
-							<!--time-->
-							<!-- <h6 class="text-xs text-text mx-2">
-								{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-							</h6> -->
-						</section>
-						<!-- comment part -->
-						{#if post.AllowComments}
-							<section
-								class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
-							>
-								{#if $User.profileImg}
+							<!-- post-->
+							<section class="w-full h-fit">
+								{#if post.PostImgUrl}
 									<img
-										class="h-8 w-8 object-cover rounded-full"
-										src="/api/{$User.profileImg}"
-										alt="Current profile photo"
+										on:dblclick={likePost(post.PostId)}
+										class="w-full h-fit  md:mx-auto  object-cover"
+										src="/api/images/{post.PostImgUrl}"
+										alt=""
 									/>
-								{:else}
-									<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
-										<i class="fa-solid fa-user text-slate-400 text-lg" />
-									</div>
 								{/if}
-								<form
-									method="post"
-									on:submit|preventDefault={addComment(post.postId)}
-									class="flex-1 flex justify-between  mx-2"
-								>
-									<input
-										type="text"
-										placeholder="Add a comment..."
-										id="cm-{post.PostId}"
-										class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none text-text bg-inherit"
-									/>
-									<button id="postBtn-{post.PostId}" class="main-btn w-16">Post</button>
-								</form>
+								<div class="flex items-center my-4 mx-2">
+									<a href="/profile/{post.Username} ">
+										<h3 class="font-semibold hover:text-text-hover text-text">{post.Username}</h3>
+									</a>
+									<h3
+										class="text-base mx-2 text-text"
+										on:dblclick={likePost(post.PostId)}
+										id="des-{post.PostId}"
+									>
+										{post.Description}
+									</h3>
+								</div>
+								{#if post.Username == $User.username}
+									<form
+										id="form-{post.PostId}"
+										method=" post"
+										class="w-full h-fit hidden "
+										on:submit|preventDefault={updatePost(post.PostId)}
+									>
+										<input
+											type="text"
+											id="upDes-{post.PostId}"
+											placeholder={post.Description}
+											class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit"
+										/>
+										<input
+											type="submit"
+											value="Edit"
+											class="p-1 text-md font-semibold text-main-bg hover:cursor-pointer py-1 px-2 rounded-md hover:text-white hover:bg-main-bg w-16 border border-main-bg float-right mr-4 mb-1"
+										/>
+									</form>
+								{/if}
 							</section>
-						{/if}
-					</section>
-				</div>
-			{/each}
-		{/if}
+							<!--bottom part-->
+							<section class="flex justify-between w-full items-center px-2">
+								<!-- button  part-->
+								<section class=" flex justify-start  text-lg  gap-2  ">
+									<button
+										class="hover:text-main text-2xl p-2 flex items-center w-16 {post.Liked
+											? 'text-main'
+											: 'text-text'}"
+										on:click={likePost(post.PostId)}
+										><i class="fa-solid fa-heart" id="like-{post.PostId}" />
+										<p class="text-sm ml-2 " id="like-n-{post.PostId}">
+											{post.Likes}
+										</p></button
+									>
+									{#if post.AllowComments}
+										<button
+											on:click={openPost(post.PostId)}
+											class="text-text hover:text-border text-2xl p-2 w-16 "
+											id="comment-{post.PostId}"><i class="fa-solid fa-comment" /></button
+										>
+									{/if}
+									<button class="text-text hover:text-gray-800 text-2xl p-2 w-16" id="share"
+										><i class="fa-solid fa-share" /></button
+									>
+								</section>
+								<!--time-->
+								<h6 class="text-xs text-text mx-2">
+									{formatDistanceToNow(new Date(post.CreatedAt), { addSuffix: true })}
+								</h6>
+							</section>
+							<!-- comment part -->
+							{#if post.AllowComments}
+								<section
+									class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
+								>
+									{#if $User.profileImg}
+										<img
+											class="h-8 w-8 object-cover rounded-full"
+											src="/api/{$User.profileImg}"
+											alt="Current profile photo"
+										/>
+									{:else}
+										<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
+											<i class="fa-solid fa-user text-slate-400 text-lg" />
+										</div>
+									{/if}
+									<form
+										method="post"
+										on:submit|preventDefault={addComment(post.postId)}
+										class="flex-1 flex justify-between  mx-2"
+									>
+										<input
+											type="text"
+											placeholder="Add a comment..."
+											id="cm-{post.PostId}"
+											class="w-9/12 py-0.5  px-2 focus:outline-hidden focus:outline-none text-text bg-inherit"
+										/>
+										<button id="postBtn-{post.PostId}" class="main-btn w-16">Post</button>
+									</form>
+								</section>
+							{/if}
+						</section>
+					</div>
+				{/each}
+			{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	input:checked ~ .dot {
