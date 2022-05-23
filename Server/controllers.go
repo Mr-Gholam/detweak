@@ -192,6 +192,16 @@ func post_set_resume(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// profile controller
+func get_profile(w http.ResponseWriter, r *http.Request) {
+	username := mux.Vars(r)["username"]
+	profileInfo := findUserInfoByUsername(username)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(profileInfo)
+	handleError(err)
+	w.Write(e)
+}
+
 // post controllers
 func post_create_post(w http.ResponseWriter, r *http.Request) {
 	var post Post
@@ -280,4 +290,10 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 		handleError(err)
 		w.Write(e)
 	}
+}
+
+// search
+func get_search(w http.ResponseWriter, r *http.Request) {
+	// userInput := mux.Vars(r)["userInput"]
+
 }

@@ -17,14 +17,17 @@
 	let bio;
 	let profileImg;
 	let birthday;
-	let onlineTime;
 	let userName;
 	let postCount;
 	let friendCount;
+	let frameWork;
+	let language;
 	let location;
 	let myProfile;
 	let isFriend;
 	let sentRequest;
+	let field;
+	let gitHub;
 	let posts = null;
 	onMount(async () => {
 		const username = $page.params.username;
@@ -33,25 +36,29 @@
 		}
 		const response = await fetch(`/api/profile/${username}`);
 		const data = await response.json();
+		console.log(data);
 		if (data) {
 			$loading = false;
 		}
-		firstName = data.firstName;
-		lastName = data.lastName;
-		userName = data.username;
-		bio = data.bio;
-		profileImg = data.profileImg;
-		birthday = data.birthday;
-		postCount = data.postCount;
-		friendCount = data.friendCount;
-		location = data.location;
-		isFriend = data.isFriend;
+		firstName = data.Firstname;
+		lastName = data.Lastname;
+		userName = data.Username;
+		bio = data.Bio;
+		profileImg = data.ImgUrl;
+		birthday = data.Birthday;
+		postCount = data.PostCount;
+		friendCount = data.FriendCount;
+		location = data.Location;
+		isFriend = data.IsFriend;
+		gitHub = data.GitHubUsername;
+		field = data.Field;
+		language = data.Language;
+		frameWork = data.FrameWork;
 		sentRequest = data.sentRequest;
 		if (birthday) {
 			day = new Date(birthday).getDate();
 			month = new Date(birthday).getMonth() + 1;
 		}
-		onlineTime = data.onlineTime;
 		posts = data.availablePosts;
 	});
 	async function addFriend() {
@@ -222,7 +229,7 @@
 					{#if profileImg}
 						<img
 							class="h-20 w-20 object-cover rounded-full lg:mr-16 "
-							src="/api/{profileImg}"
+							src="/api/images/{profileImg}"
 							alt="Current profile photo"
 						/>
 					{:else}
@@ -242,30 +249,30 @@
 					<div>
 						<h4 class="text-text">
 							<i class="fa-solid fa-code" />
-							Front-end
+							{field}
 						</h4>
 					</div>
 				</div>
 				<div class="m-2 px-2  flex justify-between items-center">
-					<section class="  text-2xl text-text font-semibold  my-1">
-						<i class="fa-brands fa-js" />
-						<i class="fa-brands fa-php" />
+					<section class="  text-sm font-semibold  my-1 text-text">
+						<h4 class="text-xs">Main Language</h4>
+						<h4 class="">
+							{language}
+						</h4>
+					</section>
+					<section class="   text-text font-semibold  my-1">
+						{frameWork}
 					</section>
 					<section class=" text-xl  text-text font-semibold  my-1">
-						<a href="https://github.com/Mr-Gholam">
+						<a href="https://github.com/{gitHub}">
 							<i class="fa-brands fa-github" />
 						</a>
 					</section>
 				</div>
 				<!-- birthday - location - bio-->
 				<div class="m-x2 px-2">
-					{#if bio}
-						<h5 class="text-sm my-4 text-text ">
-							{bio}
-						</h5>
-					{/if}
 					<!--birthday - location -->
-					<section class="flex w-full justify-between 	">
+					<section class="flex w-full justify-between px-2 	">
 						{#if birthday}
 							<h5 class=" text-xs  text-text font-semibold  my-1">
 								<i class="fa-solid fa-cake-candles" />
@@ -283,6 +290,9 @@
 							5 years
 						</h5>
 					</section>
+					<h5 class="text-sm my-4 text-text ">
+						{bio}
+					</h5>
 				</div>
 				<!-- posts - friends - friend request or send massage-->
 				<div class="flex justify-evenly w-full items-center p-2">

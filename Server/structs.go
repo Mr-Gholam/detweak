@@ -1,6 +1,8 @@
 package main
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID             uint   `gorm:"primaryKey"`
@@ -16,6 +18,7 @@ type User struct {
 	FrameWork      string `json:"framework,omitempty"`
 	Birthday       string `json:"birthday,omitempty"`
 	Location       string `json:"location,omitempty"`
+	Experience     int    `json:"experience,omitempty"`
 	ImgUrl         string
 	CreatedAt      time.Time
 }
@@ -28,10 +31,40 @@ type Post struct {
 	PostImgUrl    string
 	CreatedAt     time.Time
 }
+type friendShip struct {
+	ID         uint `gorm:"primaryKey"`
+	SenderId   uint
+	ReceiverId uint
+	Status     string
+}
 type LikedPost struct {
 	ID     uint `gorm:"primaryKey"`
 	UserId uint
 	PostId uint `json:"postId"`
+}
+type SearchResult struct {
+	Email        string
+	Username     string
+	Firstname    string
+	Lastname     string
+	ImgUrl       string
+	friendStatus string
+}
+type ProfileInfo struct {
+	Username       string
+	Firstname      string
+	Lastname       string
+	Bio            string
+	Location       string
+	Birthday       string
+	Language       string
+	Field          string
+	FrameWork      string
+	GitHubUsername string
+	ImgUrl         string
+	PostCount      int
+	FriendCount    int
+	IsFriend       bool
 }
 type ErrorRespone struct {
 	Error ErrorMessage `json:"error,omitempty"`

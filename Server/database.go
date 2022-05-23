@@ -107,3 +107,40 @@ func dislikePost(postId uint) {
 	newLikes := post.Likes - 1
 	db.Model(&Post{}).Where("id=?", postId).Update("likes", newLikes)
 }
+
+// profile
+func findUserInfoByUsername(username string) ProfileInfo {
+	var user User
+	db.Where("username = ?", username).Find(&user)
+	var profileInfo ProfileInfo
+	profileInfo.Username = user.Username
+	profileInfo.Firstname = user.Firstname
+	profileInfo.Lastname = user.Lastname
+	profileInfo.Bio = user.Bio
+	profileInfo.ImgUrl = user.ImgUrl
+	profileInfo.FrameWork = user.FrameWork
+	profileInfo.Language = user.Language
+	profileInfo.Field = user.Field
+	profileInfo.Birthday = user.Birthday
+	profileInfo.Location = user.Location
+	profileInfo.Field = user.Field
+	profileInfo.GitHubUsername = user.GitHubUsername
+
+	return profileInfo
+}
+
+// search
+func findUserByName(name string, userId uint) []SearchResult {
+	var users []User
+	var result []SearchResult
+	db.Where("firstname LIKE ?", name).Or("lastname LIKE ?", name).Find(&users)
+	for i := 0; i < len(users); i++ {
+		var userInfo SearchResult
+		userInfo.Email = users[i].Email
+		userInfo.Firstname = users[i].Firstname
+		userInfo.Lastname = users[i].Lastname
+		userInfo.ImgUrl = users[i].ImgUrl
+		result = append(result, userInfo)
+	}
+	return result
+}
