@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -20,6 +21,10 @@ func (user *User) jsonUser(r *http.Request) {
 func (post *Post) jsonPost(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	handleError(decoder.Decode(&post))
+}
+func (likedPost *LikedPost) jsonLikedPost(r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	handleError(decoder.Decode(&likedPost))
 }
 func (user *User) encryptPassword() {
 	password := []byte(user.Password)
@@ -102,7 +107,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 func post_login(w http.ResponseWriter, r *http.Request) {
 	var user User
 	user.jsonUser(r)
-	FoundEmail, foundPassword, id, username := findUserByEmail(user.Email)
+	FoundEmail, foundPassword, id, username, ImgUrl := findUserByEmail(user.Email)
 	if user.Email == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid email or password"}})
@@ -129,7 +134,7 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: ""})
+	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: ImgUrl})
 	handleError(err)
 	w.Write(e)
 }
@@ -236,8 +241,15 @@ func post_create_post_img(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 func get_available_posts(w http.ResponseWriter, r *http.Request) {
+	var friendIds []uint
+	var availablePosts []PostJSON
 	userId := getIdFromCookie(w, r)
-	availablePosts := getPostsByUserId(userId)
+	friendIds = append(friendIds, userId)
+	for i := 0; i < len(friendIds); i++ {
+		posts := getPostsByUserId(friendIds[i], userId)
+		availablePosts = append(availablePosts, posts...)
+	}
+
 	sort.Slice(availablePosts, func(i, j int) bool {
 		return availablePosts[j].PostId < availablePosts[i].PostId
 	})
@@ -245,4 +257,27 @@ func get_available_posts(w http.ResponseWriter, r *http.Request) {
 	e, err := json.Marshal(availablePosts)
 	handleError(err)
 	w.Write(e)
+}
+func post_like_post(w http.ResponseWriter, r *http.Request) {
+	var likedPost LikedPost
+	likedPost.jsonLikedPost(r)
+	userId := getIdFromCookie(w, r)
+	likedPost.UserId = userId
+	result := getPostLikedByUserId(userId, likedPost.PostId)
+	if result {
+		dislikePost(likedPost.PostId)
+		db.Where("user_id = ? AND post_id = ?", userId, likedPost.PostId).Delete(&LikedPost{})
+		w.WriteHeader(http.StatusOK)
+		e, err := json.Marshal(LikedPostJSON{Added: false})
+		handleError(err)
+		w.Write(e)
+	} else {
+		likePost(likedPost.PostId)
+		db.Create(&likedPost)
+		w.WriteHeader(http.StatusOK)
+		fmt.Println(LikedPostJSON{Added: true})
+		e, err := json.Marshal(LikedPostJSON{Added: true})
+		handleError(err)
+		w.Write(e)
+	}
 }

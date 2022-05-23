@@ -24,11 +24,15 @@ type Post struct {
 	OwnerId       uint
 	Description   string `json:"description"`
 	AllowComments bool   `json:"allowComments"`
-	Likes         int
+	Likes         uint
 	PostImgUrl    string
 	CreatedAt     time.Time
 }
-
+type LikedPost struct {
+	ID     uint `gorm:"primaryKey"`
+	UserId uint
+	PostId uint `json:"postId"`
+}
 type ErrorRespone struct {
 	Error ErrorMessage `json:"error,omitempty"`
 }
@@ -44,7 +48,7 @@ type PostJSON struct {
 	PostId        uint
 	Description   string
 	AllowComments bool
-	Likes         int
+	Likes         uint
 	PostImgUrl    string
 	CreatedAt     time.Time
 	Username      string
@@ -55,4 +59,7 @@ type PostJSON struct {
 }
 type PostImg struct {
 	ImgUrl string
+}
+type LikedPostJSON struct {
+	Added bool
 }

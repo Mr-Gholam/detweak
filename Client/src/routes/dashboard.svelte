@@ -46,7 +46,6 @@
 		}
 		const response = await fetch('/api/availablePosts');
 		const posts = await response.json();
-		console.log(posts);
 		availablePosts = posts;
 		$loading = false;
 	});
@@ -122,7 +121,7 @@
 			})
 		});
 		const data = await response.json();
-		if (data.added) {
+		if (data.Added) {
 			likeBtn.classList.add('text-main');
 			likeNumber.classList.add('text-main');
 			likeBtn.classList.remove('text-gray-400');
@@ -133,10 +132,10 @@
 			likeNumber.classList.remove('text-main');
 			likeBtn.classList.add('text-gray-400');
 			likeNumber.classList.add('text-gray-400');
+			if (likeNumber.innerText === '0') return;
 			likeNumber.innerText = Number(likeNumber.innerText) - 1;
 		}
 	}
-
 	//  open post option
 	function postOption(postId) {
 		const option = document.getElementById(`${postId}`);
@@ -477,10 +476,10 @@
 								<section
 									class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 								>
-									{#if $User.profileImg}
+									{#if $User.imgUrl}
 										<img
 											class="h-8 w-8 object-cover rounded-full"
-											src="/api/{$User.profileImg}"
+											src="/api/images/{$User.imgUrl}"
 											alt="Current profile photo"
 										/>
 									{:else}

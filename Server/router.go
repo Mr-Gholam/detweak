@@ -21,8 +21,9 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/set-profileImg", http.HandlerFunc(post_set_profile_img)).Methods("POST")
 	router.Handle("/api/set-resume", http.HandlerFunc(post_set_resume)).Methods("POST")
 	// post routes
+	router.Handle("/api/availablePosts", http.HandlerFunc(get_available_posts)).Methods("GET")
 	router.Handle("/api/create-post", http.HandlerFunc(post_create_post)).Methods("POST")
 	router.Handle("/api/create-postImg/{postId}", http.HandlerFunc(post_create_post_img)).Methods("POST")
-	router.Handle("/api/availablePosts", http.HandlerFunc(get_available_posts)).Methods("GET")
+	router.Handle("/api/like-post", http.HandlerFunc(post_like_post)).Methods("POST")
 
 }
