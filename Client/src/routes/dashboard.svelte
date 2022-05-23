@@ -347,7 +347,7 @@
 									{#if post.ProfileImg}
 										<img
 											class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-											src="/api/{post.ProfileImg}"
+											src="/api/images/{post.ProfileImg}"
 											alt="Profile photo"
 										/>
 									{:else}
@@ -403,7 +403,7 @@
 								<img
 									on:dblclick={likePost(post.PostId)}
 									class="w-full h-fit  md:mx-auto  object-cover"
-									src="/api/{post.PostImgUrl}"
+									src="/api/images/{post.PostImgUrl}"
 									alt=""
 								/>
 							{/if}

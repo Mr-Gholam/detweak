@@ -11,7 +11,7 @@ func routerSetup(router *mux.Router) {
 	router.Use(corsMiddleware)
 	router.Use(authMiddleware)
 
-	router.PathPrefix("/api/images").Handler(http.FileServer(http.Dir("./images"))).Methods("GET")
+	router.Handle("/api/images/{imgUrl}", http.HandlerFunc(sendFileToClient)).Methods("GET")
 	// auth routes
 	router.Handle("/api/jwt", http.HandlerFunc(get_jwt)).Methods("GET")
 	router.Handle("/api/logout", http.HandlerFunc(get_logOut)).Methods("POST")

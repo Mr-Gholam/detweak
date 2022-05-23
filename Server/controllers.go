@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
@@ -28,6 +29,19 @@ func (user *User) encryptPassword() {
 func (user *User) validatePassword(hashedPassword string, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err != nil
+}
+
+// file Handler
+func sendFileToClient(w http.ResponseWriter, r *http.Request) {
+	imgUrl := mux.Vars(r)["imgUrl"]
+	fileBytes, err := ioutil.ReadFile("./images/" + imgUrl)
+	if err != nil {
+		panic(err)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Write(fileBytes)
+	return
 }
 
 // auth controllers
