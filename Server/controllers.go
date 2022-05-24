@@ -313,6 +313,16 @@ func post_update_post(w http.ResponseWriter, r *http.Request) {
 	db.Model(&Post{}).Where("id =? AND owner_id =?", updatePost.PostId, userId).Update("description", updatePost.NewDescription)
 	w.WriteHeader(http.StatusOK)
 }
+func post_delete_post(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var post map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &post)
+	postId := uint(post["postId"].(float64))
+	db.Where("id = ? AND owner_id = ?", postId, userId).Delete(&Post{})
+	w.WriteHeader(http.StatusOK)
+}
 
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {
