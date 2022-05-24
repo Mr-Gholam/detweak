@@ -48,6 +48,10 @@ type LikedPost struct {
 	UserId uint
 	PostId uint `json:"postId"`
 }
+type UpdatePost struct {
+	NewDescription string `json:"newDescription"`
+	PostId         uint   `json:"postId"`
+}
 type SearchResult struct {
 	Email        string
 	Username     string

@@ -12,7 +12,6 @@
 	onMount(async () => {
 		const res = await fetch('/api/jwt');
 		const u = await res.json();
-		console.log(u);
 		if (res.status == 200) {
 			$User = u;
 		}

@@ -29,6 +29,10 @@ func (likedPost *LikedPost) jsonLikedPost(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	handleError(decoder.Decode(&likedPost))
 }
+func (updatePost *UpdatePost) jsonUpdatePost(r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	handleError(decoder.Decode(&updatePost))
+}
 func (user *User) encryptPassword() {
 	password := []byte(user.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
@@ -301,6 +305,13 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 		handleError(err)
 		w.Write(e)
 	}
+}
+func post_update_post(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var updatePost UpdatePost
+	updatePost.jsonUpdatePost(r)
+	db.Model(&Post{}).Where("id =? AND owner_id =?", updatePost.PostId, userId).Update("description", updatePost.NewDescription)
+	w.WriteHeader(http.StatusOK)
 }
 
 // Friendship Controller

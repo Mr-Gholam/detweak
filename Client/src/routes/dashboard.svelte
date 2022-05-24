@@ -199,7 +199,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				updatedDes: updatedDes.value,
+				newDescription: updatedDes.value,
 				postId
 			})
 		});
