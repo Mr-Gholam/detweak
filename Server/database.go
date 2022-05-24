@@ -109,9 +109,10 @@ func dislikePost(postId uint) {
 }
 
 // profile
-func findUserInfoByUsername(username string) ProfileInfo {
+func findUserInfoByUsername(username string, userId uint) ProfileInfo {
 	var user User
 	db.Where("username = ?", username).Find(&user)
+	posts := getPostsByUserId(user.ID, userId)
 	var profileInfo ProfileInfo
 	profileInfo.Username = user.Username
 	profileInfo.Firstname = user.Firstname
@@ -125,7 +126,9 @@ func findUserInfoByUsername(username string) ProfileInfo {
 	profileInfo.Location = user.Location
 	profileInfo.Field = user.Field
 	profileInfo.GitHubUsername = user.GitHubUsername
-
+	profileInfo.Experience = user.Experience
+	profileInfo.Posts = posts
+	profileInfo.PostCount = len(posts)
 	return profileInfo
 }
 

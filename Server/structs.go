@@ -18,7 +18,7 @@ type User struct {
 	FrameWork      string `json:"framework,omitempty"`
 	Birthday       string `json:"birthday,omitempty"`
 	Location       string `json:"location,omitempty"`
-	Experience     int    `json:"experience,omitempty"`
+	Experience     string `json:"experience,omitempty"`
 	ImgUrl         string
 	CreatedAt      time.Time
 }
@@ -62,6 +62,8 @@ type ProfileInfo struct {
 	FrameWork      string
 	GitHubUsername string
 	ImgUrl         string
+	Experience     string
+	Posts          []PostJSON
 	PostCount      int
 	FriendCount    int
 	IsFriend       bool

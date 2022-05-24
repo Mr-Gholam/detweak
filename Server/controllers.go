@@ -96,7 +96,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	user.encryptPassword()
 	// creating the user in database
 	db.Create(&user)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": user.Username, "id": user.ID, "email": user.Email})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": user.Username, "id": user.ID, "imgUrl": ""})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusCreated)
@@ -130,7 +130,7 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": id, "email": user.Email})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": id, "imgUrl": ImgUrl})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
@@ -156,7 +156,8 @@ func post_set_profile(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	db.Model(&userData).Where("id = ?", userId).Updates(User{Firstname: userData.Firstname, Lastname: userData.Lastname, Bio: userData.Bio, Birthday: userData.Birthday, Location: userData.Location})
+	db.Model(&userData).
+		Where("id = ?", userId).Updates(User{Firstname: userData.Firstname, Lastname: userData.Lastname, Bio: userData.Bio, Birthday: userData.Birthday, Location: userData.Location})
 	w.WriteHeader(http.StatusOK)
 }
 func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
@@ -168,12 +169,15 @@ func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	imgUrl, err := FileUpload(r)
+	ImgUrl, err := FileUpload(r)
 	handleError(err)
 	username := findUsernameById(userId)
-	db.Model(&User{}).Where("id = ?", userId).Updates(User{ImgUrl: imgUrl})
+	db.Model(&User{}).Where("id = ?", userId).Updates(User{ImgUrl: ImgUrl})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": ImgUrl})
+	tokenStr, _ := token.SignedString(jwtSecret)
+	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: imgUrl})
+	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: ImgUrl})
 	handleError(err)
 	w.Write(e)
 }
@@ -188,14 +192,17 @@ func post_set_resume(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	db.Model(&User{}).Where("id = ?", userId).Updates(User{GitHubUsername: userData.GitHubUsername, Language: userData.Language, FrameWork: userData.FrameWork, Field: userData.Field})
+	db.Model(&User{}).
+		Where("id = ?", userId).
+		Updates(User{GitHubUsername: userData.GitHubUsername, Language: userData.Language, FrameWork: userData.FrameWork, Field: userData.Field, Experience: userData.Experience})
 	w.WriteHeader(http.StatusOK)
 }
 
 // profile controller
 func get_profile(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
 	username := mux.Vars(r)["username"]
-	profileInfo := findUserInfoByUsername(username)
+	profileInfo := findUserInfoByUsername(username, userId)
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(profileInfo)
 	handleError(err)

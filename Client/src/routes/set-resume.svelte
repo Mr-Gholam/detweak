@@ -5,7 +5,15 @@
 	let selectedField = null;
 	let selectedFrameWork = null;
 	let gitHubUserName = '';
+	let experience = null;
 	let languages = ['JavaScript', 'PHP', 'Java', 'C', 'C++', 'C#', 'Go', 'Python', 'Ruby'];
+	let exOption = [
+		'Less than 6 months',
+		'Less than 1 year',
+		'Between 1-2 years',
+		'Between 2-4 years',
+		'More than 4 years'
+	];
 	let Fields = ['Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
 	let frontEndFrameWorks = ['React', 'Vue', 'Svelte', 'Anguler'];
 	async function submit() {
@@ -26,7 +34,8 @@
 				githubUsername: gitHubUserName,
 				language: selectedLanguage,
 				field: selectedField,
-				frameWork: selectedFrameWork
+				frameWork: selectedFrameWork,
+				experience: experience
 			})
 		});
 		if (response.ok) {
@@ -55,6 +64,19 @@
 				type="text"
 				class="outline-none border-2 border-border text-text border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
 			/>
+		</section>
+		<section class="w-80">
+			<label for="felid" class="text-base text-text">Coding Experience </label>
+			<select
+				bind:value={experience}
+				name=""
+				id=""
+				class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-1 px-2.5"
+			>
+				{#each exOption as xp}
+					<option value={xp}>{xp}</option>
+				{/each}
+			</select>
 		</section>
 		<section class="w-80">
 			<label for="felid" class="text-base text-text">Choose your Field</label>

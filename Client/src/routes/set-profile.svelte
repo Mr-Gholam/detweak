@@ -359,7 +359,6 @@
 					const data = await sendImage.json();
 					if (sendImage.ok) {
 						$User = data;
-						console.log($User);
 						goto('/set-resume');
 					}
 				}
