@@ -264,6 +264,8 @@ func get_available_posts(w http.ResponseWriter, r *http.Request) {
 	var friendIds []uint
 	var availablePosts []PostJSON
 	userId := getIdFromCookie(w, r)
+	friends := findFriendsByUserId(userId)
+	friendIds = append(friendIds, friends...)
 	friendIds = append(friendIds, userId)
 	for i := 0; i < len(friendIds); i++ {
 		posts := getPostsByUserId(friendIds[i], userId)

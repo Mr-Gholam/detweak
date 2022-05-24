@@ -191,6 +191,7 @@
 		}
 	}
 	async function updatePost(postId) {
+		const oldDes = document.getElementById(`des-${postId}`);
 		const updatedDes = document.getElementById(`upDes-${postId}`);
 		const res = await fetch('/api/update-post', {
 			method: 'POST',
@@ -204,9 +205,7 @@
 		});
 		if (res.status == 200) {
 			openEdit(postId);
-			// const response = await fetch('/api/availablePosts');
-			// const posts = await response.json();
-			// availablePosts = posts.availablePosts;
+			oldDes.innerText = updatedDes.value;
 		}
 	}
 </script>
@@ -350,7 +349,7 @@
 												class="fa-solid fa-ellipsis-vertical px-2.5 text-base cursor-pointer hover:text-main"
 											/>
 											<div
-												id={post.postId}
+												id={post.PostId}
 												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 											>
 												<button
@@ -403,13 +402,9 @@
 											type="text"
 											id="upDes-{post.PostId}"
 											placeholder={post.Description}
-											class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit"
+											class="text-base pl-2 my-2 focus:outline-hidden focus:outline-none block w-full h-fit text-text"
 										/>
-										<input
-											type="submit"
-											value="Edit"
-											class="p-1 text-md font-semibold text-main-bg hover:cursor-pointer py-1 px-2 rounded-md hover:text-white hover:bg-main-bg w-16 border border-main-bg float-right mr-4 mb-1"
-										/>
+										<input type="submit" value="Edit" class="main-btn float-right mr-4 w-16" />
 									</form>
 								{/if}
 							</section>
@@ -448,15 +443,17 @@
 								<section
 									class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 								>
-									{#if $User.imgUrl}
+									{#if $User.ImgUrl}
 										<img
 											class="h-8 w-8 object-cover rounded-full"
-											src="/api/images/{$User.imgUrl}"
+											src="/api/images/{$User.ImgUrl}"
 											alt="Current profile photo"
 										/>
 									{:else}
-										<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
-											<i class="fa-solid fa-user text-slate-400 text-lg" />
+										<div
+											class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center border border-border"
+										>
+											<i class="fa-solid fa-user text-slate-400 text-md" />
 										</div>
 									{/if}
 									<form

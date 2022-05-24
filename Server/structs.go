@@ -90,7 +90,7 @@ type ErrorMessage struct {
 }
 type UserJSON struct {
 	Username string `json:"username,omitempty"`
-	ImgUrl   string `json:"imgUrl,omitempty"`
+	ImgUrl   string `json:"ImgUrl,omitempty"`
 }
 type PostJSON struct {
 	PostId        uint

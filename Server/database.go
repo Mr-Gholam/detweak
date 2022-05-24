@@ -118,6 +118,7 @@ func findUserInfoByUsername(username string, userId uint) ProfileInfo {
 	var user User
 	db.Where("username = ?", username).Find(&user)
 	posts := getPostsByUserId(user.ID, userId)
+	friends := findFriendsByUserId(user.ID)
 	friendshipStatus := findFriendShip(user.ID, userId)
 	var profileInfo ProfileInfo
 	profileInfo.Username = user.Username
@@ -136,6 +137,7 @@ func findUserInfoByUsername(username string, userId uint) ProfileInfo {
 	profileInfo.Posts = posts
 	profileInfo.IsFriend = friendshipStatus
 	profileInfo.PostCount = len(posts)
+	profileInfo.FriendCount = len(friends)
 	return profileInfo
 }
 
@@ -182,4 +184,18 @@ func getFriendRequests(receiverId uint) []FriendReq {
 		requests = append(requests, request)
 	}
 	return requests
+}
+func findFriendsByUserId(userId uint) []uint {
+	var friendship []FriendShip
+	var friendsId []uint
+	db.Where("sender_id=? AND status = ?", userId, true).Or("receiver_id =? AND status = ?", userId, true).Find(&friendship)
+
+	for i := 0; i < len(friendship); i++ {
+		if friendship[i].SenderId == userId {
+			friendsId = append(friendsId, friendship[i].ReceiverId)
+		} else {
+			friendsId = append(friendsId, friendship[i].SenderId)
+		}
+	}
+	return friendsId
 }

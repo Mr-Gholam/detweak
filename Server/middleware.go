@@ -42,7 +42,7 @@ func authMiddleware(next http.Handler) http.Handler {
 			ctx := r.Context()
 			Id := uint(claims["id"].(float64))
 			handleError(err)
-			r = r.WithContext(context.WithValue(ctx, "user", &User{Username: claims["username"].(string), ID: Id}))
+			r = r.WithContext(context.WithValue(ctx, "user", &User{Username: claims["username"].(string), ID: Id, ImgUrl: claims["imgUrl"].(string)}))
 			next.ServeHTTP(w, r)
 			return
 		}

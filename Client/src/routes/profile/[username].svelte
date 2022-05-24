@@ -39,7 +39,6 @@
 		if (data) {
 			$loading = false;
 		}
-		console.log(data);
 		firstName = data.Firstname;
 		lastName = data.Lastname;
 		userName = data.Username;
@@ -235,7 +234,9 @@
 							alt="Current profile photo"
 						/>
 					{:else}
-						<div class="h-20 w-20 rounded-full  bg-main-bg flex items-center justify-center">
+						<div
+							class="h-20 w-20 rounded-full  bg-main-bg flex items-center justify-center border-border border"
+						>
 							<i class="fa-solid fa-user text-slate-400 text-4xl" />
 						</div>
 					{/if}
@@ -480,17 +481,17 @@
 								<section
 									class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 								>
-									{#if $User.imgUrl}
+									{#if $User.ImgUrl}
 										<img
 											class="h-8 w-8 object-cover rounded-full"
-											src="/api/images/{$User.imgUrl}"
+											src="/api/images/{$User.ImgUrl}"
 											alt="Current profile photo"
 										/>
 									{:else}
 										<div
-											class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center border-2 border-border"
+											class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center border border-border"
 										>
-											<i class="fa-solid fa-user text-slate-400 text-lg bg-transparent" />
+											<i class="fa-solid fa-user text-slate-400 text-md bg-transparent" />
 										</div>
 									{/if}
 									<form
