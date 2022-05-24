@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -21,6 +20,10 @@ func (user *User) jsonUser(r *http.Request) {
 func (post *Post) jsonPost(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	handleError(decoder.Decode(&post))
+}
+func (request *FriendJSON) jsonFriend(r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	handleError(decoder.Decode(&request))
 }
 func (likedPost *LikedPost) jsonLikedPost(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
@@ -292,11 +295,63 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 		likePost(likedPost.PostId)
 		db.Create(&likedPost)
 		w.WriteHeader(http.StatusOK)
-		fmt.Println(LikedPostJSON{Added: true})
 		e, err := json.Marshal(LikedPostJSON{Added: true})
 		handleError(err)
 		w.Write(e)
 	}
+}
+
+// Friendship Controller
+func post_add_friend(w http.ResponseWriter, r *http.Request) {
+	var user User
+	user.jsonUser(r)
+	userId := getIdFromCookie(w, r)
+	targetId := findUserIdByUsername(user.Username)
+	status := findFriendShip(userId, targetId)
+	if status == "Friend" {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"Friends"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	if status == "Pending" {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(ErrorRespone{ErrorMessage{"Pending"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	var friendShip FriendShip
+	friendShip.SenderId = userId
+	friendShip.ReceiverId = targetId
+	friendShip.Status = false
+	db.Create(&friendShip)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"status": "Pending"})
+	handleError(err)
+	w.Write(e)
+}
+func get_friend_requests(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	requests := getFriendRequests(userId)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(requests)
+	handleError(err)
+	w.Write(e)
+
+}
+func post_accept_request(w http.ResponseWriter, r *http.Request) {
+	var request FriendJSON
+	request.jsonFriend(r)
+	db.Model(&FriendShip{}).Where("id = ?", request.ID).Update("status", true)
+	w.WriteHeader(http.StatusOK)
+}
+func post_reject_request(w http.ResponseWriter, r *http.Request) {
+	var request FriendJSON
+	request.jsonFriend(r)
+	db.Where("id = ?", request.ID).Delete(&FriendShip{})
+	w.WriteHeader(http.StatusOK)
 }
 
 // search

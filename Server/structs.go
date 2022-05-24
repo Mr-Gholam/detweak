@@ -31,11 +31,17 @@ type Post struct {
 	PostImgUrl    string
 	CreatedAt     time.Time
 }
-type friendShip struct {
+type FriendShip struct {
 	ID         uint `gorm:"primaryKey"`
 	SenderId   uint
 	ReceiverId uint
-	Status     string
+	Status     bool
+}
+type FriendJSON struct {
+	ID         uint `json:"requestId"`
+	SenderId   uint
+	ReceiverId uint
+	Status     bool
 }
 type LikedPost struct {
 	ID     uint `gorm:"primaryKey"`
@@ -66,7 +72,14 @@ type ProfileInfo struct {
 	Posts          []PostJSON
 	PostCount      int
 	FriendCount    int
-	IsFriend       bool
+	IsFriend       string
+}
+type FriendReq struct {
+	RequestId uint
+	Username  string
+	Firstname string
+	Lastname  string
+	ImgUrl    string
 }
 type ErrorRespone struct {
 	Error ErrorMessage `json:"error,omitempty"`

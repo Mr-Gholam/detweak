@@ -11,34 +11,6 @@
 	let imageSrc;
 	let postPicInput;
 	let availablePosts = [];
-	let onlineFriends = [
-		{
-			firstName: 'Sohrab',
-			lastName: 'Ebrahimpourian',
-			userName: 'sohrab_sosor',
-			timeRemian: '30:12'
-		},
-		{
-			firstName: 'Mahsa',
-			lastName: 'Ebrahimpourian',
-			userName: 'nana',
-			timeRemian: '10:12'
-		}
-	];
-	let suggestion = [
-		{
-			userName: 'saleh Dow',
-			firstName: 'saleh',
-			lastName: 'Mirzaeeeee',
-			onlineTime: '1-2 pm'
-		},
-		{
-			userName: 'jafar',
-			firstName: 'jafar',
-			lastName: 'Gholami',
-			onlineTime: '3-4 am'
-		}
-	];
 	// onMount
 	onMount(async () => {
 		if (!$User) {

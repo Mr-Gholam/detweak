@@ -25,7 +25,6 @@
 	let location;
 	let myProfile;
 	let isFriend;
-	let sentRequest;
 	let field;
 	let xp;
 	let gitHub;
@@ -40,6 +39,7 @@
 		if (data) {
 			$loading = false;
 		}
+		console.log(data);
 		firstName = data.Firstname;
 		lastName = data.Lastname;
 		userName = data.Username;
@@ -54,7 +54,6 @@
 		field = data.Field;
 		language = data.Language;
 		frameWork = data.FrameWork;
-		sentRequest = data.sentRequest;
 		xp = data.Experience;
 		if (birthday) {
 			day = new Date(birthday).getDate();
@@ -70,9 +69,11 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					targetUsername: userName
+					username: userName
 				})
 			});
+			const data = await response.json();
+			isFriend = data.status;
 		} else {
 			goto('/login');
 		}
@@ -91,7 +92,7 @@
 			})
 		});
 		const data = await response.json();
-		if (data.added) {
+		if (data.Added) {
 			likeBtn.classList.add('text-red-600');
 			likeNumber.classList.add('text-red-600');
 			likeBtn.classList.remove('text-gray-400');
@@ -248,27 +249,35 @@
 						</h5>
 					</div>
 					<div>
-						<h4 class="text-text">
-							<i class="fa-solid fa-code" />
-							{field}
-						</h4>
+						{#if field}
+							<h4 class="text-text">
+								<i class="fa-solid fa-code" />
+								{field}
+							</h4>
+						{/if}
 					</div>
 				</div>
 				<div class="m-2 px-2  flex justify-between items-center">
-					<section class="  text-sm font-semibold  my-1 text-text">
-						<h4 class="text-xs">Main Language</h4>
-						<h4 class="">
-							{language}
-						</h4>
-					</section>
-					<section class="   text-text font-semibold  my-1">
-						{frameWork}
-					</section>
-					<section class=" text-xl  text-text font-semibold  my-1">
-						<a href="https://github.com/{gitHub}">
-							<i class="fa-brands fa-github" />
-						</a>
-					</section>
+					{#if language}
+						<section class="  text-sm font-semibold  my-1 text-text">
+							<h4 class="text-xs">Main Language</h4>
+							<h4 class="">
+								{language}
+							</h4>
+						</section>
+					{/if}
+					{#if frameWork}
+						<section class="   text-text font-semibold  my-1">
+							{frameWork}
+						</section>
+					{/if}
+					{#if gitHub}
+						<section class=" text-xl  text-text font-semibold  my-1">
+							<a href="https://github.com/{gitHub}">
+								<i class="fa-brands fa-github" />
+							</a>
+						</section>
+					{/if}
 				</div>
 				<!-- birthday - location - bio-->
 				<div class="m-x2 px-2">
@@ -286,10 +295,12 @@
 								{location}
 							</h5>
 						{/if}
-						<h5 class=" text-xs  text-text font-semibold  my-1">
-							<i class="fa-solid fa-business-time" />
-							{xp}
-						</h5>
+						{#if xp}
+							<h5 class=" text-xs  text-text font-semibold  my-1">
+								<i class="fa-solid fa-business-time" />
+								{xp}
+							</h5>
+						{/if}
 					</section>
 					<h5 class="text-sm my-4 text-text ">
 						{bio}
@@ -308,11 +319,11 @@
 						<h3 class="font-semibold">Friends</h3>
 					</section>
 					{#if !myProfile}
-						{#if sentRequest}
+						{#if isFriend == 'Pending'}
 							<button class="main-btn ">
 								<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
 							</button>
-						{:else if isFriend}
+						{:else if isFriend == 'Friend'}
 							<button class="main-btn" on:click={openChat(userName)}>Sent Massage</button>
 						{:else}
 							<button class="main-btn" on:click={addFriend}>Add Friend</button>
@@ -448,7 +459,7 @@
 											{post.Likes}
 										</p></button
 									>
-									{#if post.allowComments}
+									{#if post.AllowComments}
 										<button
 											on:click={openPost(post.PostId)}
 											class="text-text hover:text-border text-2xl p-2 w-16 "
@@ -476,8 +487,10 @@
 											alt="Current profile photo"
 										/>
 									{:else}
-										<div class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center">
-											<i class="fa-solid fa-user text-slate-400 text-lg" />
+										<div
+											class="h-8 w-8 rounded-full  bg-main-bg flex items-center justify-center border-2 border-border"
+										>
+											<i class="fa-solid fa-user text-slate-400 text-lg bg-transparent" />
 										</div>
 									{/if}
 									<form

@@ -12,7 +12,7 @@ func connectDb() {
 	var err error
 	dsn := "root:mehdi007@tcp(127.0.0.1:3306)/detweak?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
-	db.AutoMigrate(&User{}, &Post{}, &LikedPost{})
+	db.AutoMigrate(&User{}, &Post{}, &LikedPost{}, &FriendShip{})
 	if err != nil {
 		panic(err)
 	}
@@ -56,6 +56,11 @@ func findUserById(userId uint) (string, string, string, string) {
 	var user User
 	db.Where("id = ?", userId).First(&user)
 	return user.Username, user.Firstname, user.Lastname, user.ImgUrl
+}
+func findUserIdByUsername(username string) uint {
+	var user User
+	db.Where("username = ?", username).Find(&user)
+	return user.ID
 }
 
 // post
@@ -113,6 +118,7 @@ func findUserInfoByUsername(username string, userId uint) ProfileInfo {
 	var user User
 	db.Where("username = ?", username).Find(&user)
 	posts := getPostsByUserId(user.ID, userId)
+	friendshipStatus := findFriendShip(user.ID, userId)
 	var profileInfo ProfileInfo
 	profileInfo.Username = user.Username
 	profileInfo.Firstname = user.Firstname
@@ -128,6 +134,7 @@ func findUserInfoByUsername(username string, userId uint) ProfileInfo {
 	profileInfo.GitHubUsername = user.GitHubUsername
 	profileInfo.Experience = user.Experience
 	profileInfo.Posts = posts
+	profileInfo.IsFriend = friendshipStatus
 	profileInfo.PostCount = len(posts)
 	return profileInfo
 }
@@ -146,4 +153,33 @@ func findUserByName(name string, userId uint) []SearchResult {
 		result = append(result, userInfo)
 	}
 	return result
+}
+
+// friend ship
+func findFriendShip(senderId uint, receiverId uint) string {
+	var friendShip FriendShip
+	db.Where("sender_id =? AND receiver_id = ?", senderId, receiverId).Or("sender_id =? AND receiver_id = ?", receiverId, senderId).Find(&friendShip)
+	if friendShip.ID == 0 {
+		return "Not Friend"
+	} else if friendShip.ID != 0 && friendShip.Status == false {
+		return "Pending"
+	} else {
+		return "Friend"
+	}
+}
+func getFriendRequests(receiverId uint) []FriendReq {
+	var friendship []FriendShip
+	db.Where("receiver_id = ? AND status = ?", receiverId, false).Find(&friendship)
+	var requests []FriendReq
+	for i := 0; i < len(friendship); i++ {
+		var request FriendReq
+		username, firstname, lastname, imgUrl := findUserById(friendship[i].SenderId)
+		request.Firstname = firstname
+		request.Lastname = lastname
+		request.Username = username
+		request.ImgUrl = imgUrl
+		request.RequestId = friendship[i].ID
+		requests = append(requests, request)
+	}
+	return requests
 }
