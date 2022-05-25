@@ -68,6 +68,13 @@ type ProfileInfo struct {
 	FriendCount    int
 	IsFriend       string
 }
+type Comment struct {
+	ID        uint `gorm:"primaryKey"`
+	OwnerId   uint
+	PostId    uint
+	Comment   string
+	CreatedAt time.Time
+}
 type FriendReq struct {
 	RequestId uint
 	Username  string
@@ -87,4 +94,13 @@ type PostJSON struct {
 	Lastname      string
 	ProfileImg    string
 	Liked         bool
+	Comments      []CommentJSON
+}
+
+type CommentJSON struct {
+	CommentId         uint
+	CommenterImgUrl   string
+	CommenterUsername string
+	Comment           string
+	CreatedAt         time.Time
 }

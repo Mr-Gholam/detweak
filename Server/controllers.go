@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strconv"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
@@ -321,6 +322,53 @@ func post_delete_post(w http.ResponseWriter, r *http.Request) {
 	db.Where("post_id = ?", postId).Delete(&LikedPost{})
 	db.Where("id = ? AND owner_id = ?", postId, userId).Delete(&Post{})
 	DeleteFile(imgUrl)
+	w.WriteHeader(http.StatusOK)
+}
+func get_single_post(w http.ResponseWriter, r *http.Request) {
+	postID := mux.Vars(r)["postId"]
+	postId, err := strconv.ParseUint(postID, 10, 32)
+	handleError(err)
+	userId := getIdFromCookie(w, r)
+	post := getPostByPostId(uint(postId), userId)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(post)
+	handleError(err)
+	w.Write(e)
+}
+
+// Comment controller
+func post_create_comment(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var commentInfo map[string]interface{}
+	var commentAdded CommentJSON
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &commentInfo)
+	postId := uint(commentInfo["postId"].(float64))
+	commentContent := commentInfo["comment"].(string)
+	username, _, _, imgUrl := findUserById(userId)
+	var comment Comment
+	comment.OwnerId = userId
+	comment.PostId = postId
+	comment.Comment = commentContent
+	db.Create(&comment)
+	commentAdded.Comment = commentContent
+	commentAdded.CommentId = comment.ID
+	commentAdded.CommenterImgUrl = imgUrl
+	commentAdded.CommenterUsername = username
+	commentAdded.CreatedAt = comment.CreatedAt
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(commentAdded)
+	handleError(err)
+	w.Write(e)
+}
+func post_delete_comment(w http.ResponseWriter, r *http.Request) {
+	var commentInfo map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &commentInfo)
+	commentId := uint(commentInfo["commentId"].(float64))
+	db.Where("id = ?", commentId).Delete(&Comment{})
 	w.WriteHeader(http.StatusOK)
 }
 

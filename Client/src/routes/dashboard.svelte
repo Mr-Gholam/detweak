@@ -458,7 +458,7 @@
 									{/if}
 									<form
 										method="post"
-										on:submit|preventDefault={addComment(post.postId)}
+										on:submit|preventDefault={addComment(post.PostId)}
 										class="flex-1 flex justify-between  mx-2"
 									>
 										<input

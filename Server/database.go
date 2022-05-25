@@ -1,6 +1,8 @@
 package main
 
 import (
+	"sort"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,7 +14,7 @@ func connectDb() {
 	var err error
 	dsn := "root:mehdi007@tcp(127.0.0.1:3306)/detweak?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
-	db.AutoMigrate(&User{}, &Post{}, &LikedPost{}, &FriendShip{})
+	db.AutoMigrate(&User{}, &Post{}, &LikedPost{}, &FriendShip{}, &Comment{})
 	if err != nil {
 		panic(err)
 	}
@@ -88,6 +90,27 @@ func getPostsByUserId(ownerId uint, userId uint) []PostJSON {
 	return posts
 }
 
+func getPostByPostId(postId uint, userId uint) PostJSON {
+	var postsInfo Post
+	db.Where("id = ?", postId).Find(&postsInfo)
+	username, firstname, lastname, userImgUrl := findUserById(postsInfo.OwnerId)
+	var post PostJSON
+	comments := getAllCommentsByPostID(postId)
+	liked := getPostLikedByUserId(userId, postsInfo.ID)
+	post.AllowComments = postsInfo.AllowComments
+	post.CreatedAt = postsInfo.CreatedAt
+	post.Description = postsInfo.Description
+	post.PostImgUrl = postsInfo.PostImgUrl
+	post.Likes = postsInfo.Likes
+	post.PostId = postsInfo.ID
+	post.Liked = liked
+	post.Username = username
+	post.Firstname = firstname
+	post.Lastname = lastname
+	post.ProfileImg = userImgUrl
+	post.Comments = comments
+	return post
+}
 func getPostLikedByUserId(userId uint, postId uint) bool {
 	var liked LikedPost
 	db.Where("user_id = ? AND post_id = ?", userId, postId).Find(&liked)
@@ -160,6 +183,27 @@ func findUserByName(name string, userId uint) []SearchResult {
 		result = append(result, userInfo)
 	}
 	return result
+}
+
+// comments
+func getAllCommentsByPostID(postId uint) []CommentJSON {
+	var comments []Comment
+	var commentsJson []CommentJSON
+	db.Where("post_id = ?", postId).Find(&comments)
+	for i := 0; i < len(comments); i++ {
+		username, _, _, imgUrl := findUserById(comments[i].OwnerId)
+		var comment CommentJSON
+		comment.CommentId = comments[i].ID
+		comment.CommenterImgUrl = imgUrl
+		comment.CommenterUsername = username
+		comment.Comment = comments[i].Comment
+		comment.CreatedAt = comments[i].CreatedAt
+		commentsJson = append(commentsJson, comment)
+	}
+	sort.Slice(commentsJson, func(i, j int) bool {
+		return commentsJson[i].CommentId < commentsJson[j].CommentId
+	})
+	return commentsJson
 }
 
 // friend ship
