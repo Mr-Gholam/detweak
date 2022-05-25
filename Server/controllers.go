@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -437,6 +438,53 @@ func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
 	e, err := json.Marshal(Rooms)
 	handleError(err)
 	w.Write(e)
+}
+func post_get_chat(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var post map[string]interface{}
+	var room Room
+	var chats []Chat
+	var roomJSON RoomJSON
+	var chatJson []ChatJSON
+	var targetId uint
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &post)
+	roomId := uint(post["RoomId"].(float64))
+	db.Where("chat_room_id = ?", roomId).Find(&chats)
+	db.Where("sender_id =? AND id = ?", userId, roomId).Or("receiver_id =? AND id =?", userId, roomId).Find(&room)
+	for i := 0; i < len(chats); i++ {
+		var chat ChatJSON
+		if chats[i].ReceiverId == userId {
+			chat.Receive = true
+			chat.Message = chats[i].Message
+			chat.CreatedAt = chats[i].CreatedAt
+			chatJson = append(chatJson, chat)
+		} else {
+			chat.Receive = false
+			chat.Message = chats[i].Message
+			chat.CreatedAt = chats[i].CreatedAt
+			chatJson = append(chatJson, chat)
+		}
+	}
+	if room.ReceiverId == userId {
+		targetId = room.SenderId
+	} else {
+		targetId = room.ReceiverId
+	}
+	username, firstname, lastname, imgUrl := findUserById(targetId)
+	fmt.Println(targetId)
+	roomJSON.Chat = chatJson
+	roomJSON.Firstname = firstname
+	roomJSON.Lastname = lastname
+	roomJSON.Username = username
+	roomJSON.ImgUrl = imgUrl
+	roomJSON.RoomId = roomId
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(roomJSON)
+	handleError(err)
+	w.Write(e)
+
 }
 
 // Friendship Controller

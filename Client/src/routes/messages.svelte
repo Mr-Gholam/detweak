@@ -129,12 +129,13 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				chatRoomId
+				RoomId: chatRoomId
 			})
 		});
 		const data = await response.json();
-		currentChatInfo = data.chatInfo;
-		currentChat = data.currentChat;
+		console.log(data);
+		currentChatInfo = data;
+		currentChat = data.Chat;
 		loading = false;
 	}
 	function typing() {
@@ -218,25 +219,25 @@
 			>
 			{#if currentChatInfo}
 				<!--profile img-->
-				<a href="/profile/{currentChatInfo.username}" class=" w-fit">
-					{#if currentChatInfo.profileImg}
+				<a href="/profile/{currentChatInfo.Username}" class=" w-fit">
+					{#if currentChatInfo.ImgUrl}
 						<!-- svelte-ignore a11y-img-redundant-alt -->
 						<img
 							class="h-12 w-12 object-cover rounded-full  "
-							src="/api/{currentChatInfo.profileImg}"
+							src="/api/images/{currentChatInfo.ImgUrl}"
 							alt="Current profile photo"
 						/>
 					{:else}
 						<div
-							class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+							class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
 						>
 							<i class="fa-solid fa-user text-slate-400 text-2xl" />
 						</div>
 					{/if}
 				</a>
 				<h4 class=" font-semibold text-sm text-text mx-4 flex-1">
-					{currentChatInfo.firstName}
-					{currentChatInfo.lastName}
+					{currentChatInfo.Firstname}
+					{currentChatInfo.Lastname}
 				</h4>
 				<div class="flex items-center">
 					<i

@@ -36,6 +36,7 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/delete-Comment", http.HandlerFunc(post_delete_comment)).Methods("POST")
 	// Chat
 	router.Handle("/api/load-chatRooms", http.HandlerFunc(get_load_chatRooms)).Methods("GET")
+	router.Handle("/api/get-chat", http.HandlerFunc(post_get_chat)).Methods("POST")
 	router.Handle("/api/create-room", http.HandlerFunc(post_create_room)).Methods("POST")
 
 	// friendship
