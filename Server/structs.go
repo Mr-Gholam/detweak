@@ -37,20 +37,10 @@ type FriendShip struct {
 	ReceiverId uint
 	Status     bool
 }
-type FriendJSON struct {
-	ID         uint `json:"requestId"`
-	SenderId   uint
-	ReceiverId uint
-	Status     bool
-}
 type LikedPost struct {
 	ID     uint `gorm:"primaryKey"`
 	UserId uint
 	PostId uint `json:"postId"`
-}
-type UpdatePost struct {
-	NewDescription string `json:"newDescription"`
-	PostId         uint   `json:"postId"`
 }
 type SearchResult struct {
 	Email        string
@@ -85,17 +75,6 @@ type FriendReq struct {
 	Lastname  string
 	ImgUrl    string
 }
-type ErrorRespone struct {
-	Error ErrorMessage `json:"error,omitempty"`
-}
-
-type ErrorMessage struct {
-	Message string `json:"message,omitempty"`
-}
-type UserJSON struct {
-	Username string `json:"username,omitempty"`
-	ImgUrl   string `json:"ImgUrl,omitempty"`
-}
 type PostJSON struct {
 	PostId        uint
 	Description   string
@@ -108,10 +87,4 @@ type PostJSON struct {
 	Lastname      string
 	ProfileImg    string
 	Liked         bool
-}
-type PostImg struct {
-	ImgUrl string
-}
-type LikedPostJSON struct {
-	Added bool
 }

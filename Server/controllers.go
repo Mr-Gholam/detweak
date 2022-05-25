@@ -21,18 +21,11 @@ func (post *Post) jsonPost(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	handleError(decoder.Decode(&post))
 }
-func (request *FriendJSON) jsonFriend(r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	handleError(decoder.Decode(&request))
-}
 func (likedPost *LikedPost) jsonLikedPost(r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	handleError(decoder.Decode(&likedPost))
 }
-func (updatePost *UpdatePost) jsonUpdatePost(r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	handleError(decoder.Decode(&updatePost))
-}
+
 func (user *User) encryptPassword() {
 	password := []byte(user.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
@@ -77,7 +70,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	// invalid input
 	if user.Username == "" || user.Email == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid username, password, email"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid Email,username,password"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -86,7 +79,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	// find duplicate email
 	if foundEmail {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"email already exists"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Email already exists"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -94,7 +87,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	// find duplicate username
 	if findDuplicateUsername(user.Username) {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"username already exists"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Username already exists"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -107,7 +100,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusCreated)
-	e, err := json.Marshal(UserJSON{Username: user.Username, ImgUrl: ""})
+	e, err := json.Marshal(map[string]interface{}{"username": user.Username, "ImgUrl": ""})
 	handleError(err)
 	w.Write(e)
 }
@@ -117,14 +110,14 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	FoundEmail, foundPassword, id, username, ImgUrl := findUserByEmail(user.Email)
 	if user.Email == "" || user.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid email or password"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "invalid Email or Password"}})
 		handleError(err)
 		w.Write(e)
 		return
 	}
 	if len(FoundEmail) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"email not found"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Email Not found"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -132,7 +125,7 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	wrongPassword := user.validatePassword(foundPassword, user.Password)
 	if wrongPassword {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"incorrect password"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Incorrect Password"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -141,7 +134,7 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: ImgUrl})
+	e, err := json.Marshal(map[string]interface{}{"username": username, "ImgUrl": ImgUrl})
 	handleError(err)
 	w.Write(e)
 }
@@ -151,14 +144,14 @@ func post_set_profile(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	if userData.Firstname == "" || userData.Lastname == "" || userData.Bio == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Firstname , Lastname, Bio"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid Firstname, Lastname,Bio"}})
 		handleError(err)
 		w.Write(e)
 		return
 	}
 	if userId == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid UserId"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -171,7 +164,7 @@ func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	if userId == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid userId"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -184,7 +177,7 @@ func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(UserJSON{Username: username, ImgUrl: ImgUrl})
+	e, err := json.Marshal(map[string]interface{}{"username": username, "ImgUrl": ImgUrl})
 	handleError(err)
 	w.Write(e)
 }
@@ -194,7 +187,7 @@ func post_set_resume(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	if userId == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid UserId"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -223,14 +216,14 @@ func post_create_post(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	if userId == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Id"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid UserId"}})
 		handleError(err)
 		w.Write(e)
 		return
 	}
 	if post.Description == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"invalid Description"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Invalid Description"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -260,7 +253,7 @@ func post_create_post_img(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	db.Model(&Post{}).Where("id = ?", postId).Updates(Post{PostImgUrl: imgUrl})
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(PostImg{ImgUrl: imgUrl})
+	e, err := json.Marshal(map[string]interface{}{"ImgUrl": imgUrl})
 	handleError(err)
 	w.Write(e)
 }
@@ -294,23 +287,27 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 		dislikePost(likedPost.PostId)
 		db.Where("user_id = ? AND post_id = ?", userId, likedPost.PostId).Delete(&LikedPost{})
 		w.WriteHeader(http.StatusOK)
-		e, err := json.Marshal(LikedPostJSON{Added: false})
+		e, err := json.Marshal(map[string]interface{}{"Added": false})
 		handleError(err)
 		w.Write(e)
 	} else {
 		likePost(likedPost.PostId)
 		db.Create(&likedPost)
 		w.WriteHeader(http.StatusOK)
-		e, err := json.Marshal(LikedPostJSON{Added: true})
+		e, err := json.Marshal(map[string]interface{}{"Added": true})
 		handleError(err)
 		w.Write(e)
 	}
 }
 func post_update_post(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
-	var updatePost UpdatePost
-	updatePost.jsonUpdatePost(r)
-	db.Model(&Post{}).Where("id =? AND owner_id =?", updatePost.PostId, userId).Update("description", updatePost.NewDescription)
+	var post map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &post)
+	postId := uint(post["postId"].(float64))
+	NewDescription := post["newDescription"]
+	db.Model(&Post{}).Where("id =? AND owner_id =?", postId, userId).Update("description", NewDescription)
 	w.WriteHeader(http.StatusOK)
 }
 func post_delete_post(w http.ResponseWriter, r *http.Request) {
@@ -333,14 +330,14 @@ func post_add_friend(w http.ResponseWriter, r *http.Request) {
 	status := findFriendShip(userId, targetId)
 	if status == "Friend" {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"Friends"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Friends"}})
 		handleError(err)
 		w.Write(e)
 		return
 	}
 	if status == "Pending" {
 		w.WriteHeader(http.StatusBadRequest)
-		e, err := json.Marshal(ErrorRespone{ErrorMessage{"Pending"}})
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Pending"}})
 		handleError(err)
 		w.Write(e)
 		return
@@ -365,15 +362,21 @@ func get_friend_requests(w http.ResponseWriter, r *http.Request) {
 
 }
 func post_accept_request(w http.ResponseWriter, r *http.Request) {
-	var request FriendJSON
-	request.jsonFriend(r)
-	db.Model(&FriendShip{}).Where("id = ?", request.ID).Update("status", true)
+	var post map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &post)
+	requestId := uint(post["requestId"].(float64))
+	db.Model(&FriendShip{}).Where("id = ?", requestId).Update("status", true)
 	w.WriteHeader(http.StatusOK)
 }
 func post_reject_request(w http.ResponseWriter, r *http.Request) {
-	var request FriendJSON
-	request.jsonFriend(r)
-	db.Where("id = ?", request.ID).Delete(&FriendShip{})
+	var post map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &post)
+	requestId := uint(post["requestId"].(float64))
+	db.Where("id = ?", requestId).Delete(&FriendShip{})
 	w.WriteHeader(http.StatusOK)
 }
 
