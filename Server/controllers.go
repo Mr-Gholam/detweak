@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -473,17 +472,32 @@ func post_get_chat(w http.ResponseWriter, r *http.Request) {
 		targetId = room.ReceiverId
 	}
 	username, firstname, lastname, imgUrl := findUserById(targetId)
-	fmt.Println(targetId)
 	roomJSON.Chat = chatJson
 	roomJSON.Firstname = firstname
 	roomJSON.Lastname = lastname
 	roomJSON.Username = username
 	roomJSON.ImgUrl = imgUrl
 	roomJSON.RoomId = roomId
+	roomJSON.TargetId = targetId
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(roomJSON)
 	handleError(err)
 	w.Write(e)
+}
+func post_create_message(w http.ResponseWriter, r *http.Request) {
+	var messageInfo map[string]interface{}
+	var chat Chat
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &messageInfo)
+	roomId := uint(messageInfo["RoomId"].(float64))
+	targetId := uint(messageInfo["TargetId"].(float64))
+	message := messageInfo["Message"].(string)
+	chat.ChatRoomId = roomId
+	chat.Message = message
+	chat.ReceiverId = targetId
+	db.Create(&chat)
+	w.WriteHeader(http.StatusOK)
 
 }
 

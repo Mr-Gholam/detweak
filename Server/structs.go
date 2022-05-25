@@ -122,6 +122,7 @@ type RoomJSON struct {
 	Firstname string
 	Lastname  string
 	ImgUrl    string
+	TargetId  uint
 	Chat      []ChatJSON
 }
 

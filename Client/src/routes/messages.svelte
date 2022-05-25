@@ -17,7 +17,6 @@
 	onMount(async () => {
 		const response = await fetch('/api/load-chatRooms');
 		const data = await response.json();
-		console.log(data);
 		contacts = data;
 		if (targetUsername) {
 			if (contacts == null) {
@@ -93,8 +92,9 @@
 		messageParent.appendChild(message);
 	}
 	async function sendMessage() {
-		const chatRoomId = currentChatInfo.chatRoomId;
-		const targetId = currentChatInfo.targetId;
+		console.log(currentChatInfo);
+		const RoomId = currentChatInfo.RoomId;
+		const TargetId = currentChatInfo.TargetId;
 		if (textInput == '' || textInput == undefined) return;
 		const response = await fetch('/api/create-message', {
 			method: 'POST',
@@ -102,9 +102,9 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				message: textInput,
-				chatRoomId,
-				targetId
+				Message: textInput,
+				RoomId,
+				TargetId
 			})
 		});
 		if (response.status == 200) {
@@ -133,7 +133,6 @@
 			})
 		});
 		const data = await response.json();
-		console.log(data);
 		currentChatInfo = data;
 		currentChat = data.Chat;
 		loading = false;
@@ -262,49 +261,51 @@
 		<!--Middle part-->
 		<section class="flex-1 m-2 overflow-y-auto overflow-x-hidden flex flex-col" id="middlePart">
 			{#if !loading}
-				{#each currentChat as chat}
-					<section class="w-full">
-						{#if chat.receive}
-							<div class="flex items-end">
-								{#if currentChatInfo.profileImg}
-									<!-- svelte-ignore a11y-img-redundant-alt -->
-									<img
-										class="h-8 w-8 object-cover rounded-full  "
-										src="/api/{currentChatInfo.profileImg}"
-										alt="Current profile photo"
-									/>
-								{:else}
+				{#if currentChat}
+					{#each currentChat as chat}
+						<section class="w-full">
+							{#if chat.Receive}
+								<div class="flex items-end">
+									{#if currentChatInfo.ImgUrl}
+										<!-- svelte-ignore a11y-img-redundant-alt -->
+										<img
+											class="h-8 w-8 object-cover rounded-full  "
+											src="/api/images/{currentChatInfo.ImgUrl}"
+											alt="Current profile photo"
+										/>
+									{:else}
+										<div
+											class="h-8 w-8 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
+										>
+											<i class="fa-solid fa-user text-slate-400 text-base bg-transparent" />
+										</div>
+									{/if}
 									<div
-										class="h-8 w-8 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+										class="{chat.Receive
+											? 'receive-message'
+											: 'send-message'} flex items-end bg-inherit"
 									>
-										<i class="fa-solid fa-user text-slate-400 text-2xl" />
+										<h1 class="p-1 bg-inherit">
+											{chat.Message}
+										</h1>
+										<p class="text-xs float-right mx-2 bg-inherit">
+											{formatDistanceToNow(new Date(chat.CreatedAt), { addSuffix: true })}
+										</p>
 									</div>
-								{/if}
-								<div
-									class="{chat.receive
-										? 'receive-message'
-										: 'send-message'} flex items-end bg-inherit"
-								>
+								</div>
+							{:else}
+								<div class="{chat.Receive ? 'receive-message' : 'send-message'} flex items-end ">
 									<h1 class="p-1 bg-inherit">
-										{chat.message}
+										{chat.Message}
 									</h1>
-									<p class="text-xs float-right mx-2 bg-inherit">
-										{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
+									<p class="text-xs float-left mx-2 bg-inherit">
+										{formatDistanceToNow(new Date(chat.CreatedAt), { addSuffix: true })}
 									</p>
 								</div>
-							</div>
-						{:else}
-							<div class="{chat.receive ? 'receive-message' : 'send-message'} flex items-end ">
-								<h1 class="p-1 bg-inherit">
-									{chat.message}
-								</h1>
-								<p class="text-xs float-left mx-2 bg-inherit">
-									{formatDistanceToNow(new Date(chat.createdAt), { addSuffix: true })}
-								</p>
-							</div>
-						{/if}
-					</section>
-				{/each}
+							{/if}
+						</section>
+					{/each}
+				{/if}
 			{:else}
 				<section class="w-full loading-pulse">
 					<div class=" h-24 loading-msg bg-main-bg w-5/12 " />
