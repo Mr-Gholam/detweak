@@ -112,6 +112,11 @@ func dislikePost(postId uint) {
 	newLikes := post.Likes - 1
 	db.Model(&Post{}).Where("id=?", postId).Update("likes", newLikes)
 }
+func getPostImgUrl(postId uint) string {
+	var post Post
+	db.Where("id = ?", postId).Find(&post)
+	return post.PostImgUrl
+}
 
 // profile
 func findUserInfoByUsername(username string, userId uint) ProfileInfo {

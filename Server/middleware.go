@@ -81,6 +81,8 @@ func FileUpload(r *http.Request) (string, error) {
 	imgUrl := currentTime + "-" + handler.Filename
 	f, err := os.OpenFile("./images/"+imgUrl, os.O_WRONLY|os.O_CREATE, 0666)
 
+	defer f.Close()
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -89,4 +91,15 @@ func FileUpload(r *http.Request) (string, error) {
 	io.Copy(f, file)
 
 	return imgUrl, nil
+}
+func DeleteFile(ImgUrl string) {
+
+	if ImgUrl != "" {
+		err := os.Remove("./images/" + ImgUrl)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
 }

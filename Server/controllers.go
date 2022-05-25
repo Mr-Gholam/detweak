@@ -317,7 +317,10 @@ func post_delete_post(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	err = json.Unmarshal(body, &post)
 	postId := uint(post["postId"].(float64))
+	imgUrl := getPostImgUrl(postId)
+	db.Where("post_id = ?", postId).Delete(&LikedPost{})
 	db.Where("id = ? AND owner_id = ?", postId, userId).Delete(&Post{})
+	DeleteFile(imgUrl)
 	w.WriteHeader(http.StatusOK)
 }
 
