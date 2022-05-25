@@ -17,25 +17,10 @@
 	onMount(async () => {
 		const response = await fetch('/api/load-chatRooms');
 		const data = await response.json();
-		contacts = data.contacts;
+		console.log(data);
+		contacts = data;
 		if (targetUsername) {
-			const foundUser = contacts.find((contact) => contact.username == targetUsername);
-			console.log(foundUser);
-			if (foundUser) {
-				const response = await fetch('/api/get-chat', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						chatRoomId: foundUser.chatRoomId
-					})
-				});
-				const data = await response.json();
-				currentChatInfo = data.chatInfo;
-				currentChat = data.currentChat;
-				loading = false;
-			} else {
+			if (contacts == null) {
 				const result = await fetch('/api/create-room', {
 					method: 'POST',
 					headers: {
@@ -50,6 +35,39 @@
 				if (result.status == 200) {
 					contacts.unshift(newChatRoom);
 					contacts = contacts;
+				}
+			} else {
+				const foundUser = contacts.find((contact) => contact.username == targetUsername);
+				if (foundUser) {
+					const response = await fetch('/api/get-chat', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							chatRoomId: foundUser.chatRoomId
+						})
+					});
+					const data = await response.json();
+					currentChatInfo = data.chatInfo;
+					currentChat = data.currentChat;
+					loading = false;
+				} else {
+					const result = await fetch('/api/create-room', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							targetUsername
+						})
+					});
+					const newChatRoom = await result.json();
+					console.log(newChatRoom);
+					if (result.status == 200) {
+						contacts.unshift(newChatRoom);
+						contacts = contacts;
+					}
 				}
 			}
 		}
@@ -156,22 +174,22 @@
 			{#each contacts as contact}
 				<section
 					class="  py-2 px-3  md:my-2 items-center  w-full hover:opacity-90 cursor-pointer "
-					on:click={changeChat(contact.chatRoomId)}
-					id={contact.username}
+					on:click={changeChat(contact.RoomId)}
+					id={contact.Username}
 				>
 					<!--name and username-->
 					<section class="flex  items-center  ">
 						<!--profile img-->
-						{#if contact.profileImg}
+						{#if contact.ImgUrl}
 							<!-- svelte-ignore a11y-img-redundant-alt -->
 							<img
 								class="h-12 w-12 object-cover rounded-full  "
-								src="/api/{contact.profileImg}"
+								src="/api/images/{contact.ImgUrl}"
 								alt="Current profile photo"
 							/>
 						{:else}
 							<div
-								class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+								class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
 							>
 								<i class="fa-solid fa-user text-slate-400 text-2xl" />
 							</div>
@@ -180,10 +198,10 @@
 						<!-- Name and username-->
 						<div class="mx-2 w-9/12 ">
 							<h4 class=" font-semibold text-sm text-text  ">
-								{contact.firstName}
-								{contact.lastName}
+								{contact.Firstname}
+								{contact.Lastname}
 							</h4>
-							<h5 class=" text-xs  text-text   ">@{contact.username}</h5>
+							<h5 class=" text-xs  text-text   ">@{contact.Username}</h5>
 						</div>
 					</section>
 				</section>

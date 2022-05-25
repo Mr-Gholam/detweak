@@ -385,11 +385,20 @@ func post_create_room(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	var receiverInfo map[string]interface{}
 	var room Room
+	var existingRoom Room
 	body, err := ioutil.ReadAll(r.Body)
 	handleError(err)
 	err = json.Unmarshal(body, &receiverInfo)
 	targetUsername := receiverInfo["targetUsername"].(string)
 	receiverId := findUserIdByUsername(targetUsername)
+	db.Where("sender_id = ? AND receiver_id = ?", userId, receiverId).Or("sender_id = ? AND receiver_id = ?", receiverId, userId).Find(&existingRoom)
+	if existingRoom.ID != 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(map[string]interface{}{"error": "Room already exists"})
+		handleError(err)
+		w.Write(e)
+		return
+	}
 	room.ReceiverId = receiverId
 	room.SenderId = userId
 	db.Create(&room)
@@ -400,7 +409,34 @@ func post_create_room(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
-
+	var chatRooms []Room
+	var Ids []map[string]uint
+	var Rooms []RoomJSON
+	userId := getIdFromCookie(w, r)
+	db.Where("sender_id = ?", userId).Or("receiver_id = ?", userId).Find(&chatRooms)
+	for i := 0; i < len(chatRooms); i++ {
+		if chatRooms[i].SenderId == userId {
+			target := map[string]uint{"chatRoomId": chatRooms[i].ID, "targetId": chatRooms[i].ReceiverId}
+			Ids = append(Ids, target)
+		} else {
+			target := map[string]uint{"chatRoomId": chatRooms[i].ID, "targetId": chatRooms[i].SenderId}
+			Ids = append(Ids, target)
+		}
+	}
+	for i := 0; i < len(Ids); i++ {
+		var roomDetail RoomJSON
+		username, firstname, lastname, imgUrl := findUserById(Ids[i]["targetId"])
+		roomDetail.Firstname = firstname
+		roomDetail.ImgUrl = imgUrl
+		roomDetail.Username = username
+		roomDetail.Lastname = lastname
+		roomDetail.RoomId = Ids[i]["chatRoomId"]
+		Rooms = append(Rooms, roomDetail)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(Rooms)
+	handleError(err)
+	w.Write(e)
 }
 
 // Friendship Controller

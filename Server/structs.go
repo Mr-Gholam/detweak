@@ -115,3 +115,10 @@ type Chat struct {
 	ChatRoomId uint
 	message    string
 }
+type RoomJSON struct {
+	RoomId    uint
+	Username  string
+	Firstname string
+	Lastname  string
+	ImgUrl    string
+}
