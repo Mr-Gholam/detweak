@@ -46,6 +46,7 @@
 					})
 				});
 				const newChatRoom = await result.json();
+				console.log(newChatRoom);
 				if (result.status == 200) {
 					contacts.unshift(newChatRoom);
 					contacts = contacts;

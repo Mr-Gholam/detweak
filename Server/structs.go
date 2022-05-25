@@ -104,3 +104,14 @@ type CommentJSON struct {
 	Comment           string
 	CreatedAt         time.Time
 }
+type Room struct {
+	ID         uint
+	SenderId   uint
+	ReceiverId uint
+}
+type Chat struct {
+	ID         uint
+	ReceiverId uint
+	ChatRoomId uint
+	message    string
+}

@@ -380,6 +380,29 @@ func post_delete_comment(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Chat controller
+func post_create_room(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var receiverInfo map[string]interface{}
+	var room Room
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &receiverInfo)
+	targetUsername := receiverInfo["targetUsername"].(string)
+	receiverId := findUserIdByUsername(targetUsername)
+	room.ReceiverId = receiverId
+	room.SenderId = userId
+	db.Create(&room)
+	targetUsername, targetFirstname, targetLastname, targetImgUrl := findUserById(receiverId)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"ImgUrl": targetImgUrl, "Firstname": targetFirstname, "Lastname": targetLastname, "Username": targetUsername, "RoomId": room.ID})
+	handleError(err)
+	w.Write(e)
+}
+func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
+
+}
+
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {
 	var user User
