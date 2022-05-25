@@ -335,6 +335,14 @@ func get_single_post(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	w.Write(e)
 }
+func get_liked_posts(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	posts := getLikedPostsByUserId(userId)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(posts)
+	handleError(err)
+	w.Write(e)
+}
 
 // Comment controller
 func post_create_comment(w http.ResponseWriter, r *http.Request) {

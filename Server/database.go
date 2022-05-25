@@ -140,6 +140,31 @@ func getPostImgUrl(postId uint) string {
 	db.Where("id = ?", postId).Find(&post)
 	return post.PostImgUrl
 }
+func getLikedPostsByUserId(userId uint) []PostJSON {
+	var likedPosts []LikedPost
+	var posts []PostJSON
+	db.Where("user_id = ?", userId).Find(&likedPosts)
+	for i := 0; i < len(likedPosts); i++ {
+		var post PostJSON
+		var postInfo Post
+		var owner User
+		db.Where("id = ?", likedPosts[i].PostId).Find(&postInfo)
+		db.Where("id = ?", postInfo.OwnerId).Find(&owner)
+		post.AllowComments = postInfo.AllowComments
+		post.CreatedAt = postInfo.CreatedAt
+		post.Description = postInfo.Description
+		post.Firstname = owner.Firstname
+		post.Lastname = owner.Lastname
+		post.Username = owner.Username
+		post.Liked = true
+		post.Likes = postInfo.Likes
+		post.PostImgUrl = postInfo.PostImgUrl
+		post.ProfileImg = owner.ImgUrl
+		post.PostId = postInfo.ID
+		posts = append(posts, post)
+	}
+	return posts
+}
 
 // profile
 func findUserInfoByUsername(username string, userId uint) ProfileInfo {
