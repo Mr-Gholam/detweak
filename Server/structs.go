@@ -114,6 +114,7 @@ type Chat struct {
 	ReceiverId uint
 	ChatRoomId uint
 	Message    string
+	ImgUrl     string
 	CreatedAt  time.Time
 }
 type RoomJSON struct {
@@ -127,6 +128,7 @@ type RoomJSON struct {
 }
 
 type ChatJSON struct {
+	ImgUrl    string
 	Receive   bool
 	Message   string
 	CreatedAt time.Time

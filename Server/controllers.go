@@ -457,10 +457,12 @@ func post_get_chat(w http.ResponseWriter, r *http.Request) {
 		if chats[i].ReceiverId == userId {
 			chat.Receive = true
 			chat.Message = chats[i].Message
+			chat.ImgUrl = chats[i].ImgUrl
 			chat.CreatedAt = chats[i].CreatedAt
 			chatJson = append(chatJson, chat)
 		} else {
 			chat.Receive = false
+			chat.ImgUrl = chats[i].ImgUrl
 			chat.Message = chats[i].Message
 			chat.CreatedAt = chats[i].CreatedAt
 			chatJson = append(chatJson, chat)
@@ -498,7 +500,38 @@ func post_create_message(w http.ResponseWriter, r *http.Request) {
 	chat.ReceiverId = targetId
 	db.Create(&chat)
 	w.WriteHeader(http.StatusOK)
-
+	e, err := json.Marshal(map[string]interface{}{"CreatedAt": chat.CreatedAt})
+	handleError(err)
+	w.Write(e)
+}
+func post_create_message_img(w http.ResponseWriter, r *http.Request) {
+	var room Room
+	var chat Chat
+	targetId := mux.Vars(r)["TargetId"]
+	receiverId, err := strconv.ParseUint(targetId, 0, 64)
+	handleError(err)
+	userId := getIdFromCookie(w, r)
+	db.Where("sender_id =? AND receiver_id = ?", userId, targetId).Or("sender_id =? AND receiver_id = ?", targetId, userId).Find(&room)
+	imgUrl, err := FileUpload(r)
+	handleError(err)
+	chat.ImgUrl = imgUrl
+	chat.ReceiverId = uint(receiverId)
+	chat.ChatRoomId = room.ID
+	db.Create(&chat)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"CreatedAt": chat.CreatedAt, "ImgUrl": imgUrl, "MessageId": chat.ID})
+	handleError(err)
+	w.Write(e)
+}
+func post_update_message(w http.ResponseWriter, r *http.Request) {
+	var messageInfo map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &messageInfo)
+	messageId := uint(messageInfo["messageId"].(float64))
+	message := messageInfo["message"].(string)
+	db.Model(&Chat{}).Where("id = ?", messageId).Update("message", message)
+	w.WriteHeader(http.StatusOK)
 }
 
 // Friendship Controller

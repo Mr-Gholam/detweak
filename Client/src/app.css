@@ -12,6 +12,20 @@
 	font-family: 'Roboto', sans-serif;
 	background-color: #0f172a;
 }
+.overflow-y-auto::-webkit-scrollbar {
+	width: 5px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+	border-radius: 100vh;
+	background: #413f42;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+	background-color: #7f8487;
+	border-radius: 100vh;
+	/* border: 1px solid #1f306e; */
+}
 
 .error {
 	font-size: 1rem; /* 16px */
@@ -22,7 +36,7 @@
 	color: #ff3333;
 }
 .send-message {
-	border-width: 1px;
+	border-width: 0px;
 	border-radius: 16px;
 	background-color: #6db0d1;
 	width: fit-content;
@@ -47,10 +61,11 @@
 	border-width: 6px;
 }
 .receive-message {
-	border-width: 1px;
+	border-width: 0px;
 	border-radius: 16px;
 	background-color: #1f306e;
 	width: fit-content;
+	max-width: 50%;
 	height: fit-content;
 	padding: 0.4rem 0.75rem;
 	color: white;

@@ -9,11 +9,14 @@
 	let currentChat = [];
 	let currentChatInfo;
 	let textInput;
+	let picInput;
+	let hasPhoto = false;
 	let showList = true;
 	let bouncing = false;
 	let loading = true;
 	const targetUser = $page.url.search;
 	const targetUsername = targetUser.split('=')[1];
+
 	onMount(async () => {
 		const response = await fetch('/api/load-chatRooms');
 		const data = await response.json();
@@ -30,13 +33,12 @@
 					})
 				});
 				const newChatRoom = await result.json();
-				console.log(newChatRoom);
 				if (result.status == 200) {
 					contacts.unshift(newChatRoom);
 					contacts = contacts;
 				}
 			} else {
-				const foundUser = contacts.find((contact) => contact.username == targetUsername);
+				const foundUser = contacts.find((contact) => contact.Username == targetUsername);
 				if (foundUser) {
 					const response = await fetch('/api/get-chat', {
 						method: 'POST',
@@ -44,12 +46,12 @@
 							'Content-Type': 'application/json'
 						},
 						body: JSON.stringify({
-							chatRoomId: foundUser.chatRoomId
+							RoomId: foundUser.RoomId
 						})
 					});
 					const data = await response.json();
-					currentChatInfo = data.chatInfo;
-					currentChat = data.currentChat;
+					currentChatInfo = data;
+					currentChat = data.Chat;
 					loading = false;
 				} else {
 					const result = await fetch('/api/create-room', {
@@ -71,15 +73,50 @@
 			}
 		}
 	});
-	function createSendMessage(input) {
+	function scrollToBottom() {
+		const element = document.getElementById('middlePart');
+		element.scrollTop = element.scrollHeight;
+	}
+	function createSendMessage(input, createdAt) {
 		const middePart = document.getElementById('middlePart');
 		const messageParent = document.createElement('div');
-		middePart.appendChild(messageParent);
-		messageParent.classList.add('w-full');
+		const parent = document.createElement('div');
+		parent.classList.add('w-full');
+		middePart.appendChild(parent);
+		messageParent.classList.add('flex', 'items-end', 'bg-inherit', 'send-message');
 		const message = document.createElement('h1');
-		message.classList.add('send-message');
+		const Time = document.createElement('p');
+		message.classList.add('p-1', 'bg-inherit');
+		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
+		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
 		message.innerText = input;
+		Time.innerText = time;
 		messageParent.appendChild(message);
+		messageParent.appendChild(Time);
+		parent.appendChild(messageParent);
+		scrollToBottom();
+	}
+	function createSendImgMessage(imgUrl, createdAt, input) {
+		const middePart = document.getElementById('middlePart');
+		const messageParent = document.createElement('div');
+		const parent = document.createElement('div');
+		parent.classList.add('w-full');
+		middePart.appendChild(parent);
+		messageParent.classList.add('flex', 'items-end', 'bg-inherit', 'send-message', 'flex-col');
+		const img = document.createElement('img');
+		const message = document.createElement('h1');
+		const Time = document.createElement('p');
+		img.setAttribute('src', `/api/images/${imgUrl}`);
+		message.classList.add('p-1', 'bg-inherit');
+		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
+		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		Time.innerText = time;
+		message.innerText = input;
+		messageParent.appendChild(img);
+		messageParent.appendChild(message);
+		messageParent.appendChild(Time);
+		parent.appendChild(messageParent);
+		scrollToBottom;
 	}
 	function createReceiveMessage(input) {
 		const middePart = document.getElementById('middlePart');
@@ -91,10 +128,47 @@
 		message.innerText = input;
 		messageParent.appendChild(message);
 	}
+	function togglePic() {
+		if (!hasPhoto) {
+			hasPhoto = true;
+		} else {
+			hasPhoto = false;
+		}
+	}
 	async function sendMessage() {
-		console.log(currentChatInfo);
 		const RoomId = currentChatInfo.RoomId;
 		const TargetId = currentChatInfo.TargetId;
+		const formData = new FormData();
+		formData.append('image', picInput.files[0]);
+		if (hasPhoto) {
+			const image = await fetch(`/api/create-message-img/${TargetId}`, {
+				method: 'POST',
+				body: formData
+			});
+			const imgData = await image.json();
+			togglePic();
+
+			if (textInput == '' || textInput == undefined) {
+				createSendImgMessage(imgData.ImgUrl, imgData.CreatedAt, '');
+				scrollToBottom();
+				return;
+			}
+			const response = await fetch('/api/update-message', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					message: textInput,
+					messageId: imgData.MessageId
+				})
+			});
+			if (response.ok) {
+				createSendImgMessage(imgData.ImgUrl, imgData.CreatedAt, textInput);
+				scrollToBottom;
+				textInput = '';
+			}
+		}
 		if (textInput == '' || textInput == undefined) return;
 		const response = await fetch('/api/create-message', {
 			method: 'POST',
@@ -107,8 +181,10 @@
 				TargetId
 			})
 		});
+		const data = await response.json();
 		if (response.status == 200) {
-			createSendMessage(textInput);
+			createSendMessage(textInput, data.CreatedAt);
+			scrollToBottom;
 			textInput = '';
 		}
 	}
@@ -135,6 +211,9 @@
 		const data = await response.json();
 		currentChatInfo = data;
 		currentChat = data.Chat;
+		setTimeout(() => {
+			scrollToBottom();
+		}, 5);
 		loading = false;
 	}
 	function typing() {
@@ -263,7 +342,7 @@
 			{#if !loading}
 				{#if currentChat}
 					{#each currentChat as chat}
-						<section class="w-full">
+						<div class="w-full">
 							{#if chat.Receive}
 								<div class="flex items-end">
 									{#if currentChatInfo.ImgUrl}
@@ -283,8 +362,15 @@
 									<div
 										class="{chat.Receive
 											? 'receive-message'
-											: 'send-message'} flex items-end bg-inherit"
+											: 'send-message'} flex items-end bg-inherit {chat.ImgUrl ? 'flex-col' : ''}"
 									>
+										{#if chat.ImgUrl}
+											<img
+												src="/api/images/{chat.ImgUrl}"
+												alt=""
+												class="w-full h-fit  md:mx-auto  object-cover rounded-sm"
+											/>
+										{/if}
 										<h1 class="p-1 bg-inherit">
 											{chat.Message}
 										</h1>
@@ -294,7 +380,18 @@
 									</div>
 								</div>
 							{:else}
-								<div class="{chat.Receive ? 'receive-message' : 'send-message'} flex items-end ">
+								<div
+									class="{chat.Receive
+										? 'receive-message'
+										: 'send-message'} flex items-end {chat.ImgUrl ? 'flex-col' : ''}  "
+								>
+									{#if chat.ImgUrl}
+										<img
+											src="/api/images/{chat.ImgUrl}"
+											alt=""
+											class="w-full h-fit  md:mx-auto  object-cover rounded-sm"
+										/>
+									{/if}
 									<h1 class="p-1 bg-inherit">
 										{chat.Message}
 									</h1>
@@ -303,7 +400,7 @@
 									</p>
 								</div>
 							{/if}
-						</section>
+						</div>
 					{/each}
 				{/if}
 			{:else}
@@ -331,13 +428,21 @@
 					placeholder="Say Hello"
 				/>
 				<label
-					for="postPic"
-					class="text-2xl  hover:cursor-pointer hover:text-main mx-2 flex items-center text-text "
-					><i class="fa-solid fa-paperclip" /></label
+					for="picture"
+					class="text-2xl  hover:cursor-pointer hover:text-main mx-2 flex items-center text-text {hasPhoto
+						? 'text-main'
+						: 'text-text'} "><i class="fa-solid fa-paperclip" /></label
 				>
-				<input type="file" name="image" id="postPic" class="hidden" />
+				<input
+					type="file"
+					name="image"
+					id="picture"
+					on:change={togglePic}
+					class="hidden"
+					bind:this={picInput}
+				/>
 				<button
-					class="font-semibold rounded-full border border-main bg-inherit 	justify-center w-11 h-11 mx-2 flex items-center {loading
+					class="font-semibold rounded-full border-2 border-main bg-inherit 	justify-center w-11 h-11 mx-2 flex items-center {loading
 						? 'loading-pulse'
 						: ''}"
 					id="sendBtn"><i class="fas fa-chevron-right text-main bg-inherit" /></button
