@@ -165,7 +165,7 @@
 			});
 			if (response.ok) {
 				createSendImgMessage(imgData.ImgUrl, imgData.CreatedAt, textInput);
-				scrollToBottom;
+				scrollToBottom();
 				textInput = '';
 			}
 		}
@@ -184,7 +184,7 @@
 		const data = await response.json();
 		if (response.status == 200) {
 			createSendMessage(textInput, data.CreatedAt);
-			scrollToBottom;
+			scrollToBottom();
 			textInput = '';
 		}
 	}

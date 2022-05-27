@@ -7,23 +7,6 @@
 	let bio;
 	let profilePic;
 	let profilePicInput;
-	let timelineSelected;
-	let amPm;
-
-	let timelines = [
-		{ id: 0, value: '0-1' },
-		{ id: 1, value: '1-2' },
-		{ id: 2, value: '2-3' },
-		{ id: 3, value: '3-4' },
-		{ id: 4, value: '4-5' },
-		{ id: 5, value: '5-6' },
-		{ id: 6, value: '6-7' },
-		{ id: 7, value: '7-8' },
-		{ id: 8, value: '8-9' },
-		{ id: 9, value: '9-10' },
-		{ id: 10, value: '10-11' },
-		{ id: 11, value: '11-12' }
-	];
 	let countries = [
 		{ text: 'Afghanistan', value: 'AF' },
 		{ text: 'Åland Islands', value: 'AX' },
@@ -286,8 +269,6 @@
 		bio = data.user.bio;
 		birthday = data.user.birthday.slice(0, 10);
 		countrySelected = data.user.location;
-		amPm = `${data.user.onlineTime.slice(3, 5)}`;
-		timelineSelected = `${data.user.onlineTime.slice(0, 3)}`;
 		currentPic = data.user.profileImgUrl;
 		email = data.user.email;
 		username = data.user.username;
@@ -303,7 +284,7 @@
 				profilePic.setAttribute('src', reader.result);
 			});
 			reader.readAsDataURL(file);
-			console.log(file);
+			currentPic = file;
 			return;
 		}
 	}
@@ -383,7 +364,7 @@
 </svelte:head>
 <div class="md:p-4 my-2 md:w-9/12 ">
 	<section
-		class="w-80 flex border-2 justify-evenly p-3 bg-main-bg rounded-full text-white mx-auto mb-4 "
+		class="w-80 flex border-2 justify-evenly p-3 bg-main-bg rounded-full text-white mx-auto mb-4 border-border"
 	>
 		<button class="hover:text-main text-main" id="personalBtn" on:click={switchPersonal}
 			>Personal Setting</button
@@ -397,115 +378,91 @@
 		id="personal"
 		action="/set-profile"
 		method="post"
-		class="flex flex-col justify-between p-4 gap-4 items-center  md:border-2 md:border-solid md:border-gray-200 w-fit mx-auto"
+		class="flex flex-col justify-between p-4 gap-4 items-center  md:border-2 md:border-solid md:border-border w-fit mx-auto"
 		enctype="multipart/form-data"
 		on:submit|preventDefault={submitPersonal}
 	>
 		<section class="w-80">
-			<label class="text-base" for="firstName">First Name</label>
+			<label class="text-base text-text" for="firstName">First Name</label>
 			<input
 				type="text"
 				name="firstName"
 				id="firstName"
 				bind:value={firstName}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
+				class="outline-none border-2 border-border border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 text-text"
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="lastName">Last Name</label>
+			<label class="text-base text-text" for="lastName">Last Name</label>
 
 			<input
 				type="text"
 				name="lastName"
 				id="lastName"
 				bind:value={lastName}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
+				class="outline-none border-2 border-border border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 text-text"
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="bio">Bio</label>
+			<label class="text-base text-text" for="bio">Bio</label>
 			<textarea
 				name="bio"
 				id="bio"
 				cols="20 "
 				rows="5"
 				bind:value={bio}
-				class="outline-none border-2 border-main-bg border-solid
+				class="outline-none border-2 border-border border-solid
                  rounded-lg px-2.5 mx-auto block w-11/12 my-3 p-2 resize-none
+				text-text
                  "
 			/>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="birthday">Bithday</label>
+			<label class="text-base text-text" for="birthday">Bithday</label>
 			<input
 				type="date"
 				name="birthday"
 				id=""
 				bind:value={birthday}
-				class="outline-none border-2 border-main-bg border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
+				class="outline-none border-2 border-border border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3  text-text"
 			/>
-			<section class="w-80">
-				<label for="online-time" class="text-base">Select your country</label>
-				<section class="flex justify-center">
-					<select
-						bind:value={countrySelected}
-						class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3 p-1"
-					>
-						<option selected disabled value=""> Country</option>
-						{#each countries as country}
-							<option value={country.text}>
-								{country.text}
-							</option>
-						{/each}
-					</select>
-				</section>
-			</section>
 		</section>
 		<section class="w-80">
-			<label for="online-time" class="text-base">Choose daily online time</label>
+			<label for="online-time" class="text-base text-text">Select your country</label>
 			<section class="flex justify-center">
 				<select
-					id="online-time"
-					bind:value={timelineSelected}
-					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3"
+					bind:value={countrySelected}
+					class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg p-1 my-3 "
 				>
-					<option selected disabled value=""> hour</option>
-					{#each timelines as timeline}
-						<option value={timeline.value}>
-							{timeline.value}
+					<option selected disabled value=""> Country</option>
+					{#each countries as country}
+						<option value={country.text}>
+							{country.text}
 						</option>
 					{/each}
 				</select>
-				<select
-					bind:value={amPm}
-					name="am-pm"
-					id="am-pm"
-					class="block mx-2 w-24 text-center outline-none border-2 color-main border-main-bg border-solid rounded-lg p-1 my-3"
-				>
-					<option selected disabled value=""> Am-PM</option>
-					<option value="AM">AM</option>
-					<option value="PM">PM</option>
-				</select>
 			</section>
 		</section>
 		<section class="w-80">
-			<label class="text-base" for="profilePic">Profile Picture</label>
+			<label class="text-base text-text" for="profilePic">Profile Picture</label>
 			<div class="flex items-center justify-evenly my-3   ">
 				<!-- svelte-ignore a11y-img-redundant-alt -->
+
 				{#if currentPic}
 					<img
 						class="h-16 w-16 object-cover rounded-full "
 						bind:this={profilePic}
-						src="/api/{currentPic}"
+						src="/api/images/{currentPic}"
 						alt="Current profile photo"
 					/>
 				{:else}
 					<div
-						class="h-16 w-16 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center"
+						class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
 					>
 						<i class="fa-solid fa-user text-slate-400 text-2xl" />
 					</div>
 				{/if}
+
 				<input
 					type="file"
 					name="profilePic"
@@ -514,23 +471,34 @@
 					id="profileImg"
 					accept="image/png, image/jpeg"
 					class="block w-4/6 text-sm text-gray-500
-                file:mr-3 file:py-2 file:px-3 
-                file:text-sm file:font-semibold
-                file:bg-violet-50 file:text-main-bg
-                file:border-main-bg file:border-2
-                file:border-solid
-                file:rounded-full
-                file:hover:bg-main
-		
-                file:hover:cursor-pointer"
+					file:mr-3 file:py-2 file:px-3 
+					file:text-sm file:font-semibold
+					file:bg-main-bg file:text-text
+					file:border-border  file:border-2
+					file:border-solid
+					file:rounded-full
+					file:hover:text-main
+					file:hover:border-main
+					file:hover:cursor-pointer"
 				/>
 			</div>
 		</section>
+		{#if !currentPic}
+			<section class="w-80">
+				<label for="online-time" class="text-base text-text">Delete Profile Picture</label>
+				<button
+					class="cursor-pointer text-lg rounded-lg  bg-red-600 hover:text-border py-2 px-12 mx-auto block w-11/12  text-white  my-3"
+				>
+					<i class="fa-solid fa-camera bg-transparent" />
+					Delete picture
+				</button>
+			</section>
+		{/if}
 		<section class="w-80">
 			<input
 				type="submit"
-				value="Next"
-				class="cursor-pointer text-lg rounded-lg hover:text-main text-white bg-main-bg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl hover:bg-main-darker  "
+				value="Save Changes"
+				class="main-btn w-11/12 py-2 px-20 text-lg mx-auto block"
 			/>
 		</section>
 	</form>
