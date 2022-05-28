@@ -252,6 +252,21 @@
 		{ text: 'Zambia', value: 'ZM' },
 		{ text: 'Zimbabwe', value: 'ZW' }
 	];
+	let selectedLanguage = null;
+	let selectedField = null;
+	let selectedFrameWork = null;
+	let gitHubUserName = '';
+	let experience = null;
+	let languages = ['JavaScript', 'PHP', 'Java', 'C', 'C++', 'C#', 'Go', 'Python', 'Ruby'];
+	let exOption = [
+		'Less than 6 months',
+		'Less than 1 year',
+		'Between 1-2 years',
+		'Between 2-4 years',
+		'More than 4 years'
+	];
+	let Fields = ['Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
+	let frontEndFrameWorks = ['React', 'Vue', 'Svelte', 'Anguler'];
 	let currentPic;
 	let countrySelected;
 	let birthday;
@@ -291,22 +306,44 @@
 	function switchPersonal() {
 		const personal = document.getElementById('personal');
 		const account = document.getElementById('account');
+		const Perfessional = document.getElementById('professional');
+		const PerfessionalBtn = document.getElementById('professionalBtn');
 		const personalBtn = document.getElementById('personalBtn');
 		const accountBtn = document.getElementById('accountBtn');
-		personal.classList.remove('hidden');
-		account.classList.add('hidden');
-		personalBtn.classList.add('text-main');
-		accountBtn.classList.remove('text-main');
+		personal.classList.replace('hidden', 'flex');
+		account.classList.replace('flex', 'hidden');
+		Perfessional.classList.replace('flex', 'hidden');
+		personalBtn.classList.replace('text-text', 'text-white');
+		accountBtn.classList.replace('text-white', 'text-text');
+		PerfessionalBtn.classList.replace('text-white', 'text-text');
 	}
 	function switchAccount() {
 		const personal = document.getElementById('personal');
 		const account = document.getElementById('account');
 		const personalBtn = document.getElementById('personalBtn');
 		const accountBtn = document.getElementById('accountBtn');
-		personal.classList.add('hidden');
-		account.classList.remove('hidden');
-		personalBtn.classList.remove('text-main');
-		accountBtn.classList.add('text-main');
+		const Perfessional = document.getElementById('professional');
+		const PerfessionalBtn = document.getElementById('professionalBtn');
+		personal.classList.replace('flex', 'hidden');
+		account.classList.replace('hidden', 'flex');
+		Perfessional.classList.replace('flex', 'hidden');
+		personalBtn.classList.replace('text-white', 'text-text');
+		accountBtn.classList.replace('text-text', 'text-white');
+		PerfessionalBtn.classList.replace('text-white', 'text-text');
+	}
+	function switchPerfessional() {
+		const personal = document.getElementById('personal');
+		const account = document.getElementById('account');
+		const personalBtn = document.getElementById('personalBtn');
+		const accountBtn = document.getElementById('accountBtn');
+		const Perfessional = document.getElementById('professional');
+		const PerfessionalBtn = document.getElementById('professionalBtn');
+		personal.classList.replace('flex', 'hidden');
+		account.classList.replace('flex', 'hidden');
+		Perfessional.classList.replace('hidden', 'flex');
+		personalBtn.classList.replace('text-white', 'text-text');
+		accountBtn.classList.replace('text-white', 'text-text');
+		PerfessionalBtn.classList.replace('text-text', 'text-white');
 	}
 	async function submitPersonal() {
 		const formData = new FormData();
@@ -316,7 +353,6 @@
 		formData.append('birthday', birthday);
 		formData.append('image', profilePicInput.files[0]);
 		formData.append('location', countrySelected);
-		formData.append('onlineTime', timelineSelected + amPm);
 		const response = await fetch('/api/update-profile', {
 			method: 'POST',
 			body: formData
@@ -362,14 +398,24 @@
 <svelte:head>
 	<title>Setting</title>
 </svelte:head>
-<div class="md:p-4 my-2 md:w-9/12 ">
+<div class="md:p-4 my-2 md:w-9/12 lg:flex  ">
 	<section
-		class="w-80 flex border-2 justify-evenly p-3 bg-main-bg rounded-full text-white mx-auto mb-4 border-border"
+		class="w-80 flex border-2 justify-evenly p-3  rounded-full text-white mx-auto mb-4 border-border lg:flex-col  h-52 lg:w-fit lg:mx-0 lg:fixed lg:top-24 lg:rounded-md lg:my-2 lg:border-0 "
 	>
-		<button class="hover:text-main text-main" id="personalBtn" on:click={switchPersonal}
-			>Personal Setting</button
+		<button
+			class="hover:text-main  text-left font-semibold text-white "
+			id="personalBtn"
+			on:click={switchPersonal}>Personal Setting</button
 		>
-		<button class="hover:text-main" id="accountBtn" on:click={switchAccount}>Account Setting</button
+		<button
+			class="hover:text-main text-left font-semibold text-text"
+			id="professionalBtn"
+			on:click={switchPerfessional}>Professional Setting</button
+		>
+		<button
+			class="hover:text-main text-left font-semibold text-text"
+			id="accountBtn"
+			on:click={switchAccount}>Account Setting</button
 		>
 	</section>
 	<!--Personal-->
@@ -378,10 +424,13 @@
 		id="personal"
 		action="/set-profile"
 		method="post"
-		class="flex flex-col justify-between p-4 gap-4 items-center  md:border-2 md:border-solid md:border-border w-fit mx-auto"
+		class="flex flex-col justify-between p-4 gap-4 items-center  md:border-2 md:border-solid md:border-border w-fit mx-auto lg:my-6"
 		enctype="multipart/form-data"
 		on:submit|preventDefault={submitPersonal}
 	>
+		<section class="w-80">
+			<h4 class="text-white text-xl text-center my-2">Personal Setting</h4>
+		</section>
 		<section class="w-80">
 			<label class="text-base text-text" for="firstName">First Name</label>
 			<input
@@ -432,7 +481,7 @@
 			<section class="flex justify-center">
 				<select
 					bind:value={countrySelected}
-					class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg p-1 my-3 "
+					class="block mx-2 w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg my-3 p-2"
 				>
 					<option selected disabled value=""> Country</option>
 					{#each countries as country}
@@ -483,13 +532,13 @@
 				/>
 			</div>
 		</section>
-		{#if !currentPic}
+		{#if currentPic}
 			<section class="w-80">
 				<label for="online-time" class="text-base text-text">Delete Profile Picture</label>
 				<button
-					class="cursor-pointer text-lg rounded-lg  bg-red-600 hover:text-border py-2 px-12 mx-auto block w-11/12  text-white  my-3"
+					class="cursor-pointer text-lg rounded-lg  border-red-600 border-2 text-red-600 hover:text-white py-2 px-12 mx-auto block w-11/12 hover:bg-red-600 my-3"
 				>
-					<i class="fa-solid fa-camera bg-transparent" />
+					<i class="fa-solid fa-camera bg-transparent mx-2" />
 					Delete picture
 				</button>
 			</section>
@@ -498,93 +547,175 @@
 			<input
 				type="submit"
 				value="Save Changes"
-				class="main-btn w-11/12 py-2 px-20 text-lg mx-auto block"
+				class="main-btn w-11/12 py-2 px-20 text-lg mx-auto block border-2"
 			/>
 		</section>
 	</form>
-
-	<!--auth-->
+	<!-- perfossinal -->
 	<div
-		id="account"
-		class="flex flex-col justify-between  p-4 gap-3 items-center shadow-xl border-2 hidden w-fit mx-auto"
+		id="professional"
+		class="hidden flex-col justify-between  p-4 gap-3 items-center shadow-xl border-2  w-fit mx-auto border-border lg:my-6"
 	>
-		<form
-			on:submit|preventDefault={submitAccount}
-			class="gap-3 items-center flex flex-col justify-between"
-		>
-			<h1 class="text-lg font-semibold text-center">Account Settting</h1>
-			<section class="w-80 ">
-				<label class="text-base" for="email">Email</label>
+		<form action="" class="flex flex-col justify-between  gap-4 items-center">
+			<section class="w-80">
+				<h4 class="text-white text-xl text-center my-2">Perfessional Setting</h4>
+			</section>
+			<section class="w-80">
+				<label for="felid" class="text-base text-text">Your Github username </label>
 				<input
-					bind:value={email}
-					type="email"
-					name="email"
-					id="email"
-					class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					bind:value={gitHubUserName}
+					type="text"
+					class="outline-none border-2 border-border text-text border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3"
 				/>
 			</section>
-			<section class="w-80 ">
-				<label class="text-base" for="username">Username</label>
-				<input
-					bind:value={username}
-					type="text"
-					name="username"
-					id="username"
-					class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
-				/>
+			<section class="w-80">
+				<label for="felid" class="text-base text-text">Coding Experience </label>
+				<select
+					bind:value={experience}
+					name=""
+					id=""
+					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
+				>
+					{#each exOption as xp}
+						<option value={xp}>{xp}</option>
+					{/each}
+				</select>
+			</section>
+			<section class="w-80">
+				<label for="felid" class="text-base text-text">Choose your Field</label>
+				<select
+					bind:value={selectedField}
+					name=""
+					id=""
+					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
+				>
+					{#each Fields as field}
+						<option value={field}>{field}</option>
+					{/each}
+				</select>
+			</section>
+			<section class="w-80">
+				<label for="languages" class="text-base text-text">Choose your main language</label>
+				<select
+					bind:value={selectedLanguage}
+					name=""
+					id=""
+					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
+				>
+					{#each languages as language}
+						<option value={language}>{language}</option>
+					{/each}
+				</select>
+			</section>
+			<section class="w-80">
+				<label for="fram-work" class="text-base text-text">Choose your fram work</label>
+				<select
+					bind:value={selectedFrameWork}
+					name=""
+					id=""
+					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
+				>
+					{#each frontEndFrameWorks as frameWork}
+						<option value={frameWork}>{frameWork}</option>
+					{/each}
+				</select>
 			</section>
 			<section class="w-80">
 				<input
 					type="submit"
 					value="Save Changes"
-					class="cursor-pointer text-lg rounded-lg  bg-main-bg hover:text-main py-2 px-20 mx-auto block w-11/12 hover:shadow-xl text-white "
+					class=" text-lg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl main-btn my-3 border-2  "
 				/>
 			</section>
 		</form>
-		<form id="changePassword">
+	</div>
+
+	<!--auth-->
+	<div
+		id="account"
+		class=" flex-col justify-between  p-4 gap-3 items-center shadow-xl border-2 hidden w-fit mx-auto border-border lg:my-6"
+	>
+		<form id="changePassword" class="mb-8 flex flex-col gap-4">
+			<h1 class="text-lg font-semibold text-center text-white">Password Settting</h1>
 			<section class="w-80 ">
-				<label class="text-base" for="password">Currnet Password</label>
+				<label class="text-base text-text" for="password">Currnet Password</label>
 				<input
 					bind:value={currentPassword}
 					type="password"
 					name="password"
 					id="currentPassword"
-					class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				/>
 			</section>
 			<section class="w-80 ">
-				<label class="text-base" for="password"> New Password</label>
+				<label class="text-base text-text" for="password"> New Password</label>
 				<input
 					bind:value={password}
 					type="password"
 					name="password"
 					id="password"
-					class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				/>
 			</section>
 			<section class="w-80 ">
-				<label class="text-base" for="confirmPassword">Confirm New Password</label>
+				<label class="text-base text-text" for="confirmPassword">Confirm New Password</label>
 				<input
 					bind:value={confirmPassword}
 					type="password"
 					name="confirmPassword"
 					id="confirmPassword"
-					class="outline-none border-2 border-main-bg border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				/>
 			</section>
 			<section class="w-80">
 				<input
 					type="submit"
 					value="Change Password"
-					class="cursor-pointer text-lg rounded-lg  bg-main-bg hover:text-main py-2 px-20 mx-auto block w-11/12 hover:shadow-xl text-white "
+					class="main-btn py-3 px-20 mx-auto block w-11/12 my-3 border-2 "
 				/>
 			</section>
 		</form>
-		<button
-			class="cursor-pointer text-lg rounded-lg  bg-red-600 hover:text-black py-2 px-12 mx-auto block w-11/12  text-white "
+		<form
+			on:submit|preventDefault={submitAccount}
+			class="gap-3 items-center flex flex-col justify-between mb-8"
 		>
-			<i class="fa-solid fa-user-xmark mx-2 " />
-			Delete Account
-		</button>
+			<h1 class="text-lg font-semibold text-center text-white">Account Settting</h1>
+			<section class="w-80 ">
+				<label class="text-base text-text" for="email">Email</label>
+				<input
+					bind:value={email}
+					type="email"
+					name="email"
+					id="email"
+					class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text"
+				/>
+			</section>
+			<section class="w-80 ">
+				<label class="text-base text-text" for="username">Username</label>
+				<input
+					bind:value={username}
+					type="text"
+					name="username"
+					id="username"
+					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+				/>
+			</section>
+			<section class="w-80">
+				<input
+					type="submit"
+					value="Save Changes"
+					class="main-btn block w-11/12 mx-auto px-20 py-3 my-3 border-2"
+				/>
+			</section>
+		</form>
+		<section class="w-80">
+			<label class="text-base text-text" for="confirmPassword">Delete Account</label>
+			<button
+				class="cursor-pointer text-lg rounded-lg  border-red-600 border-2 text-red-600 hover:text-white py-2 px-12 mx-auto block w-11/12 hover:bg-red-600 my-3 "
+			>
+				<i class="fa-solid fa-user-xmark mx-2  bg-transparent" />
+				Delete Account
+			</button>
+		</section>
 	</div>
 </div>

@@ -4,7 +4,7 @@
 @tailwind utilities;
 @layer components {
 	.main-btn {
-		@apply px-2 py-1 border border-border rounded-md hover:text-main hover:border-main  text-text;
+		@apply px-2 py-1 border border-border rounded-md hover:text-main hover:border-main  text-text hover:shadow-xl;
 	}
 }
 
