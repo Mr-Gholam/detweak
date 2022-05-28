@@ -283,8 +283,7 @@
 	onMount(async () => {
 		const response = await fetch('/api/setting');
 		const data = await response.json();
-		console.log(data);
-		user = data;
+		user = JSON.parse(JSON.stringify(data));
 		firstName = data.Firstname;
 		lastName = data.Lastname;
 		gitHubUserName = data.GitHub;
@@ -310,7 +309,6 @@
 			reader.readAsDataURL(file);
 			currentPic = file;
 			changePic();
-			console.log(hasPhoto);
 			return;
 		}
 	}
@@ -357,18 +355,48 @@
 		PerfessionalBtn.classList.replace('text-text', 'text-white');
 	}
 	async function submitPersonal() {
-		const formData = new FormData();
-		formData.append('firstName', firstName);
-		formData.append('lastName', lastName);
-		formData.append('bio', bio);
-		formData.append('birthday', birthday);
-		formData.append('image', profilePicInput.files[0]);
-		formData.append('location', countrySelected);
-		const response = await fetch('/api/update-profile', {
+		const btn = document.getElementById('submitPersonal');
+		if (hasPhoto) {
+			const formData = new FormData();
+			formData.append('image', profilePicInput.files[0]);
+			const image = await fetch('/api/update-profileImg', {
+				method: 'post',
+				body: formData
+			});
+			const imageJson = await image.json();
+			if (imageJson.ImgUrl) {
+				hasPhoto = false;
+				document.getElementById('profileImg').value = '';
+				profileImage = imageJson.ImgUrl;
+
+				btn.value = 'User Updated';
+				btn.classList.add('text-green', 'border-green');
+				setTimeout(() => {
+					btn.value = 'Save Changes';
+					btn.classList.remove('text-green', 'border-green');
+				}, 3000);
+			}
+		}
+		const response = await fetch('/api/update-personal', {
 			method: 'POST',
-			body: formData
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				Firstname: user.Firstname != firstName ? firstName : undefined,
+				Lastname: user.Lastname != lastName ? lastName : undefined,
+				Bio: user.Bio != bio ? bio : undefined,
+				Location: user.Location != countrySelected ? countrySelected : undefined,
+				Birthday: user.Birthday != birthday ? birthday : undefined
+			})
 		});
 		if (response.ok) {
+			btn.value = 'User Updated';
+			btn.classList.add('text-green', 'border-green');
+			setTimeout(() => {
+				btn.value = 'Save Changes';
+				btn.classList.remove('text-green', 'border-green');
+			}, 3000);
 		}
 	}
 	async function submitAccount() {
@@ -413,6 +441,7 @@
 		});
 		if (response.ok) {
 			currentPic = '';
+			profileImage = '';
 		}
 	}
 	function changePic() {
@@ -420,11 +449,8 @@
 			hasPhoto = false;
 			currentPic = '';
 			document.getElementById('profileImg').value = '';
-			return;
 		} else {
 			hasPhoto = true;
-			console.log(hasPhoto);
-			return;
 		}
 	}
 </script>
@@ -535,7 +561,7 @@
 					<img
 						class="h-16 w-16 object-cover rounded-full "
 						bind:this={profilePic}
-						src="/api/images/{currentPic}"
+						src="/api/images/{profileImage}"
 						alt="Current profile photo"
 					/>
 				{:else}
@@ -589,6 +615,7 @@
 		{/if}
 		<section class="w-80">
 			<input
+				id="submitPersonal"
 				type="submit"
 				value="Save Changes"
 				class="main-btn w-11/12 py-2 px-20 text-lg mx-auto block border-2"

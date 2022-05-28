@@ -43,7 +43,9 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/update-message", http.HandlerFunc(post_update_message)).Methods("POST")
 	// Setting
 	router.Handle("/api/setting", http.HandlerFunc(get_setting)).Methods("GET")
-	router.Handle("/api/remove-profileImg", http.HandlerFunc(post_remove_profileImg)).Methods("POSt")
+	router.Handle("/api/remove-profileImg", http.HandlerFunc(post_remove_profileImg)).Methods("POST")
+	router.Handle("/api/update-profileImg", http.HandlerFunc(post_update_profileImg)).Methods("POST")
+	router.Handle("/api/update-personal", http.HandlerFunc(post_update_personal)).Methods("POST")
 
 	// friendship
 	router.Handle("/api/friend-requests", http.HandlerFunc(get_friend_requests)).Methods("GET")

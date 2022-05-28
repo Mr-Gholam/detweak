@@ -568,9 +568,58 @@ func post_remove_profileImg(w http.ResponseWriter, r *http.Request) {
 	db.Model(&User{}).Where("id =?", userId).Update("ImgUrl", "")
 	DeleteFile(ImgUrl)
 	username := findUsernameById(userId)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": ""})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": " "})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
+	w.WriteHeader(http.StatusOK)
+}
+func post_update_profileImg(w http.ResponseWriter, r *http.Request) {
+	var user User
+	userId := getIdFromCookie(w, r)
+	db.Where("id = ?", userId).Find(&user)
+	if user.ImgUrl != "" {
+		DeleteFile(user.ImgUrl)
+	}
+	NewImgUrl, err := FileUpload(r)
+	handleError(err)
+	db.Model(&User{}).Where("id = ?", userId).Update("ImgUrl", NewImgUrl)
+	username := findUsernameById(userId)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": NewImgUrl})
+	tokenStr, _ := token.SignedString(jwtSecret)
+	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"ImgUrl": NewImgUrl})
+	handleError(err)
+	w.Write(e)
+}
+func post_update_personal(w http.ResponseWriter, r *http.Request) {
+	var data map[string]interface{}
+	updated := make(map[string]interface{})
+	userId := getIdFromCookie(w, r)
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &data)
+	firstname, firstOk := data["Firstname"]
+	if firstOk {
+		updated["Firstname"] = firstname
+	}
+	lastname, lastOk := data["Lastname"]
+	if lastOk {
+		updated["Lastname"] = lastname
+	}
+	bio, bioOk := data["Bio"]
+	if bioOk {
+		updated["Bio"] = bio
+	}
+	birthday, birthOk := data["Birthday"]
+	if birthOk {
+		updated["Birthday"] = birthday
+	}
+	location, locationOk := data["Location"]
+	if locationOk {
+		updated["Location"] = location
+	}
+	db.Model(&User{}).Where("id = ?", userId).Updates(updated)
 	w.WriteHeader(http.StatusOK)
 }
 
