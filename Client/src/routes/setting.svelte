@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import { loading } from '../store';
-	let user;
 	let firstName;
 	let lastName;
 	let bio;
@@ -275,21 +274,23 @@
 	let currentPassword;
 	let password;
 	let confirmPassword;
-	async function load() {
-		const response = await fetch('/api/userInfo');
-		const data = await response.json();
-		user = data.user;
-		firstName = data.user.firstName;
-		lastName = data.user.lastName;
-		bio = data.user.bio;
-		birthday = data.user.birthday.slice(0, 10);
-		countrySelected = data.user.location;
-		currentPic = data.user.profileImgUrl;
-		email = data.user.email;
-		username = data.user.username;
-	}
 	onMount(async () => {
-		load();
+		const response = await fetch('/api/setting');
+		const data = await response.json();
+		console.log(data);
+		firstName = data.Firstname;
+		lastName = data.Lastname;
+		gitHubUserName = data.GitHub;
+		bio = data.Bio;
+		birthday = data.Birthday.slice(0, 10);
+		countrySelected = data.Location;
+		currentPic = data.ImgUrl;
+		email = data.Email;
+		username = data.Username;
+		selectedLanguage = data.Language;
+		selectedField = data.Field;
+		selectedFrameWork = data.FrameWork;
+		experience = data.Experience;
 	});
 	function imageChange() {
 		const file = profilePicInput.files[0];
@@ -358,7 +359,6 @@
 			body: formData
 		});
 		if (response.ok) {
-			load();
 		}
 	}
 	async function submitAccount() {
@@ -374,7 +374,6 @@
 		});
 		if (response.status == 200) {
 			switchAccount();
-			load();
 		}
 	}
 	async function changePassword() {
@@ -390,8 +389,10 @@
 			})
 		});
 		if (response.status == 200) {
-			load();
 		}
+	}
+	async function removeImgProfile() {
+		const response = await fetch('/api/remove-profileImg');
 	}
 </script>
 
@@ -471,7 +472,7 @@
 			<input
 				type="date"
 				name="birthday"
-				id=""
+				id="birthday"
 				bind:value={birthday}
 				class="outline-none border-2 border-border border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3  text-text"
 			/>
@@ -573,7 +574,7 @@
 				<select
 					bind:value={experience}
 					name=""
-					id=""
+					id="experience"
 					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
 				>
 					{#each exOption as xp}
@@ -586,7 +587,7 @@
 				<select
 					bind:value={selectedField}
 					name=""
-					id=""
+					id="field"
 					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
 				>
 					{#each Fields as field}
@@ -599,7 +600,7 @@
 				<select
 					bind:value={selectedLanguage}
 					name=""
-					id=""
+					id="language"
 					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
 				>
 					{#each languages as language}
@@ -612,7 +613,7 @@
 				<select
 					bind:value={selectedFrameWork}
 					name=""
-					id=""
+					id="frameWork"
 					class="block mx-auto w-11/12 text-center outline-none border-2 color-main border-border text-text border-solid rounded-lg  my-3 p-2 px-2.5"
 				>
 					{#each frontEndFrameWorks as frameWork}

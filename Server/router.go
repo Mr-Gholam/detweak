@@ -41,6 +41,8 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/create-message", http.HandlerFunc(post_create_message)).Methods("POST")
 	router.Handle("/api/create-message-img/{TargetId}", http.HandlerFunc(post_create_message_img)).Methods("POST")
 	router.Handle("/api/update-message", http.HandlerFunc(post_update_message)).Methods("POST")
+	// Setting
+	router.Handle("/api/setting", http.HandlerFunc(get_setting)).Methods("GET")
 
 	// friendship
 	router.Handle("/api/friend-requests", http.HandlerFunc(get_friend_requests)).Methods("GET")

@@ -534,6 +534,31 @@ func post_update_message(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Setting controller
+func get_setting(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var user User
+	db.Where("id =? ", userId).Find(&user)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{
+		"Email":      user.Email,
+		"Username":   user.Username,
+		"Firstname":  user.Firstname,
+		"Lastname":   user.Lastname,
+		"Bio":        user.Bio,
+		"GitHub":     user.GitHubUsername,
+		"Field":      user.Field,
+		"Language":   user.Language,
+		"FrameWork":  user.FrameWork,
+		"Birthday":   user.Birthday,
+		"Location":   user.Location,
+		"Experience": user.Experience,
+		"ImgUrl":     user.ImgUrl,
+	})
+	handleError(err)
+	w.Write(e)
+}
+
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {
 	var user User
