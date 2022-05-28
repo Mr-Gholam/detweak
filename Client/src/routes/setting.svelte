@@ -1,4 +1,6 @@
 <script>
+	// @ts-nocheck
+
 	import { onMount } from 'svelte';
 	import { loading } from '../store';
 	let user;
@@ -15,7 +17,8 @@
 	let currentPassword;
 	let password;
 	let confirmPassword;
-	let hasPhoto;
+	let profileImage;
+	let hasPhoto = false;
 	let selectedLanguage = null;
 	let selectedField = null;
 	let selectedFrameWork = null;
@@ -289,6 +292,7 @@
 		birthday = data.Birthday.slice(0, 10);
 		countrySelected = data.Location;
 		currentPic = data.ImgUrl;
+		profileImage = data.ImgUrl;
 		email = data.Email;
 		username = data.Username;
 		selectedLanguage = data.Language;
@@ -305,6 +309,8 @@
 			});
 			reader.readAsDataURL(file);
 			currentPic = file;
+			changePic();
+			console.log(hasPhoto);
 			return;
 		}
 	}
@@ -407,6 +413,18 @@
 		});
 		if (response.ok) {
 			currentPic = '';
+		}
+	}
+	function changePic() {
+		if (hasPhoto) {
+			hasPhoto = false;
+			currentPic = '';
+			document.getElementById('profileImg').value = '';
+			return;
+		} else {
+			hasPhoto = true;
+			console.log(hasPhoto);
+			return;
 		}
 	}
 </script>
@@ -544,11 +562,20 @@
 					file:rounded-full
 					file:hover:text-main
 					file:hover:border-main
-					file:hover:cursor-pointer"
+					file:hover:cursor-pointer {hasPhoto ? 'file:text-main file:border-main' : ''}
+					"
 				/>
+				{#if hasPhoto}
+					<button
+						on:click={changePic}
+						class=" w-6 h-6 rounded-full text-center text-text  hover:text-error"
+					>
+						<i class="fa-solid fa-x" />
+					</button>
+				{/if}
 			</div>
 		</section>
-		{#if currentPic}
+		{#if profileImage}
 			<section class="w-80">
 				<label for="online-time" class="text-base text-text">Delete Profile Picture</label>
 				<button
