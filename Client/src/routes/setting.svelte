@@ -1,11 +1,26 @@
 <script>
 	import { onMount } from 'svelte';
 	import { loading } from '../store';
+	let user;
 	let firstName;
 	let lastName;
 	let bio;
 	let profilePic;
 	let profilePicInput;
+	let currentPic;
+	let countrySelected;
+	let birthday;
+	let email;
+	let username;
+	let currentPassword;
+	let password;
+	let confirmPassword;
+	let hasPhoto;
+	let selectedLanguage = null;
+	let selectedField = null;
+	let selectedFrameWork = null;
+	let gitHubUserName = '';
+	let experience = null;
 	let countries = [
 		{ text: 'Afghanistan', value: 'AF' },
 		{ text: 'Åland Islands', value: 'AX' },
@@ -251,11 +266,6 @@
 		{ text: 'Zambia', value: 'ZM' },
 		{ text: 'Zimbabwe', value: 'ZW' }
 	];
-	let selectedLanguage = null;
-	let selectedField = null;
-	let selectedFrameWork = null;
-	let gitHubUserName = '';
-	let experience = null;
 	let languages = ['JavaScript', 'PHP', 'Java', 'C', 'C++', 'C#', 'Go', 'Python', 'Ruby'];
 	let exOption = [
 		'Less than 6 months',
@@ -266,18 +276,12 @@
 	];
 	let Fields = ['Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
 	let frontEndFrameWorks = ['React', 'Vue', 'Svelte', 'Anguler'];
-	let currentPic;
-	let countrySelected;
-	let birthday;
-	let email;
-	let username;
-	let currentPassword;
-	let password;
-	let confirmPassword;
+
 	onMount(async () => {
 		const response = await fetch('/api/setting');
 		const data = await response.json();
 		console.log(data);
+		user = data;
 		firstName = data.Firstname;
 		lastName = data.Lastname;
 		gitHubUserName = data.GitHub;
@@ -392,7 +396,18 @@
 		}
 	}
 	async function removeImgProfile() {
-		const response = await fetch('/api/remove-profileImg');
+		const response = await fetch('/api/remove-profileImg', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				ImgUrl: currentPic
+			})
+		});
+		if (response.ok) {
+			currentPic = '';
+		}
 	}
 </script>
 
@@ -537,6 +552,7 @@
 			<section class="w-80">
 				<label for="online-time" class="text-base text-text">Delete Profile Picture</label>
 				<button
+					on:click={removeImgProfile}
 					class="cursor-pointer text-lg rounded-lg  border-red-600 border-2 text-red-600 hover:text-white py-2 px-12 mx-auto block w-11/12 hover:bg-red-600 my-3"
 				>
 					<i class="fa-solid fa-camera bg-transparent mx-2" />

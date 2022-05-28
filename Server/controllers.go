@@ -558,6 +558,21 @@ func get_setting(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	w.Write(e)
 }
+func post_remove_profileImg(w http.ResponseWriter, r *http.Request) {
+	var data map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &data)
+	ImgUrl := data["ImgUrl"].(string)
+	userId := getIdFromCookie(w, r)
+	db.Model(&User{}).Where("id =?", userId).Update("ImgUrl", "")
+	DeleteFile(ImgUrl)
+	username := findUsernameById(userId)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": ""})
+	tokenStr, _ := token.SignedString(jwtSecret)
+	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
+	w.WriteHeader(http.StatusOK)
+}
 
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {
