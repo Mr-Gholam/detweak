@@ -18,6 +18,8 @@
 	let password;
 	let confirmPassword;
 	let profileImage;
+	let emailError = false;
+	let usernameError = false;
 	let hasPhoto = false;
 	let selectedLanguage = null;
 	let selectedField = null;
@@ -400,18 +402,35 @@
 		}
 	}
 	async function submitAccount() {
+		const btn = document.getElementById('accountSubmitBtn');
 		const response = await fetch('/api/update-account', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				email,
-				username
+				Email: user.Email != email ? email : undefined,
+				Username: user.Username != username ? username : undefined
 			})
 		});
-		if (response.status == 200) {
-			switchAccount();
+		const json = await response.json();
+		if (json.error) {
+			if (json.error.message == 'Username already exists') {
+				usernameError = true;
+			}
+			if (json.error.message == 'Email already exists') {
+				emailError = true;
+			}
+		}
+		if (response.ok) {
+			emailError = false;
+			usernameError = false;
+			btn.value = 'User Updated';
+			btn.classList.add('text-green', 'border-green');
+			setTimeout(() => {
+				btn.value = 'Save Changes';
+				btn.classList.remove('text-green', 'border-green');
+			}, 3000);
 		}
 	}
 	async function changePassword() {
@@ -751,6 +770,10 @@
 			class="gap-3 items-center flex flex-col justify-between mb-8"
 		>
 			<h1 class="text-lg font-semibold text-center text-white">Account Settting</h1>
+			<!-- email error -->
+			<section class="w-80 {emailError ? 'block' : 'hidden'}">
+				<h1 class="text-center text-error font-semibold">Email already exists</h1>
+			</section>
 			<section class="w-80 ">
 				<label class="text-base text-text" for="email">Email</label>
 				<input
@@ -758,21 +781,30 @@
 					type="email"
 					name="email"
 					id="email"
-					class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text"
+					class="outline-none border-2  border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text {emailError
+						? 'border-error'
+						: 'border-border'}"
 				/>
 			</section>
+			<!-- username Error -->
+			<section class="w-80 {usernameError ? 'block' : 'hidden'}">
+				<h1 class="text-center text-error font-semibold">Username already exists</h1>
+			</section>
 			<section class="w-80 ">
-				<label class="text-base text-text" for="username">Username</label>
+				<label class="text-base  text-text" for="username">Username</label>
 				<input
 					bind:value={username}
 					type="text"
 					name="username"
 					id="username"
-					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					class="outline-none border-2  text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 {usernameError
+						? 'border-error'
+						: 'border-border'}"
 				/>
 			</section>
 			<section class="w-80">
 				<input
+					id="accountSubmitBtn"
 					type="submit"
 					value="Save Changes"
 					class="main-btn block w-11/12 mx-auto px-20 py-3 my-3 border-2"

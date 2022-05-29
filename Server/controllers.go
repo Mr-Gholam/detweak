@@ -622,6 +622,47 @@ func post_update_personal(w http.ResponseWriter, r *http.Request) {
 	db.Model(&User{}).Where("id = ?", userId).Updates(updated)
 	w.WriteHeader(http.StatusOK)
 }
+func post_update_account(w http.ResponseWriter, r *http.Request) {
+	var data map[string]interface{}
+	updated := make(map[string]interface{})
+	userId := getIdFromCookie(w, r)
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &data)
+	email, emailOk := data["Email"]
+	if emailOk {
+		duplicateEmail := findDuplicateEmail(email.(string))
+		if duplicateEmail {
+			w.WriteHeader(http.StatusBadRequest)
+			e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Email already exists"}})
+			handleError(err)
+			w.Write(e)
+			return
+		}
+		updated["Email"] = email
+	}
+	username, usernameOk := data["Username"]
+	if usernameOk {
+		duplicateUsername := findDuplicateUsername(username.(string))
+		if duplicateUsername {
+			w.WriteHeader(http.StatusBadRequest)
+			e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Username already exists"}})
+			handleError(err)
+			w.Write(e)
+			return
+		}
+		updated["Username"] = username
+	}
+	db.Model(&User{}).Where("id = ?", userId).Updates(updated)
+	newUsername, _, _, imgUrl := findUserById(userId)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": newUsername, "id": userId, "imgUrl": imgUrl})
+	tokenStr, _ := token.SignedString(jwtSecret)
+	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"message": "user updated"})
+	handleError(err)
+	w.Write(e)
+}
 
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {
