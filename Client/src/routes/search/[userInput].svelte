@@ -12,7 +12,8 @@
 		const userInput = $page.params.userInput;
 		const response = await fetch(`/api/search/${userInput}`);
 		const data = await response.json();
-		suggestion = JSON.parse(JSON.stringify(data.usersFound));
+		console.log(data);
+		suggestion = JSON.parse(JSON.stringify(data));
 		$loading = false;
 	});
 	async function addFriend(username) {
@@ -51,12 +52,12 @@
 				<!--name and username-->
 				<section class="flex  items-center w-8/12 ">
 					<!--profile img-->
-					<a href="/profile/{suggedtedPeople.username}">
+					<a href="/profile/{suggedtedPeople.Username}">
 						<!-- svelte-ignore a11y-img-redundant-alt -->
-						{#if suggedtedPeople.profileImg}
+						{#if suggedtedPeople.ImgUrl}
 							<img
 								class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-								src="/api/{suggedtedPeople.profileImg}"
+								src="/api/images/{suggedtedPeople.ImgUrl}"
 								alt="Current profile photo"
 							/>
 						{:else}
@@ -68,25 +69,25 @@
 						{/if}
 					</a>
 					<!-- Name and username-->
-					<a href="/profile/{suggedtedPeople.username}" class="mx-2 w-9/12">
+					<a href="/profile/{suggedtedPeople.Username}" class="mx-2 w-9/12">
 						<h4 class=" font-semibold text-sm text-text hover:text-text-hover ">
-							{suggedtedPeople.firstName}
-							{suggedtedPeople.lastName}
+							{suggedtedPeople.Firstname}
+							{suggedtedPeople.Lastname}
 						</h4>
 						<h5 class=" text-xs  text-text hover:text-text-hover">
-							@{suggedtedPeople.username}
+							@{suggedtedPeople.Username}
 						</h5>
 					</a>
 				</section>
-				{#if !suggedtedPeople.myProfile}
-					{#if suggedtedPeople.sentRequest}
+				{#if suggedtedPeople.Username != $User.username}
+					{#if suggedtedPeople.IsFriend == 'Pending'}
 						<button class="main-btn ">
 							<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
 						</button>
-					{:else if suggedtedPeople.isFriend}
+					{:else if suggedtedPeople.IsFriend == 'Friend'}
 						<button class="main-btn">Sent Massage</button>
 					{:else}
-						<button on:click={addFriend(suggedtedPeople.username)} class=" main-btn"
+						<button on:click={addFriend(suggedtedPeople.Username)} class=" main-btn"
 							>Add Friend
 						</button>
 					{/if}

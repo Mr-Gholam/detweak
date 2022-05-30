@@ -800,6 +800,22 @@ func post_reject_request(w http.ResponseWriter, r *http.Request) {
 
 // search
 func get_search(w http.ResponseWriter, r *http.Request) {
-	// userInput := mux.Vars(r)["userInput"]
-
+	userId := getIdFromCookie(w, r)
+	var users []User
+	var result []map[string]string
+	userInput := mux.Vars(r)["userInput"]
+	db.Where("firstname LIKE ?", userInput).Find(&users)
+	for i := 0; i < len(users); i++ {
+		user := make(map[string]string)
+		user["Firstname"] = users[i].Firstname
+		user["Lastname"] = users[i].Lastname
+		user["ImgUrl"] = users[i].ImgUrl
+		user["Username"] = users[i].Username
+		user["IsFriend"] = findFriendShip(users[i].ID, userId)
+		result = append(result, user)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
 }
