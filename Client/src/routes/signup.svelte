@@ -1,6 +1,5 @@
 <script>
 	import { goto } from '$app/navigation';
-	import da from 'date-fns/locale/da';
 	import { onMount } from 'svelte';
 	import { loading, User } from '../store';
 
@@ -164,10 +163,9 @@
 		}
 	}
 	onMount(async () => {
-		// const response = await fetch('/api/signup', { method: 'GET' });
-		// if (response.status == 200) {
-		// 	goto('/dashboard');
-		// }
+		if ($User) {
+			goto('/dashboard');
+		}
 	});
 </script>
 
