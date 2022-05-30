@@ -696,6 +696,36 @@ func post_update_password(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	w.Write(e)
 }
+func post_update_professional(w http.ResponseWriter, r *http.Request) {
+	var data map[string]interface{}
+	updated := make(map[string]interface{})
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &data)
+	userId := getIdFromCookie(w, r)
+	github, githubOk := data["GitHub"]
+	if githubOk {
+		updated["GitHubUsername"] = github
+	}
+	xp, xpOk := data["Experience"]
+	if xpOk {
+		updated["Experience"] = xp
+	}
+	language, languageOk := data["Language"]
+	if languageOk {
+		updated["Language"] = language
+	}
+	field, fieldOk := data["Field"]
+	if fieldOk {
+		updated["Field"] = field
+	}
+	framework, frameworkOk := data["FrameWork"]
+	if frameworkOk {
+		updated["FrameWork"] = framework
+	}
+	db.Model(&User{}).Where("id =?", userId).Updates(updated)
+	w.WriteHeader(http.StatusOK)
+}
 
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {

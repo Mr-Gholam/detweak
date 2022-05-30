@@ -61,8 +61,8 @@
 				})
 			});
 			const data = await response.json();
+			console.log(data);
 			if (response.ok) {
-				console.log(data);
 				$User = data;
 				$loading = false;
 				goto('/dashboard');

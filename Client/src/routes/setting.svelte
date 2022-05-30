@@ -280,16 +280,17 @@
 		{ text: 'Zambia', value: 'ZM' },
 		{ text: 'Zimbabwe', value: 'ZW' }
 	];
-	let languages = ['JavaScript', 'PHP', 'Java', 'C', 'C++', 'C#', 'Go', 'Python', 'Ruby'];
+	let languages = ['', 'JavaScript', 'PHP', 'Java', 'C', 'C++', 'C#', 'Go', 'Python', 'Ruby'];
 	let exOption = [
+		'',
 		'Less than 6 months',
 		'Less than 1 year',
 		'Between 1-2 years',
 		'Between 2-4 years',
 		'More than 4 years'
 	];
-	let Fields = ['Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
-	let frontEndFrameWorks = ['React', 'Vue', 'Svelte', 'Anguler'];
+	let Fields = ['', 'Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
+	let frontEndFrameWorks = ['', 'React', 'Vue', 'Svelte', 'Anguler'];
 
 	onMount(async () => {
 		const response = await fetch('/api/setting');
@@ -528,6 +529,30 @@
 			hasPhoto = true;
 		}
 	}
+	async function submitprofessional() {
+		const btn = document.getElementById('professionalSubmitBtn');
+		const response = await fetch('/api/update-professional', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				GitHub: user.gitHub != gitHubUserName ? gitHubUserName : undefined,
+				Experience: user.Experience != experience ? experience : undefined,
+				Language: user.Language != selectedLanguage ? selectedLanguage : undefined,
+				Field: user.Field != selectedField ? selectedField : undefined,
+				FrameWork: user.FrameWork != selectedFrameWork ? selectedFrameWork : undefined
+			})
+		});
+		if (response.ok) {
+			btn.value = 'User Updated';
+			btn.classList.add('text-green', 'border-green');
+			setTimeout(() => {
+				btn.value = 'Save Changes';
+				btn.classList.remove('text-green', 'border-green');
+			}, 3000);
+		}
+	}
 </script>
 
 <svelte:head>
@@ -702,9 +727,12 @@
 		id="professional"
 		class="hidden flex-col justify-between  p-4 gap-3 items-center shadow-xl border-2  w-fit mx-auto border-border lg:my-6"
 	>
-		<form action="" class="flex flex-col justify-between  gap-4 items-center">
+		<form
+			class="flex flex-col justify-between  gap-4 items-center"
+			on:submit|preventDefault={submitprofessional}
+		>
 			<section class="w-80">
-				<h4 class="text-white text-xl text-center my-2">Perfessional Setting</h4>
+				<h4 class="text-white text-xl text-center my-2">Professional Setting</h4>
 			</section>
 			<section class="w-80">
 				<label for="felid" class="text-base text-text">Your Github username </label>
@@ -768,6 +796,7 @@
 			</section>
 			<section class="w-80">
 				<input
+					id="professionalSubmitBtn"
 					type="submit"
 					value="Save Changes"
 					class=" text-lg py-2 px-20 mx-auto block w-11/12 hover:shadow-xl main-btn my-3 border-2  "
