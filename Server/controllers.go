@@ -651,6 +651,13 @@ func post_update_account(w http.ResponseWriter, r *http.Request) {
 			w.Write(e)
 			return
 		}
+		if len(username.(string)) <= 3 {
+			w.WriteHeader(http.StatusBadRequest)
+			e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Username must be 3 character "}})
+			handleError(err)
+			w.Write(e)
+			return
+		}
 		updated["Username"] = username
 	}
 	db.Model(&User{}).Where("id = ?", userId).Updates(updated)
@@ -660,6 +667,32 @@ func post_update_account(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(map[string]interface{}{"message": "user updated"})
+	handleError(err)
+	w.Write(e)
+}
+func post_update_password(w http.ResponseWriter, r *http.Request) {
+	var data map[string]interface{}
+	var user User
+	userId := getIdFromCookie(w, r)
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &data)
+	db.Where("id = ?", userId).Find(&user)
+	oldPassword := data["currentPassword"]
+	wrongPassword := user.validatePassword(user.Password, oldPassword.(string))
+	if wrongPassword {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Incorrect Password"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	newPassword := data["newPassword"]
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword.(string)), bcrypt.DefaultCost)
+	handleError(err)
+	db.Model(&User{}).Where("id = ?", userId).Update("password", hashedPassword)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"message": "password updated"})
 	handleError(err)
 	w.Write(e)
 }

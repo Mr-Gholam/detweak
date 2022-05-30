@@ -2,6 +2,7 @@
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
+	import { User } from '../store';
 	import { loading } from '../store';
 	let user;
 	let firstName;
@@ -18,8 +19,16 @@
 	let password;
 	let confirmPassword;
 	let profileImage;
+	let usernameLengthError = false;
 	let emailError = false;
 	let usernameError = false;
+	let showPasswordRules = false;
+	let uppercaseError = false;
+	let lowercaseError = false;
+	let passwordNumberError = false;
+	let passwordLength = false;
+	let passwordsNotMatch = false;
+	let incorectPassword = false;
 	let hasPhoto = false;
 	let selectedLanguage = null;
 	let selectedField = null;
@@ -370,6 +379,7 @@
 				hasPhoto = false;
 				document.getElementById('profileImg').value = '';
 				profileImage = imageJson.ImgUrl;
+				$User.ImgUrl = imageJson.ImgUrl;
 
 				btn.value = 'User Updated';
 				btn.classList.add('text-green', 'border-green');
@@ -401,6 +411,15 @@
 			}, 3000);
 		}
 	}
+	function checkUsername() {
+		if (user.Username != username) {
+			if (username.length <= 3) {
+				usernameLengthError = true;
+			} else {
+				usernameLengthError = false;
+			}
+		}
+	}
 	async function submitAccount() {
 		const btn = document.getElementById('accountSubmitBtn');
 		const response = await fetch('/api/update-account', {
@@ -410,7 +429,7 @@
 			},
 			body: JSON.stringify({
 				Email: user.Email != email ? email : undefined,
-				Username: user.Username != username ? username : undefined
+				Username: user.Username != username && username.length >= 3 ? username : undefined
 			})
 		});
 		const json = await response.json();
@@ -433,7 +452,34 @@
 			}, 3000);
 		}
 	}
+	function checkNewPassword() {
+		showPasswordRules = true;
+		if (!/[A-Z]/.test(password)) {
+			uppercaseError = true;
+		} else if (!/[a-z]/.test(password)) {
+			lowercaseError = true;
+		} else if (!/[0-9]/.test(password)) {
+			passwordNumberError = true;
+		} else if (password.length <= 7) {
+			passwordLength = true;
+		} else {
+			uppercaseError = false;
+			lowercaseError = false;
+			passwordNumberError = false;
+			passwordLength = false;
+		}
+	}
+	function matchConfirm() {
+		if (password !== confirmPassword) {
+			passwordsNotMatch = true;
+		} else {
+			passwordsNotMatch = false;
+		}
+	}
 	async function changePassword() {
+		const btn = document.getElementById('passwordBtn');
+		if (currentPassword == undefined || password == undefined || confirmPassword == undefined)
+			return;
 		const response = await fetch('/api/change-password', {
 			method: 'POST',
 			headers: {
@@ -445,7 +491,17 @@
 				newConfirm: confirmPassword
 			})
 		});
-		if (response.status == 200) {
+		const data = await response.json();
+		if (data.error) {
+			incorectPassword = true;
+		}
+		if (data.message) {
+			btn.value = 'Password Updated';
+			btn.classList.add('text-green', 'border-green');
+			setTimeout(() => {
+				btn.value = 'Save Changes';
+				btn.classList.remove('text-green', 'border-green');
+			}, 3000);
 		}
 	}
 	async function removeImgProfile() {
@@ -725,8 +781,16 @@
 		id="account"
 		class=" flex-col justify-between  p-4 gap-3 items-center shadow-xl border-2 hidden w-fit mx-auto border-border lg:my-6"
 	>
-		<form id="changePassword" class="mb-8 flex flex-col gap-4">
+		<!-- password setting -->
+		<form
+			id="changePassword"
+			class="mb-8 flex flex-col gap-4"
+			on:submit|preventDefault={changePassword}
+		>
 			<h1 class="text-lg font-semibold text-center text-white">Password Settting</h1>
+			<section class="w-80 {incorectPassword ? 'block' : 'hidden'}">
+				<h1 class="text-center text-error font-semibold">Incorect Password</h1>
+			</section>
 			<section class="w-80 ">
 				<label class="text-base text-text" for="password">Currnet Password</label>
 				<input
@@ -734,12 +798,15 @@
 					type="password"
 					name="password"
 					id="currentPassword"
-					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					class="outline-none border-2  text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 {incorectPassword
+						? 'border-error'
+						: 'border-border'}"
 				/>
 			</section>
 			<section class="w-80 ">
 				<label class="text-base text-text" for="password"> New Password</label>
 				<input
+					on:change={checkNewPassword}
 					bind:value={password}
 					type="password"
 					name="password"
@@ -747,24 +814,48 @@
 					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				/>
 			</section>
+			<section class="w-80 {passwordsNotMatch ? 'block' : 'hidden'}">
+				<h1 class="text-center text-error font-semibold">Passwords do not match</h1>
+			</section>
 			<section class="w-80 ">
 				<label class="text-base text-text" for="confirmPassword">Confirm New Password</label>
 				<input
+					on:change={matchConfirm}
 					bind:value={confirmPassword}
 					type="password"
 					name="confirmPassword"
 					id="confirmPassword"
-					class="outline-none border-2 border-border text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
+					class="outline-none border-2 text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 {passwordsNotMatch
+						? 'border-error'
+						: 'border-border'}"
 				/>
+			</section>
+			<section class="w-80 {showPasswordRules ? 'block' : 'hidden'}">
+				<ul class=" px-4">
+					<li class="text-xs my-1 {uppercaseError ? 'text-error' : 'text-text'}" id="uppercase">
+						<p>At least one uppercase letter</p>
+					</li>
+					<li class="text-xs my-1 {lowercaseError ? 'text-error' : 'text-text'}" id="lowercase">
+						<p>At least one lowercase letter</p>
+					</li>
+					<li class="text-xs my-1 {passwordNumberError ? 'text-error' : 'text-text'}" id="number">
+						<p>contain at least one number</p>
+					</li>
+					<li class="text-xs my-1 {passwordLength ? 'text-error' : 'text-text'}" id="length">
+						<p>should be more than 8 character</p>
+					</li>
+				</ul>
 			</section>
 			<section class="w-80">
 				<input
+					id="passwordBtn"
 					type="submit"
 					value="Change Password"
 					class="main-btn py-3 px-20 mx-auto block w-11/12 my-3 border-2 "
 				/>
 			</section>
 		</form>
+		<!-- account setting  -->
 		<form
 			on:submit|preventDefault={submitAccount}
 			class="gap-3 items-center flex flex-col justify-between mb-8"
@@ -787,17 +878,24 @@
 				/>
 			</section>
 			<!-- username Error -->
-			<section class="w-80 {usernameError ? 'block' : 'hidden'}">
-				<h1 class="text-center text-error font-semibold">Username already exists</h1>
+			<section class="w-80 {usernameError || usernameLengthError ? 'block' : 'hidden'}">
+				<h1 class="text-center text-error font-semibold {usernameError ? 'block' : 'hidden'}">
+					Username already exists
+				</h1>
+				<h1 class="text-center text-error font-semibold{usernameLengthError ? 'block' : 'hidden'}">
+					Username must be at least 3 charcthers
+				</h1>
 			</section>
 			<section class="w-80 ">
 				<label class="text-base  text-text" for="username">Username</label>
 				<input
+					on:change={checkUsername}
 					bind:value={username}
 					type="text"
 					name="username"
 					id="username"
-					class="outline-none border-2  text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 {usernameError
+					class="outline-none border-2  text-text border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 {usernameError ||
+					usernameLengthError
 						? 'border-error'
 						: 'border-border'}"
 				/>
@@ -811,6 +909,7 @@
 				/>
 			</section>
 		</form>
+		<!-- delete account  -->
 		<section class="w-80">
 			<label class="text-base text-text" for="confirmPassword">Delete Account</label>
 			<button
