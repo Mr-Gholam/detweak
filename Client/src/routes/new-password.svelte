@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { loading, User } from '../store';
 	onMount(async () => {
-		if ($User) {
+		if ($User.username) {
 			goto('/dashboard');
 		}
 	});

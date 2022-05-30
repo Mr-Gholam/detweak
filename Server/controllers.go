@@ -802,8 +802,11 @@ func post_reject_request(w http.ResponseWriter, r *http.Request) {
 func get_search(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	var users []User
-	var result []map[string]string
+	var posts []Post
+	var postResult []PostJSON
+	var userResults []map[string]string
 	userInput := mux.Vars(r)["userInput"]
+	db.Where("description LIKE ?", userInput).Find(&posts)
 	db.Where("firstname LIKE ?", userInput).Or("lastname LIKE ?", userInput).Or("username LIKE ?", userInput).Find(&users)
 	for i := 0; i < len(users); i++ {
 		user := make(map[string]string)
@@ -812,10 +815,15 @@ func get_search(w http.ResponseWriter, r *http.Request) {
 		user["ImgUrl"] = users[i].ImgUrl
 		user["Username"] = users[i].Username
 		user["IsFriend"] = findFriendShip(users[i].ID, userId)
-		result = append(result, user)
+		userResults = append(userResults, user)
+	}
+	for i := 0; i < len(posts); i++ {
+		post := getPostByPostId(posts[i].ID, userId)
+		post.IsFriend = findFriendShip(posts[i].OwnerId, userId)
+		postResult = append(postResult, post)
 	}
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(result)
+	e, err := json.Marshal(map[string]interface{}{"Users": userResults, "Posts": postResult})
 	handleError(err)
 	w.Write(e)
 }

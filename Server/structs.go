@@ -83,6 +83,7 @@ type FriendReq struct {
 	ImgUrl    string
 }
 type PostJSON struct {
+	IsFriend      string
 	PostId        uint
 	Description   string
 	AllowComments bool

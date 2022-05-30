@@ -7,7 +7,7 @@
 	let passedEmail = false;
 	let passedPassword = false;
 	onMount(async () => {
-		if ($User) {
+		if ($User.username) {
 			goto('/dashboard');
 		}
 	});

@@ -137,7 +137,6 @@
 			if (Response.status == 201) {
 				$loading = false;
 				$User = data;
-				console.log($User);
 				goto('/set-profile');
 			}
 			// handleing duplicate email
@@ -163,7 +162,7 @@
 		}
 	}
 	onMount(async () => {
-		if ($User) {
+		if ($User.username) {
 			goto('/dashboard');
 		}
 	});
