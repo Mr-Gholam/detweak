@@ -553,6 +553,14 @@
 			}, 3000);
 		}
 	}
+	async function deleteAccount() {
+		const response = await fetch('/api/delete-account', { method: 'POST' });
+		if (response.ok) {
+			console.log('done');
+			$User = null;
+			location.replace('/');
+		}
+	}
 </script>
 
 <svelte:head>
@@ -942,6 +950,7 @@
 		<section class="w-80">
 			<label class="text-base text-text" for="confirmPassword">Delete Account</label>
 			<button
+				on:click={deleteAccount}
 				class="cursor-pointer text-lg rounded-lg  border-red-600 border-2 text-red-600 hover:text-white py-2 px-12 mx-auto block w-11/12 hover:bg-red-600 my-3 "
 			>
 				<i class="fa-solid fa-user-xmark mx-2  bg-transparent" />

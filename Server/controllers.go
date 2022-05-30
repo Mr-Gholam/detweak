@@ -726,6 +726,18 @@ func post_update_professional(w http.ResponseWriter, r *http.Request) {
 	db.Model(&User{}).Where("id =?", userId).Updates(updated)
 	w.WriteHeader(http.StatusOK)
 }
+func post_delete_account(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	db.Where("receiver_id = ?", userId).Delete(&Chat{})
+	db.Where("owner_id = ?", userId).Delete(&Comment{})
+	db.Where("user_id = ?", userId).Delete(&LikedPost{})
+	db.Where("owner_id = ?", userId).Delete(&Post{})
+	db.Where("sender_id = ?", userId).Or("receiver_id = ?", userId).Delete(&FriendShip{})
+	db.Where("sender_id = ?", userId).Or("receiver_id = ?", userId).Delete(&Room{})
+	db.Where("id = ?", userId).Delete(&User{})
+	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: "", HttpOnly: true, Secure: true, MaxAge: -1, SameSite: http.SameSiteNoneMode})
+	w.WriteHeader(http.StatusOK)
+}
 
 // Friendship Controller
 func post_add_friend(w http.ResponseWriter, r *http.Request) {

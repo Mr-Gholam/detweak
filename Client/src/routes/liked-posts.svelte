@@ -12,7 +12,6 @@
 	onMount(async () => {
 		const response = await fetch('/api/liked-posts');
 		const data = await response.json();
-		console.log(data);
 		likedPosts = data;
 	});
 	// like post

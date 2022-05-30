@@ -47,7 +47,6 @@
 	}
 	async function logout() {
 		const response = await fetch('/api/logout', { method: 'POST' });
-		console.log(response);
 		if (response.ok) {
 			$User.username = null;
 			location.replace('/');
