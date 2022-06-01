@@ -6,6 +6,15 @@
 	let password;
 	let passedEmail = false;
 	let passedPassword = false;
+
+	let uppercaseError = false;
+	let lowercaseError = false;
+	let numberError = false;
+	let lengthError = false;
+	let passedUppercase = false;
+	let passedLowercase = false;
+	let passedNumber = false;
+	let passedLength = false;
 	onMount(async () => {
 		if ($User.username) {
 			goto('/dashboard');
@@ -40,14 +49,37 @@
 		const el = document.getElementById('password');
 		if (!/[A-Z]/.test(password)) {
 			el.classList.add('border-error');
+			uppercaseError = true;
+			passedUppercase = false;
 		} else if (!/[a-z]/.test(password)) {
 			el.classList.add('border-error');
+			uppercaseError = false;
+			passedUppercase = true;
+			passedLowercase = false;
+			lowercaseError = true;
 		} else if (!/[0-9]/.test(password)) {
 			el.classList.add('border-error');
+			lowercaseError = false;
+			passedLowercase = true;
+			passedNumber = false;
+			numberError = true;
 		} else if (password.length <= 7) {
 			el.classList.add('border-error');
+			numberError = false;
+			passedNumber = true;
+			passedLength = false;
+			lengthError = true;
 		} else {
 			el.classList.remove('border-error');
+			lengthError = false;
+			numberError = false;
+			lowercaseError = false;
+			uppercaseError = false;
+			passedLength = true;
+			passedUppercase = true;
+			passedLowercase = true;
+			passedNumber = true;
+			passedLength = true;
 			passedPassword = true;
 		}
 	}
@@ -127,6 +159,48 @@
 				class="outline-none border-2 border-border text-text rounded-lg px-1 mx-auto block w-11/12 p-2 my-3"
 				placeholder="Password"
 			/>
+			<ul class=" px-4">
+				<li
+					class="text-xs my-1   {uppercaseError
+						? 'text-error'
+						: passedUppercase
+						? 'text-green'
+						: 'text-text'}"
+					id="uppercase"
+				>
+					<p>At least one uppercase letter</p>
+				</li>
+				<li
+					class="text-xs my-1 {lowercaseError
+						? 'text-error'
+						: passedLowercase
+						? 'text-green'
+						: 'text-text'}"
+					id="lowercase"
+				>
+					<p>At least one lowercase letter</p>
+				</li>
+				<li
+					class="text-xs my-1 {numberError
+						? 'text-error'
+						: passedNumber
+						? 'text-green'
+						: 'text-text'}"
+					id="number"
+				>
+					<p>contain at least one number</p>
+				</li>
+				<li
+					class="text-xs my-1 {lengthError
+						? 'text-error'
+						: passedLength
+						? 'text-green'
+						: 'text-text'}"
+					id="length"
+				>
+					<p>should be more than 8 character</p>
+				</li>
+			</ul>
 		</section>
 		<section class="my-3">
 			<h4 class="text-base text-text">

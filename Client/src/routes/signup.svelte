@@ -173,11 +173,11 @@
 			}
 		}
 	}
-	onMount(async () => {
-		if ($User.username) {
-			goto('/dashboard');
-		}
-	});
+	// onMount(async () => {
+	// 	if ($User.username) {
+	// 		goto('/dashboard');
+	// 	}
+	// });
 </script>
 
 <svelte:head>

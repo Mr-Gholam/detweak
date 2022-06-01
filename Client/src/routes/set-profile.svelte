@@ -3,7 +3,7 @@
 	import { loading, User } from '../store';
 	let firstName;
 	let lastName;
-	let bio;
+	let bio = '';
 	let profilePic;
 	let profilePicInput;
 	let birthday;
@@ -315,7 +315,7 @@
 		const error = document.createElement('p');
 		error.classList.add('error');
 		error.innerHTML = 'Bio should be at least 15 charecters';
-		if (bio.length <= 15) {
+		if (bio.length <= 14) {
 			el.classList.add('border-error');
 			if (el.parentNode.querySelector('.error')) return;
 			el.parentNode.insertBefore(error, el.previousElementSibling);
@@ -328,9 +328,6 @@
 			passedBio = true;
 		}
 	}
-	/**
-	 * ? ya ali madad
-	 */
 	//submit
 	async function submit() {
 		if (passedName) {
@@ -368,7 +365,15 @@
 			document.getElementById('firstName').classList.add('border-error');
 		}
 	}
-	//
+	function changePic() {
+		if (hasPic) {
+			hasPic = false;
+			profilePic = '';
+			document.getElementById('profileImg').value = '';
+		} else {
+			hasPic = true;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -409,7 +414,7 @@
 				class="outline-none border-2 border-border text-text border-solid rounded-lg px-2.5 mx-auto block w-11/12 p-2 my-3 "
 			/>
 		</section>
-		<section class="w-80">
+		<section class="w-80 relative">
 			<label class="text-base text-text" for="bio">Bio *</label>
 			<textarea
 				name="bio"
@@ -417,11 +422,12 @@
 				cols="20 "
 				rows="5"
 				bind:value={bio}
-				on:change={checkBio}
+				on:input={checkBio}
 				class="outline-none border-2 border-border text-text border-solid
                  rounded-lg px-2.5 mx-auto block w-11/12 my-3 p-2 resize-none
                  "
 			/>
+			<p class="absolute text-text bottom-0 right-0 mb-5 mr-6 text-xs">{bio.length}/150</p>
 		</section>
 		<section class="w-80">
 			<label class="text-base text-text" for="birthday">Bithday</label>
@@ -450,7 +456,6 @@
 				</section>
 			</section>
 		</section>
-
 		<section class="w-80">
 			<label class="text-base text-text" for="profilePic">Profile Picture</label>
 			<div class="flex items-center justify-evenly my-3   ">
@@ -476,7 +481,7 @@
 					on:change={imageChange}
 					id="profileImg"
 					accept="image/png, image/jpeg"
-					class="block w-4/6 text-sm text-gray-500
+					class="block w-8/12 text-sm text-gray-500
                 file:mr-3 file:py-2 file:px-3 
                 file:text-sm file:font-semibold
                 file:bg-main-bg file:text-text
@@ -485,8 +490,17 @@
                 file:rounded-full
                 file:hover:text-main
 				file:hover:border-main
+					{hasPic ? 'file:text-main file:border-main' : ''}
                 file:hover:cursor-pointer"
 				/>
+				{#if hasPic}
+					<button
+						on:click={changePic}
+						class=" w-6 h-6 rounded-full text-center text-text  hover:text-error"
+					>
+						<i class="fa-solid fa-x" />
+					</button>
+				{/if}
 			</div>
 		</section>
 		<section class="w-80">
