@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
-		if ($User) {
+		if ($User.username) {
 			goto('/dashboard');
 		}
 	});
