@@ -807,7 +807,7 @@ func get_search(w http.ResponseWriter, r *http.Request) {
 	var userResults []map[string]string
 	userInput := mux.Vars(r)["userInput"]
 	db.Where("description LIKE ?", "%"+userInput+"%").Find(&posts)
-	db.Where("firstname LIKE ?", userInput).Or("lastname LIKE ?", userInput).Or("username LIKE ?", userInput).Find(&users)
+	db.Where("firstname LIKE ?", "%"+userInput+"%").Or("lastname LIKE ?", "%"+userInput+"%").Or("username LIKE ?", "%"+userInput+"%").Find(&users)
 	for i := 0; i < len(users); i++ {
 		user := make(map[string]string)
 		user["Firstname"] = users[i].Firstname

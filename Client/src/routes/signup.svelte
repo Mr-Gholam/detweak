@@ -1,11 +1,12 @@
 <script>
 	import { goto } from '$app/navigation';
+	import tr from 'date-fns/locale/tr';
 	import { onMount } from 'svelte';
 	import { loading, User } from '../store';
 
 	let email;
 	let username;
-	let password;
+	let password = '';
 	let confirmPassword;
 	let privacy = false;
 
@@ -15,6 +16,14 @@
 	let passedConfirm = false;
 	let passedPrivacy = false;
 
+	let uppercaseError = false;
+	let lowercaseError = false;
+	let numberError = false;
+	let lengthError = false;
+	let passedUppercase = false;
+	let passedLowercase = false;
+	let passedNumber = false;
+	let passedLength = false;
 	//checking email
 	function checkEmail() {
 		const error = document.createElement('p');
@@ -63,28 +72,31 @@
 		const error = document.createElement('p');
 		error.classList.add('error');
 		const el = document.getElementById('password');
-		const uppercase = document.getElementById('uppercase');
-		const lowercase = document.getElementById('lowecase');
-		const number = document.getElementById('number');
-		const length = document.getElementById('length');
 		if (!/[A-Z]/.test(password)) {
 			el.classList.add('border-error');
-			uppercase.classList.add('text-error');
+			uppercaseError = true;
 		} else if (!/[a-z]/.test(password)) {
-			uppercase.classList.remove('text-error');
 			el.classList.add('border-error');
-			lowercase.classList.add('text-error');
+			uppercaseError = false;
+			passedUppercase = true;
+			lowercaseError = true;
 		} else if (!/[0-9]/.test(password)) {
-			lowercase.classList.remove('text-error');
 			el.classList.add('border-error');
-			number.classList.add('text-error');
+			lowercaseError = false;
+			passedLowercase = true;
+			numberError = true;
 		} else if (password.length <= 7) {
-			number.classList.remove('text-error');
 			el.classList.add('border-error');
-			length.classList.add('text-error');
+			numberError = false;
+			passedNumber = true;
+			lengthError = true;
 		} else {
 			el.classList.remove('border-error');
-			length.classList.remove('text-error');
+			passedLength = true;
+			lengthError = false;
+			numberError = false;
+			lowercaseError = false;
+			uppercaseError = false;
 			passedPassword = true;
 		}
 	}
@@ -134,13 +146,14 @@
 				})
 			});
 			const data = await Response.json();
+			console.log(data);
 			if (Response.status == 201) {
 				$loading = false;
 				$User = data;
 				goto('/set-profile');
 			}
 			// handleing duplicate email
-			if (Response.status == 401 && data.emailErr) {
+			if (Response.status == 400 && data.error.message == 'Email already exists') {
 				$loading = false;
 				const error = document.createElement('p');
 				const el = document.getElementById('email');
@@ -150,7 +163,7 @@
 				el.parentNode.insertBefore(error, el.previousElementSibling);
 			}
 			// handleing duplicate username
-			if (Response.status == 403 && data.UsernameErr) {
+			if (Response.status == 400 && data.error.message == 'Username already exists') {
 				$loading = false;
 				const error = document.createElement('p');
 				const el = document.getElementById('username');
@@ -204,17 +217,53 @@
 			<label class="text-base text-text" for="password">Password</label>
 			<input
 				bind:value={password}
-				on:change={checkPassword}
+				on:input={checkPassword}
 				type="password"
 				name="password"
 				id="password"
 				class="outline-none border-2 border-border border-solid rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text "
 			/>
 			<ul class=" px-4">
-				<li class="text-xs my-1 text-text" id="uppercase"><p>At least one uppercase letter</p></li>
-				<li class="text-xs my-1 text-text" id="lowercase"><p>At least one lowercase letter</p></li>
-				<li class="text-xs my-1 text-text" id="number"><p>contain at least one number</p></li>
-				<li class="text-xs my-1 text-text" id="length"><p>should be more than 8 character</p></li>
+				<li
+					class="text-xs my-1 {uppercaseError
+						? 'text-error'
+						: passedUppercase
+						? 'text-green'
+						: 'text-text'}"
+					id="uppercase"
+				>
+					<p>At least one uppercase letter</p>
+				</li>
+				<li
+					class="text-xs my-1 {lowercaseError
+						? 'text-error'
+						: passedLowercase
+						? 'text-green'
+						: 'text-text'}"
+					id="lowercase"
+				>
+					<p>At least one lowercase letter</p>
+				</li>
+				<li
+					class="text-xs my-1 {numberError
+						? 'text-error'
+						: passedNumber
+						? 'text-green'
+						: 'text-text'}"
+					id="number"
+				>
+					<p>contain at least one number</p>
+				</li>
+				<li
+					class="text-xs my-1 {lengthError
+						? 'text-error'
+						: passedLength
+						? 'text-green'
+						: 'text-text'}"
+					id="length"
+				>
+					<p>should be more than 8 character</p>
+				</li>
 			</ul>
 		</section>
 		<section class="w-80 ">
@@ -235,7 +284,7 @@
 					type="checkbox"
 					name="privacy"
 					id=""
-					class="border-border bg-main-bg"
+					class="border-border bg-main accent-main"
 				/>
 				Privacy Bullshit
 			</label>

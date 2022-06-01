@@ -208,6 +208,11 @@
 			oldDes.innerText = updatedDes.value;
 		}
 	}
+	function removePhoto() {
+		hasPhoto = false;
+		imageSrc = '';
+		document.getElementById('postPic').value = '';
+	}
 </script>
 
 <svelte:head>
@@ -274,9 +279,20 @@
 						</label>
 
 						<!-- file input-->
-						<label for="postPic" class="text-2xl  hover:cursor-pointer hover:text-main  text-text"
-							><i class="fa-solid fa-paperclip" /></label
+						<label
+							for="postPic"
+							class="text-2xl  hover:cursor-pointer hover:text-main text-text  {hasPhoto
+								? 'hidden'
+								: 'block'}"><i class="fa-solid fa-paperclip" /></label
 						>
+						<div
+							on:click={removePhoto}
+							class="text-2xl  hover:cursor-pointer hover:text-main text-text  {hasPhoto
+								? 'block'
+								: 'hidden'}"
+						>
+							<i class="fa-solid fa-x" />
+						</div>
 						<input
 							bind:this={postPicInput}
 							type="file"

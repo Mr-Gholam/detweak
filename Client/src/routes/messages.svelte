@@ -250,41 +250,43 @@
 		<!--Every profile-->
 		<section class="w-1/2 bg-main-bg  h-full relative  md:w-full md:h-fit md:bg-transparent">
 			<i class="fa-solid fa-x absolute top-0 right-0 m-2 md:hidden z-10" on:click={closeNameList} />
-			{#each contacts as contact}
-				<section
-					class="  py-2 px-3  md:my-2 items-center  w-full hover:opacity-90 cursor-pointer "
-					on:click={changeChat(contact.RoomId)}
-					id={contact.Username}
-				>
-					<!--name and username-->
-					<section class="flex  items-center  ">
-						<!--profile img-->
-						{#if contact.ImgUrl}
-							<!-- svelte-ignore a11y-img-redundant-alt -->
-							<img
-								class="h-12 w-12 object-cover rounded-full  "
-								src="/api/images/{contact.ImgUrl}"
-								alt="Current profile photo"
-							/>
-						{:else}
-							<div
-								class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
-							>
-								<i class="fa-solid fa-user text-slate-400 text-2xl" />
-							</div>
-						{/if}
+			{#if contacts}
+				{#each contacts as contact}
+					<section
+						class="  py-2 px-3  md:my-2 items-center  w-full hover:opacity-90 cursor-pointer "
+						on:click={changeChat(contact.RoomId)}
+						id={contact.Username}
+					>
+						<!--name and username-->
+						<section class="flex  items-center  ">
+							<!--profile img-->
+							{#if contact.ImgUrl}
+								<!-- svelte-ignore a11y-img-redundant-alt -->
+								<img
+									class="h-12 w-12 object-cover rounded-full  "
+									src="/api/images/{contact.ImgUrl}"
+									alt="Current profile photo"
+								/>
+							{:else}
+								<div
+									class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
+								>
+									<i class="fa-solid fa-user text-slate-400 text-2xl" />
+								</div>
+							{/if}
 
-						<!-- Name and username-->
-						<div class="mx-2 w-9/12 ">
-							<h4 class=" font-semibold text-sm text-text  ">
-								{contact.Firstname}
-								{contact.Lastname}
-							</h4>
-							<h5 class=" text-xs  text-text   ">@{contact.Username}</h5>
-						</div>
+							<!-- Name and username-->
+							<div class="mx-2 w-9/12 ">
+								<h4 class=" font-semibold text-sm text-text  ">
+									{contact.Firstname}
+									{contact.Lastname}
+								</h4>
+								<h5 class=" text-xs  text-text   ">@{contact.Username}</h5>
+							</div>
+						</section>
 					</section>
-				</section>
-			{/each}
+				{/each}
+			{/if}
 		</section>
 	</section>
 	<!--Main Chat -->
