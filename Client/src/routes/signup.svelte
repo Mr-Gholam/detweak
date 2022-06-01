@@ -146,7 +146,6 @@
 				})
 			});
 			const data = await Response.json();
-			console.log(data);
 			if (Response.status == 201) {
 				$loading = false;
 				$User = data;

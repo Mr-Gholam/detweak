@@ -65,14 +65,13 @@
 				})
 			});
 			const data = await response.json();
-			console.log(data);
 			if (response.ok) {
 				$User = data;
 				$loading = false;
 				goto('/dashboard');
 			}
 			// handleing invalid email
-			if (response.status == 403 && data.emailErr) {
+			if (response.status == 400 && data.error.message == 'Email Not found') {
 				const error = document.createElement('p');
 				error.classList.add('error');
 				const el = document.getElementById('email');
@@ -82,7 +81,7 @@
 				$loading = false;
 			}
 			// handleing invalid password
-			if (response.status == 403 && data.passwordErr) {
+			if (response.status == 400 && data.error.message == 'Incorrect Password') {
 				const error = document.createElement('p');
 				error.classList.add('error');
 				const el = document.getElementById('password');
@@ -121,7 +120,7 @@
 			<label class="text-lg text-text" for="password">Password</label>
 			<input
 				bind:value={password}
-				on:change={checkPassword}
+				on:input={checkPassword}
 				type="password"
 				name="password"
 				id="password"
