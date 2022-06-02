@@ -169,6 +169,9 @@
 			oldDes.innerText = updatedDes.value;
 		}
 	}
+	function openChat(username) {
+		goto(`/messages?username=${username}`);
+	}
 </script>
 
 <svelte:head>
@@ -220,7 +223,9 @@
 									<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
 								</button>
 							{:else if suggedtedPeople.IsFriend == 'Friend'}
-								<button class="main-btn">Sent Massage</button>
+								<button class="main-btn" on:click={openChat(suggedtedPeople.Username)}
+									>Sent Massage</button
+								>
 							{:else}
 								<button on:click={addFriend(suggedtedPeople.Username)} class=" main-btn"
 									>Add Friend
@@ -308,7 +313,8 @@
 											<h5 class="mx-2	 text-sm">Friend Request Sent</h5>
 										</button>
 									{:else if post.IsFriend == 'Friend'}
-										<button class="main-btn">Sent Massage</button>
+										<button class="main-btn" on:click={openChat(post.Username)}>Sent Massage</button
+										>
 									{:else}
 										<button on:click={addFriend(post.Username)} class=" main-btn"
 											>Add Friend

@@ -34,7 +34,11 @@
 				});
 				const newChatRoom = await result.json();
 				if (result.status == 200) {
-					contacts.unshift(newChatRoom);
+					if (contacts.length == 0) {
+						contacts.push(newChatRoom);
+					} else {
+						contacts.unshift(newChatRoom);
+					}
 					contacts = contacts;
 				}
 			} else {

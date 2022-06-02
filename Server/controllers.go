@@ -2,16 +2,25 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"sort"
 	"strconv"
 
+	"github.com/gobwas/ws"
+	"github.com/gobwas/ws/wsutil"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
 )
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 var jwtSecret = []byte("detweak")
 
 func (user *User) jsonUser(r *http.Request) {
@@ -49,6 +58,32 @@ func sendFileToClient(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Write(fileBytes)
 	return
+}
+
+// webSocket
+func get_ws(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	conn, _, _, err := ws.UpgradeHTTP(r, w)
+	handleError(err)
+	go func() {
+		db.Model(&User{}).Where("id =? ", userId).Update("is_online", true)
+	}()
+	go func() {
+
+		defer conn.Close()
+		for {
+			fmt.Println("conneted")
+			msg, _, err := wsutil.ReadClientData(conn)
+
+			if err != nil {
+				fmt.Println("Disconneted")
+				db.Model(&User{}).Where("id =? ", userId).Update("is_online", false)
+				break
+			}
+			log.Println(string(msg))
+		}
+	}()
+
 }
 
 // auth controllers

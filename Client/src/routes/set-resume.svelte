@@ -1,5 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { loading } from '../store';
+	import { onMount } from 'svelte';
 
 	let selectedLanguage = null;
 	let selectedField = null;
@@ -16,6 +18,9 @@
 	];
 	let Fields = ['Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
 	let frontEndFrameWorks = ['React', 'Vue', 'Svelte', 'Anguler'];
+	onMount(() => {
+		$loading = false;
+	});
 	async function submit() {
 		if (
 			selectedField == null &&

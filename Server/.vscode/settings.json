@@ -7,7 +7,9 @@
         "mehdi",
         "Respone",
         "signup",
-        "supersectect"
+        "supersectect",
+        "upgrader",
+        "wsutil"
     ],
     "files.exclude":{
         "**/.git": true,

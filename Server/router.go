@@ -12,6 +12,9 @@ func routerSetup(router *mux.Router) {
 	router.Use(authMiddleware)
 	// img handler
 	router.Handle("/api/images/{imgUrl}", http.HandlerFunc(sendFileToClient)).Methods("GET")
+	// websocket
+	router.Handle("/api/ws", http.HandlerFunc(get_ws)).Methods("GET")
+
 	// auth routes
 	router.Handle("/api/jwt", http.HandlerFunc(get_jwt)).Methods("GET")
 	router.Handle("/api/logout", http.HandlerFunc(get_logOut)).Methods("POST")
