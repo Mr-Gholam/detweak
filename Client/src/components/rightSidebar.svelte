@@ -1,8 +1,10 @@
 <script>
+	// @ts-nocheck
+
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import { onlineFriends } from '../store';
-
 	let suggestion = [
 		{
 			userName: 'mr-gholam',
@@ -17,6 +19,13 @@
 			onlineTime: '3-4 am'
 		}
 	];
+	onMount(async () => {
+		const response = await fetch('/api/online-friends');
+		const data = await response.json();
+		console.log(data);
+		$onlineFriends = data;
+		$onlineFriends = $onlineFriends;
+	});
 	function openChat(username) {
 		goto(`/messages?username=${username}`);
 	}
@@ -115,7 +124,7 @@
 						method="post"
 						class="text-xs font-semibold   text-center  w-4/12 "
 					>
-						<button class=" main-btn  py-3 px-3  py-1.5 ">Add Friend </button>
+						<button class=" main-btn   px-3  py-1.5 ">Add Friend </button>
 					</form>
 				</section>
 			{/each}

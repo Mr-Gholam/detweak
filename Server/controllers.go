@@ -833,6 +833,33 @@ func get_friend_requests(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 
 }
+func get_online_friends(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var result []map[string]interface{}
+	var friendIds []uint
+	var senderIds []uint
+	var receiverIds []uint
+	db.Model(&FriendShip{}).Select([]string{"receiver_id"}).Where("sender_id =? AND status =?", userId, true).Find(&receiverIds)
+	db.Model(&FriendShip{}).Select([]string{"sender_id"}).Where("receiver_id  =? AND status =?", userId, true).Find(&senderIds)
+	friendIds = append(friendIds, senderIds...)
+	friendIds = append(friendIds, receiverIds...)
+	for i := 0; i < len(friendIds); i++ {
+		_, ok := OnlineUserIds[friendIds[i]]
+		if ok {
+			var user = make(map[string]interface{})
+			username, firstname, lastname, imgUrl := findUserById(friendIds[i])
+			user["Username"] = username
+			user["Firstname"] = firstname
+			user["Lastname"] = lastname
+			user["ImgUrl"] = imgUrl
+			result = append(result, user)
+		}
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
 func post_accept_request(w http.ResponseWriter, r *http.Request) {
 	var post map[string]interface{}
 	body, err := ioutil.ReadAll(r.Body)

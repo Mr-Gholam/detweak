@@ -56,6 +56,7 @@ func routerSetup(router *mux.Router) {
 
 	// friendship
 	router.Handle("/api/friend-requests", http.HandlerFunc(get_friend_requests)).Methods("GET")
+	router.Handle("/api/online-friends", http.HandlerFunc(get_online_friends)).Methods("GET")
 	router.Handle("/api/add-friend", http.HandlerFunc(post_add_friend)).Methods("POST")
 	router.Handle("/api/accept-request", http.HandlerFunc(post_accept_request)).Methods("POST")
 	router.Handle("/api/reject-request", http.HandlerFunc(post_reject_request)).Methods("POST")
