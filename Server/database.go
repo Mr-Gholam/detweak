@@ -24,7 +24,7 @@ func connectDb() {
 // user
 func findDuplicateEmail(email string) bool {
 	var user User
-	db.Where("email = ?", email).First(&user)
+	db.Model(&User{}).Select([]string{"email"}).Where("email = ?", email).First(&user)
 	if len(user.Email) > 0 {
 		return true
 	} else {
@@ -33,7 +33,7 @@ func findDuplicateEmail(email string) bool {
 }
 func findUserByEmail(email string) (string, string, uint, string, string) {
 	var user User
-	db.Where("email = ?", email).First(&user)
+	db.Model(&User{}).Select([]string{"email", "password", "id", "username", "img_url"}).Where("email = ?", email).First(&user)
 	if len(user.Email) > 0 {
 		return user.Email, user.Password, user.ID, user.Username, user.ImgUrl
 	} else {
@@ -42,7 +42,7 @@ func findUserByEmail(email string) (string, string, uint, string, string) {
 }
 func findDuplicateUsername(username string) bool {
 	var user User
-	db.Where("username = ?", username).First(&user)
+	db.Model(&User{}).Select([]string{"username"}).Where("username = ?", username).First(&user)
 	if len(user.Username) > 0 {
 		return true
 	} else {
@@ -51,17 +51,17 @@ func findDuplicateUsername(username string) bool {
 }
 func findUsernameById(userId uint) string {
 	var user User
-	db.Where("id = ?", userId).First(&user)
+	db.Model(&User{}).Select([]string{"username"}).Where("id = ?", userId).First(&user)
 	return user.Username
 }
 func findUserById(userId uint) (string, string, string, string) {
 	var user User
-	db.Where("id = ?", userId).First(&user)
+	db.Model(&User{}).Select([]string{"username", "firstname", "lastname", "img_url"}).Where("id = ?", userId).First(&user)
 	return user.Username, user.Firstname, user.Lastname, user.ImgUrl
 }
 func findUserIdByUsername(username string) uint {
 	var user User
-	db.Where("username = ?", username).Find(&user)
+	db.Model(&User{}).Select([]string{"id"}).Where("username = ?", username).Find(&user)
 	return user.ID
 }
 
@@ -113,7 +113,7 @@ func getPostByPostId(postId uint, userId uint) PostJSON {
 }
 func getPostLikedByUserId(userId uint, postId uint) bool {
 	var liked LikedPost
-	db.Where("user_id = ? AND post_id = ?", userId, postId).Find(&liked)
+	db.Model(&LikedPost{}).Select([]string{"id"}).Where("user_id = ? AND post_id = ?", userId, postId).Find(&liked)
 	if liked.ID == 0 {
 		return false
 	} else {
@@ -122,13 +122,13 @@ func getPostLikedByUserId(userId uint, postId uint) bool {
 }
 func likePost(postId uint) {
 	var post Post
-	db.Where("id=?", postId).First(&post)
+	db.Model(&Post{}).Select([]string{"likes"}).Where("id=?", postId).First(&post)
 	newLikes := post.Likes + 1
 	db.Model(&Post{}).Where("id=?", postId).Update("likes", newLikes)
 }
 func dislikePost(postId uint) {
 	var post Post
-	db.Where("id=?", postId).First(&post)
+	db.Model(&Post{}).Select([]string{"likes"}).Where("id=?", postId).First(&post)
 	if post.Likes == 0 {
 		return
 	}
@@ -137,7 +137,7 @@ func dislikePost(postId uint) {
 }
 func getPostImgUrl(postId uint) string {
 	var post Post
-	db.Where("id = ?", postId).Find(&post)
+	db.Model(&Post{}).Select([]string{"post_img_url"}).Where("id = ?", postId).Find(&post)
 	return post.PostImgUrl
 }
 func getLikedPostsByUserId(userId uint) []PostJSON {
@@ -194,22 +194,6 @@ func findUserInfoByUsername(username string, userId uint) ProfileInfo {
 	return profileInfo
 }
 
-// search
-func findUserByName(name string, userId uint) []SearchResult {
-	var users []User
-	var result []SearchResult
-	db.Where("firstname LIKE ?", name).Or("lastname LIKE ?", name).Find(&users)
-	for i := 0; i < len(users); i++ {
-		var userInfo SearchResult
-		userInfo.Email = users[i].Email
-		userInfo.Firstname = users[i].Firstname
-		userInfo.Lastname = users[i].Lastname
-		userInfo.ImgUrl = users[i].ImgUrl
-		result = append(result, userInfo)
-	}
-	return result
-}
-
 // comments
 func getAllCommentsByPostID(postId uint) []CommentJSON {
 	var comments []Comment
@@ -234,7 +218,7 @@ func getAllCommentsByPostID(postId uint) []CommentJSON {
 // friend ship
 func findFriendShip(senderId uint, receiverId uint) string {
 	var friendShip FriendShip
-	db.Where("sender_id =? AND receiver_id = ?", senderId, receiverId).Or("sender_id =? AND receiver_id = ?", receiverId, senderId).Find(&friendShip)
+	db.Model(&FriendShip{}).Select([]string{"id", "status"}).Where("sender_id =? AND receiver_id = ?", senderId, receiverId).Or("sender_id =? AND receiver_id = ?", receiverId, senderId).Find(&friendShip)
 	if friendShip.ID == 0 {
 		return "Not Friend"
 	} else if friendShip.ID != 0 && friendShip.Status == false {
@@ -245,7 +229,7 @@ func findFriendShip(senderId uint, receiverId uint) string {
 }
 func getFriendRequests(receiverId uint) []FriendReq {
 	var friendship []FriendShip
-	db.Where("receiver_id = ? AND status = ?", receiverId, false).Find(&friendship)
+	db.Model(&FriendShip{}).Select([]string{"sender_id", "id"}).Where("receiver_id = ? AND status = ?", receiverId, false).Find(&friendship)
 	var requests []FriendReq
 	for i := 0; i < len(friendship); i++ {
 		var request FriendReq
@@ -262,8 +246,7 @@ func getFriendRequests(receiverId uint) []FriendReq {
 func findFriendsByUserId(userId uint) []uint {
 	var friendship []FriendShip
 	var friendsId []uint
-	db.Where("sender_id=? AND status = ?", userId, true).Or("receiver_id =? AND status = ?", userId, true).Find(&friendship)
-
+	db.Model(&FriendShip{}).Select([]string{"sender_id", "receiver_id"}).Where("sender_id=? AND status = ?", userId, true).Or("receiver_id =? AND status = ?", userId, true).Find(&friendship)
 	for i := 0; i < len(friendship); i++ {
 		if friendship[i].SenderId == userId {
 			friendsId = append(friendsId, friendship[i].ReceiverId)

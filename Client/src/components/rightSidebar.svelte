@@ -22,7 +22,6 @@
 	onMount(async () => {
 		const response = await fetch('/api/online-friends');
 		const data = await response.json();
-		console.log(data);
 		$onlineFriends = data;
 		$onlineFriends = $onlineFriends;
 	});
@@ -41,7 +40,7 @@
 		: 'hidden'}"
 >
 	<!--online friends-->
-	{#if $onlineFriends.length != 0}
+	{#if $onlineFriends}
 		<section>
 			<h3 class="text-center text-lg font-semibold my-2 text-white ">Online Friends</h3>
 			<section class="flex justify-between gap-4 flex-col">
