@@ -19,7 +19,6 @@ type User struct {
 	Birthday       string `json:"birthday,omitempty"`
 	Location       string `json:"location,omitempty"`
 	Experience     string `json:"experience,omitempty"`
-	IsOnline       bool
 	ImgUrl         string
 	CreatedAt      time.Time
 }

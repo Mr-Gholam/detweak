@@ -1,5 +1,5 @@
 <script>
-	import { loading, onlineFriend, User, ws } from '../store';
+	import { loading, onlineFriends, User, ws } from '../store';
 	import '../app.css';
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
@@ -16,15 +16,26 @@
 			var h = window.location.href.split('/');
 			const webSokect = new WebSocket('ws' + h[0].replace('http', '') + '//' + h[2] + '/api/ws');
 			webSokect.onclose = () => {
+				$onlineFriends = [];
 				console.log('connection lost');
 			};
 			webSokect.onopen = () => {
 				console.log('connected');
 			};
 			webSokect.onmessage = (e) => {
-				const { friend } = JSON.parse(e.data);
-				$onlineFriend.push(friend);
-				console.log($onlineFriend);
+				const { Friend } = JSON.parse(e.data);
+				const { offlineFriend } = JSON.parse(e.data);
+				if (Friend) {
+					$onlineFriends.push(Friend);
+					$onlineFriends = $onlineFriends;
+				}
+				if (offlineFriend) {
+					const location = $onlineFriends.findIndex(
+						(user) => user.Username == offlineFriend.Username
+					);
+					$onlineFriends.splice(location, 1);
+					$onlineFriends = $onlineFriends;
+				}
 			};
 			ws.set(webSokect);
 		}

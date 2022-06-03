@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"sort"
 	"strconv"
@@ -13,14 +13,10 @@ import (
 	"github.com/gobwas/ws/wsutil"
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
+var OnlineUserIds = map[uint]*net.Conn{}
 var jwtSecret = []byte("detweak")
 
 func (user *User) jsonUser(r *http.Request) {
@@ -63,21 +59,44 @@ func sendFileToClient(w http.ResponseWriter, r *http.Request) {
 // webSocket
 func get_ws(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
+	username, firstname, lastname, imgUrl := findUserById(userId)
+
 	conn, _, _, err := ws.UpgradeHTTP(r, w)
+	OnlineUserIds[userId] = &conn
 	handleError(err)
+	var friendIds []uint
+	var senderIds []uint
+	var receiverIds []uint
+	db.Model(&FriendShip{}).Select([]string{"receiver_id"}).Where("sender_id =? AND status =?", userId, true).Find(&receiverIds)
+	db.Model(&FriendShip{}).Select([]string{"sender_id"}).Where("receiver_id  =? AND status =?", userId, true).Find(&senderIds)
+	friendIds = append(friendIds, senderIds...)
+	friendIds = append(friendIds, receiverIds...)
 	go func() {
-		db.Model(&User{}).Where("id =? ", userId).Update("is_online", true)
+		for i := 0; i < len(friendIds); i++ {
+			onlineFriend, err := json.Marshal(map[string]interface{}{"Friend": map[string]interface{}{"Firstname": firstname, "Lastname": lastname, "Username": username, "ImgUrl": imgUrl}})
+			handleError(err)
+			ws, ok := OnlineUserIds[friendIds[i]]
+			if ok {
+				wsutil.WriteServerText(*ws, onlineFriend)
+			}
+		}
 	}()
 	go func() {
 
 		defer conn.Close()
 		for {
-			fmt.Println("conneted")
 			msg, _, err := wsutil.ReadClientData(conn)
 
 			if err != nil {
-				fmt.Println("Disconneted")
-				db.Model(&User{}).Where("id =? ", userId).Update("is_online", false)
+				for i := 0; i < len(friendIds); i++ {
+					offlineFriend, err := json.Marshal(map[string]interface{}{"offlineFriend": map[string]interface{}{"Username": username}})
+					handleError(err)
+					ws, ok := OnlineUserIds[friendIds[i]]
+					if ok {
+						wsutil.WriteServerText(*ws, offlineFriend)
+					}
+				}
+				delete(OnlineUserIds, userId)
 				break
 			}
 			log.Println(string(msg))
