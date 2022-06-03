@@ -14,6 +14,7 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/images/{imgUrl}", http.HandlerFunc(sendFileToClient)).Methods("GET")
 	// websocket
 	router.Handle("/api/ws", http.HandlerFunc(get_ws)).Methods("GET")
+	router.Handle("/api/chatRoom/{chatRoomId}", http.HandlerFunc(get_chatRoom_ws)).Methods("GET")
 
 	// auth routes
 	router.Handle("/api/jwt", http.HandlerFunc(get_jwt)).Methods("GET")

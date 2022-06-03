@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
@@ -60,7 +61,6 @@ func sendFileToClient(w http.ResponseWriter, r *http.Request) {
 func get_ws(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	username, firstname, lastname, imgUrl := findUserById(userId)
-
 	conn, _, _, err := ws.UpgradeHTTP(r, w)
 	OnlineUserIds[userId] = &conn
 	handleError(err)
@@ -82,7 +82,6 @@ func get_ws(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 	go func() {
-
 		defer conn.Close()
 		for {
 			msg, _, err := wsutil.ReadClientData(conn)
@@ -102,7 +101,27 @@ func get_ws(w http.ResponseWriter, r *http.Request) {
 			log.Println(string(msg))
 		}
 	}()
+}
+func get_chatRoom_ws(w http.ResponseWriter, r *http.Request) {
+	chatroomId := mux.Vars(r)["chatRoomId"]
+	fmt.Println(chatroomId)
+	conn, _, _, err := ws.UpgradeHTTP(r, w)
+	handleError(err)
+	go func() {
 
+	}()
+	go func() {
+		defer conn.Close()
+		for {
+			msg, _, err := wsutil.ReadClientData(conn)
+
+			if err != nil {
+
+				break
+			}
+			log.Println(string(msg))
+		}
+	}()
 }
 
 // auth controllers

@@ -213,6 +213,16 @@
 			})
 		});
 		const data = await response.json();
+		var h = window.location.href.split('/');
+		const webSokect = new WebSocket(
+			'ws' + h[0].replace('http', '') + '//' + h[2] + `/api/chatRoom/${chatRoomId}`
+		);
+		webSokect.onopen = () => {
+			console.log(`Conncted to chatroom ${chatRoomId}`);
+		};
+		webSokect.onclose = () => {
+			console.log(`Disconncted to chatroom ${chatRoomId}`);
+		};
 		currentChatInfo = data;
 		currentChat = data.Chat;
 		setTimeout(() => {
