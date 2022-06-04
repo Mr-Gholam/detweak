@@ -22,18 +22,18 @@
 	function postOption(postId) {
 		const option = document.getElementById(`${postId}`);
 		if (option.classList.contains('hidden')) {
-			option.classList.remove('hidden');
+			option.classList.replace('hidden', 'flex');
 		} else {
-			option.classList.add('hidden');
+			option.classList.replace('flex', 'hidden');
 		}
 	}
 	//  open post option comment
 	function postOptionComment(commentId) {
 		const option = document.getElementById(`cm-${commentId}`);
 		if (option.classList.contains('hidden')) {
-			option.classList.remove('hidden');
+			option.classList.replace('hidden', 'flex');
 		} else {
-			option.classList.add('hidden');
+			option.classList.replace('flex', 'hidden');
 		}
 	}
 	// like post
@@ -226,7 +226,7 @@
 								/>
 								<div
 									id={post.PostId}
-									class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
+									class="hidden absolute bg-main-bg w-32  flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 								>
 									<button
 										on:click={openEdit(post.PostId)}
@@ -362,7 +362,7 @@
 											/>
 											<div
 												id="cm-{comment.CommentId}"
-												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10"
+												class="hidden absolute bg-main-bg w-32  flex-col items-center  rounded p-3  option gap-2 z-10"
 											>
 												<button
 													on:click={deleteComment(comment.CommentId)}

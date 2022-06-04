@@ -207,6 +207,9 @@
 	function openChat(username) {
 		goto(`/messages?username=${username}`);
 	}
+	function showFriends() {
+		goto(`/friends/${userName}`);
+	}
 </script>
 
 <svelte:head>
@@ -315,7 +318,10 @@
 						</h4>
 						<h3 class="font-semibold">Posts</h3>
 					</section>
-					<section class="flex flex-col items-center text-text">
+					<section
+						class="flex flex-col items-center text-text cursor-pointer"
+						on:click={showFriends}
+					>
 						<h4>{friendCount}</h4>
 						<h3 class="font-semibold">Friends</h3>
 					</section>

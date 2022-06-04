@@ -73,9 +73,9 @@
 	function postOption(postId) {
 		const option = document.getElementById(`${postId}`);
 		if (option.classList.contains('hidden')) {
-			option.classList.remove('hidden');
+			option.classList.replace('hidden', 'flex');
 		} else {
-			option.classList.add('hidden');
+			option.classList.replace('flex', 'hidden');
 		}
 	}
 	// add Comment
@@ -292,7 +292,7 @@
 											/>
 											<div
 												id={post.PostId}
-												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
+												class="hidden absolute bg-main-bg w-32  flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 											>
 												<button
 													on:click={openEdit(post.PostId)}

@@ -915,6 +915,34 @@ func post_reject_request(w http.ResponseWriter, r *http.Request) {
 	db.Where("id = ?", requestId).Delete(&FriendShip{})
 	w.WriteHeader(http.StatusOK)
 }
+func get_friends_by_username(w http.ResponseWriter, r *http.Request) {
+	username := mux.Vars(r)["username"]
+	var result []map[string]string
+	var friendsId []uint
+	var receiverIds []uint
+	var senderIds []uint
+	userId := getIdFromCookie(w, r)
+	targetId := findUserIdByUsername(username)
+	db.Model(&FriendShip{}).Select("receiver_id").Where("sender_id =? AND status = ?", targetId, true).Find(&receiverIds)
+	db.Model(&FriendShip{}).Select("sender_id").Where("receiver_id =? AND status = ?", targetId, true).Find(&senderIds)
+	friendsId = append(friendsId, receiverIds...)
+	friendsId = append(friendsId, senderIds...)
+	for i := 0; i < len(friendsId); i++ {
+		var userInfo User
+		user := make(map[string]string)
+		db.Model(&User{}).Select([]string{"firstname", "lastname", "img_url", "username", "id"}).Where("id =?", friendsId[i]).First(&userInfo)
+		user["Firstname"] = userInfo.Firstname
+		user["Lastname"] = userInfo.Lastname
+		user["ImgUrl"] = userInfo.ImgUrl
+		user["Username"] = userInfo.Username
+		user["IsFriend"] = findFriendShip(friendsId[i], userId)
+		result = append(result, user)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
 
 // search
 func get_search(w http.ResponseWriter, r *http.Request) {
