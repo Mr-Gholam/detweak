@@ -1,6 +1,15 @@
 <script>
 	import { User } from '../store';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	let notificationNumber;
+	onMount(async () => {
+		const response = await fetch('/api/friend-requests');
+		const data = await response.json();
+		if (data) {
+			notificationNumber = data.length;
+		}
+	});
 </script>
 
 <div
@@ -28,10 +37,22 @@
 		>
 		<a
 			href="/notification"
-			class="hover:text-main   pl-2 py-2 {$page.url.pathname === '/notification'
+			class="hover:text-main  flex  justify-between items-center pl-2 py-2 {$page.url.pathname ===
+			'/notification'
 				? 'text-white'
-				: 'text-text'}"><i class="fa-solid fa-bell mr-1" /> Notification</a
+				: 'text-text'}"
 		>
+			<div>
+				<i class="fa-solid fa-bell mr-1" /> Notification
+			</div>
+			{#if notificationNumber}
+				<div
+					class="bg-main w-5 h-5 rounded-full text-xs flex justify-center items-center text-white mr-1"
+				>
+					{notificationNumber}
+				</div>
+			{/if}
+		</a>
 		<a
 			href="/messages"
 			class="hover:text-main pl-2  py-2 {$page.url.pathname === '/messages'

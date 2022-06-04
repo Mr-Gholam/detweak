@@ -122,6 +122,9 @@ func get_chatRoom_ws(w http.ResponseWriter, r *http.Request) {
 		defer conn.Close()
 		for {
 			msg, _, err := wsutil.ReadClientData(conn)
+			if len(msg) == 0 {
+				continue
+			}
 			var msgContent map[string]interface{}
 			err = json.Unmarshal(msg, &msgContent)
 			message, err := json.Marshal(map[string]interface{}{"Message": msgContent})
@@ -132,12 +135,9 @@ func get_chatRoom_ws(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if err != nil {
-				if len(msg) == 0 {
-					delete(OnlineChatUsers, chatRoomUserId)
-					break
-				}
+				delete(OnlineChatUsers, chatRoomUserId)
+				break
 			}
-			log.Println(string(msg))
 		}
 	}()
 }

@@ -1,7 +1,5 @@
 <script>
 	// @ts-nocheck
-
-	import { io } from 'socket.io-client';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
