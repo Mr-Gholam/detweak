@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
@@ -18,6 +17,7 @@ import (
 )
 
 var OnlineUserIds = map[uint]*net.Conn{}
+var OnlineChatUsers = map[string]*net.Conn{}
 var jwtSecret = []byte("detweak")
 
 func (user *User) jsonUser(r *http.Request) {
@@ -104,8 +104,16 @@ func get_ws(w http.ResponseWriter, r *http.Request) {
 }
 func get_chatRoom_ws(w http.ResponseWriter, r *http.Request) {
 	chatroomId := mux.Vars(r)["chatRoomId"]
-	fmt.Println(chatroomId)
+	userId := getIdFromCookie(w, r)
+	var targetId uint
+	db.Model(&Room{}).Select([]string{"sender_id"}).Where("id =? AND receiver_id =? ", chatroomId, userId).First(&targetId)
+	db.Model(&Room{}).Select([]string{"receiver_id"}).Where("id =? AND sender_id =? ", chatroomId, userId).First(&targetId)
+	var userIdString string = strconv.FormatUint(uint64(userId), 10)
+	var targetIdString string = strconv.FormatUint(uint64(targetId), 10)
+	chatRoomUserId := "RoomId:" + chatroomId + "/" + "UserId:" + userIdString
+	chatRoomTargetId := "RoomId:" + chatroomId + "/" + "UserId:" + targetIdString
 	conn, _, _, err := ws.UpgradeHTTP(r, w)
+	OnlineChatUsers[chatRoomUserId] = &conn
 	handleError(err)
 	go func() {
 
@@ -114,10 +122,20 @@ func get_chatRoom_ws(w http.ResponseWriter, r *http.Request) {
 		defer conn.Close()
 		for {
 			msg, _, err := wsutil.ReadClientData(conn)
+			var msgContent map[string]interface{}
+			err = json.Unmarshal(msg, &msgContent)
+			message, err := json.Marshal(map[string]interface{}{"Message": msgContent})
+			handleError(err)
+			ws, ok := OnlineChatUsers[chatRoomTargetId]
+			if ok {
+				wsutil.WriteServerText(*ws, message)
+			}
 
 			if err != nil {
-
-				break
+				if len(msg) == 0 {
+					delete(OnlineChatUsers, chatRoomUserId)
+					break
+				}
 			}
 			log.Println(string(msg))
 		}

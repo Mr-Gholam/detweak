@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
+	let chatwebSocket;
 	let contacts = [];
 	let currentChat = [];
 	let currentChatInfo;
@@ -111,7 +112,7 @@
 		const message = document.createElement('h1');
 		const Time = document.createElement('p');
 		img.setAttribute('src', `/api/images/${imgUrl}`);
-		message.classList.add('p-1', 'bg-inherit');
+		message.classList.add('p-1', 'bg-inherit', 'text-left');
 		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
 		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
 		Time.innerText = time;
@@ -122,15 +123,46 @@
 		parent.appendChild(messageParent);
 		scrollToBottom;
 	}
-	function createReceiveMessage(input) {
+	function createReceiveImgMessage(imgUrl, createdAt, input) {
 		const middePart = document.getElementById('middlePart');
 		const messageParent = document.createElement('div');
-		middePart.appendChild(messageParent);
-		messageParent.classList.add('w-full');
+		const parent = document.createElement('div');
+		parent.classList.add('w-full');
+		middePart.appendChild(parent);
+		messageParent.classList.add('flex', 'items-end', 'bg-inherit', 'receive-message', 'flex-col');
+		const img = document.createElement('img');
 		const message = document.createElement('h1');
-		message.classList.add('receive-message');
+		const Time = document.createElement('p');
+		img.setAttribute('src', `/api/images/${imgUrl}`);
+		message.classList.add('p-1', 'bg-inherit', 'text-left', 'w-fit', 'mr-auto');
+		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
+		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		Time.innerText = time;
 		message.innerText = input;
+		messageParent.appendChild(img);
 		messageParent.appendChild(message);
+		messageParent.appendChild(Time);
+		parent.appendChild(messageParent);
+		scrollToBottom;
+	}
+	function createReceiveMessage(createdAt, input) {
+		const middePart = document.getElementById('middlePart');
+		const messageParent = document.createElement('div');
+		const parent = document.createElement('div');
+		parent.classList.add('w-full');
+		middePart.appendChild(parent);
+		messageParent.classList.add('flex', 'items-end', 'bg-inherit', 'receive-message');
+		const message = document.createElement('h1');
+		const Time = document.createElement('p');
+		message.classList.add('p-1', 'bg-inherit');
+		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
+		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		message.innerText = input;
+		Time.innerText = time;
+		messageParent.appendChild(message);
+		messageParent.appendChild(Time);
+		parent.appendChild(messageParent);
+		scrollToBottom();
 	}
 	function togglePic() {
 		if (!hasPhoto) {
@@ -169,6 +201,9 @@
 			});
 			if (response.ok) {
 				createSendImgMessage(imgData.ImgUrl, imgData.CreatedAt, textInput);
+				chatwebSocket.send(
+					JSON.stringify({ ImgUrl: imgData.ImgUrl, Time: imgData.CreatedAt, Content: textInput })
+				);
 				scrollToBottom();
 				textInput = '';
 			}
@@ -188,6 +223,7 @@
 		const data = await response.json();
 		if (response.status == 200) {
 			createSendMessage(textInput, data.CreatedAt);
+			chatwebSocket.send(JSON.stringify({ Content: textInput, Time: data.CreatedAt }));
 			scrollToBottom();
 			textInput = '';
 		}
@@ -217,11 +253,20 @@
 		const webSokect = new WebSocket(
 			'ws' + h[0].replace('http', '') + '//' + h[2] + `/api/chatRoom/${chatRoomId}`
 		);
+		chatwebSocket = webSokect;
 		webSokect.onopen = () => {
 			console.log(`Conncted to chatroom ${chatRoomId}`);
 		};
 		webSokect.onclose = () => {
 			console.log(`Disconncted to chatroom ${chatRoomId}`);
+		};
+		webSokect.onmessage = (e) => {
+			const { Message } = JSON.parse(e.data);
+			if (Message.ImgUrl) {
+				createReceiveImgMessage(Message.ImgUrl, Message.Time, Message.Content);
+			} else {
+				createReceiveMessage(Message.Time, Message.Content);
+			}
 		};
 		currentChatInfo = data;
 		currentChat = data.Chat;
@@ -361,20 +406,6 @@
 						<div class="w-full">
 							{#if chat.Receive}
 								<div class="flex items-end">
-									{#if currentChatInfo.ImgUrl}
-										<!-- svelte-ignore a11y-img-redundant-alt -->
-										<img
-											class="h-8 w-8 object-cover rounded-full  "
-											src="/api/images/{currentChatInfo.ImgUrl}"
-											alt="Current profile photo"
-										/>
-									{:else}
-										<div
-											class="h-8 w-8 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
-										>
-											<i class="fa-solid fa-user text-slate-400 text-base bg-transparent" />
-										</div>
-									{/if}
 									<div
 										class="{chat.Receive
 											? 'receive-message'
@@ -387,7 +418,7 @@
 												class="w-full h-fit  md:mx-auto  object-cover rounded-sm"
 											/>
 										{/if}
-										<h1 class="p-1 bg-inherit">
+										<h1 class="p-1 bg-inherit text-left w-fit mr-auto">
 											{chat.Message}
 										</h1>
 										<p class="text-xs float-right mx-2 bg-inherit">
@@ -408,7 +439,7 @@
 											class="w-full h-fit  md:mx-auto  object-cover rounded-sm"
 										/>
 									{/if}
-									<h1 class="p-1 bg-inherit">
+									<h1 class="p-1 bg-inherit text-left w-fit mr-auto">
 										{chat.Message}
 									</h1>
 									<p class="text-xs float-left mx-2 bg-inherit">
