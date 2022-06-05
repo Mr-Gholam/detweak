@@ -12,9 +12,28 @@
 		const userInput = $page.params.userInput;
 		const response = await fetch(`/api/search/${userInput}`);
 		const data = await response.json();
-		console.log(data);
 		suggestionUsers = JSON.parse(JSON.stringify(data.Users));
+		suggestionUsers.sort((a, b) => {
+			if (a.IsFriend == 'Friend') {
+				return -1;
+			} else if (a.IsFriend == 'Not Friend') {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+		suggestionUsers = suggestionUsers;
 		suggestedPosts = JSON.parse(JSON.stringify(data.Posts));
+		suggestedPosts.sort((a, b) => {
+			if (a.IsFriend == 'Friend') {
+				return -1;
+			} else if (a.IsFriend == 'Not Friend') {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+		suggestedPosts = suggestedPosts;
 		$loading = false;
 	});
 	async function addFriend(username) {

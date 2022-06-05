@@ -1,11 +1,19 @@
 <script>
 	import { goto } from '$app/navigation';
 	// @ts-nocheck
-	import { User } from '../store';
+	import { User, Notification } from '../store';
 	let searchValue;
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	const path = $page.url.pathname;
 	let humberguer = false;
+	onMount(async () => {
+		const response = await fetch('/api/friend-requests');
+		const data = await response.json();
+		if (data) {
+			$Notification = data.length;
+		}
+	});
 	function openHumberguer() {
 		const firstBurger = document.getElementById('firstBurger');
 		const midtBurger = document.getElementById('midBurger');
@@ -87,38 +95,50 @@
 					<a
 						href="/dashboard"
 						on:click={openHumberguer}
-						class=" {$page.url.pathname === '/dashboard' ? 'text-main' : ''}">Dashboard</a
+						class=" {$page.url.pathname === '/dashboard' ? 'text-white' : 'text-text'}">Dashboard</a
 					>
 					<a
 						on:click={openHumberguer}
 						href="/profile/{$User.username}"
-						class={$page.url.pathname === `/profile/${$User.username}` ? 'text-main' : ''}
+						class={$page.url.pathname === `/profile/${$User.username}` ? 'text-white' : 'text-text'}
 						>My Profile</a
 					>
 					<a
 						on:click={openHumberguer}
 						href="/notification"
-						class={$page.url.pathname === '/notification' ? 'text-main' : ''}>Notification</a
+						class=" flex  justify-between items-center {$page.url.pathname === '/notification'
+							? 'text-white'
+							: 'text-text'}"
+						>Notification
+						{#if $Notification}
+							<div
+								class="bg-main w-5 h-5 rounded-full text-xs flex justify-center items-center text-white mr-1"
+							>
+								{$Notification}
+							</div>
+						{/if}</a
 					>
 					<a
 						href="/messages"
 						on:click={openHumberguer}
-						class={$page.url.pathname === '/messages' ? 'text-main' : ''}>Messages</a
+						class={$page.url.pathname === '/messages' ? 'text-white' : 'text-text'}>Messages</a
 					>
 					<a
 						on:click={openHumberguer}
 						href="/liked-posts"
-						class=" {$page.url.pathname === '/liked-posts' ? 'text-main' : ''}"
+						class=" {$page.url.pathname === '/liked-posts' ? 'text-white' : 'text-text'}"
 					>
 						Liked Posts</a
 					>
 					<a
 						href="/setting"
 						on:click={openHumberguer}
-						class=" {$page.url.pathname === '/setting' ? 'text-main' : ''}">Setting</a
+						class=" {$page.url.pathname === '/setting' ? 'text-white' : 'text-text'}">Setting</a
 					>
-					<button class=" w-fit font-semibold " on:click={openHumberguer} on:click={logout}
-						>Logout</button
+					<button
+						class=" w-fit font-semibold text-text "
+						on:click={openHumberguer}
+						on:click={logout}>Logout</button
 					>
 				</section>
 			</div>

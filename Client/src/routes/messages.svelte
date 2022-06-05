@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
+	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
 	let chatwebSocket;
 	let contacts = [];
 	let currentChat = [];
@@ -91,7 +91,7 @@
 		const Time = document.createElement('p');
 		message.classList.add('p-1', 'bg-inherit');
 		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
-		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		const time = formatDistanceToNowStrict(new Date(createdAt), { addSuffix: true });
 		message.innerText = input;
 		Time.innerText = time;
 		messageParent.appendChild(message);
@@ -112,7 +112,7 @@
 		img.setAttribute('src', `/api/images/${imgUrl}`);
 		message.classList.add('p-1', 'bg-inherit', 'text-left');
 		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
-		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		const time = formatDistanceToNowStrict(new Date(createdAt), { addSuffix: true });
 		Time.innerText = time;
 		message.innerText = input;
 		messageParent.appendChild(img);
@@ -134,7 +134,7 @@
 		img.setAttribute('src', `/api/images/${imgUrl}`);
 		message.classList.add('p-1', 'bg-inherit', 'text-left', 'w-fit', 'mr-auto');
 		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
-		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		const time = formatDistanceToNowStrict(new Date(createdAt), { addSuffix: true });
 		Time.innerText = time;
 		message.innerText = input;
 		messageParent.appendChild(img);
@@ -154,7 +154,7 @@
 		const Time = document.createElement('p');
 		message.classList.add('p-1', 'bg-inherit');
 		Time.classList.add('text-xs', 'float-left', 'mx-2', 'bg-inherit');
-		const time = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+		const time = formatDistanceToNowStrict(new Date(createdAt), { addSuffix: true });
 		message.innerText = input;
 		Time.innerText = time;
 		messageParent.appendChild(message);
@@ -420,7 +420,7 @@
 											{chat.Message}
 										</h1>
 										<p class="text-xs float-right mx-2 bg-inherit">
-											{formatDistanceToNow(new Date(chat.CreatedAt), { addSuffix: true })}
+											{formatDistanceToNowStrict(new Date(chat.CreatedAt), { addSuffix: true })}
 										</p>
 									</div>
 								</div>
@@ -428,7 +428,7 @@
 								<div
 									class="{chat.Receive
 										? 'receive-message'
-										: 'send-message'} flex items-end {chat.ImgUrl ? 'flex-col' : ''}  "
+										: 'send-message'} flex items-end flex-col  "
 								>
 									{#if chat.ImgUrl}
 										<img
@@ -440,9 +440,9 @@
 									<h1 class="p-1 bg-inherit text-left w-fit mr-auto">
 										{chat.Message}
 									</h1>
-									<p class="text-xs float-left mx-2 bg-inherit">
-										{formatDistanceToNow(new Date(chat.CreatedAt), { addSuffix: true })}
-									</p>
+									<h1 class="text-xs float-left  bg-inherit flex">
+										{formatDistanceToNowStrict(new Date(chat.CreatedAt), { addSuffix: true })}
+									</h1>
 								</div>
 							{/if}
 						</div>
