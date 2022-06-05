@@ -8,3 +8,4 @@ export const loading = writable(false)
 
 export const onlineFriends = writable([])
 export const ws = writable(null)
+export const Notification = writable(null)

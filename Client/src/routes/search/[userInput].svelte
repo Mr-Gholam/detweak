@@ -3,7 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { loading, User } from '../../store';
+	import { loading, User, ws } from '../../store';
 	import { goto } from '$app/navigation';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	let suggestionUsers;
@@ -36,6 +36,7 @@
 				post.IsFriend = data.status;
 				suggestionUsers = suggestionUsers;
 				suggestedPosts = suggestedPosts;
+				$ws.send(JSON.stringify({ Target: username }));
 			}
 		} else {
 			goto('/login');

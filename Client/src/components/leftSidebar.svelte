@@ -1,13 +1,12 @@
 <script>
-	import { User } from '../store';
+	import { User, Notification } from '../store';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	let notificationNumber;
 	onMount(async () => {
 		const response = await fetch('/api/friend-requests');
 		const data = await response.json();
 		if (data) {
-			notificationNumber = data.length;
+			$Notification = data.length;
 		}
 	});
 </script>
@@ -45,11 +44,11 @@
 			<div>
 				<i class="fa-solid fa-bell mr-1" /> Notification
 			</div>
-			{#if notificationNumber}
+			{#if $Notification}
 				<div
 					class="bg-main w-5 h-5 rounded-full text-xs flex justify-center items-center text-white mr-1"
 				>
-					{notificationNumber}
+					{$Notification}
 				</div>
 			{/if}
 		</a>

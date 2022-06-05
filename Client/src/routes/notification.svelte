@@ -2,7 +2,7 @@
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
-	import { loading } from '../store';
+	import { loading, Notification } from '../store';
 	let friendRequests = [];
 	onMount(async () => {
 		const response = await fetch('/api/friend-requests');
@@ -23,6 +23,8 @@
 		if (response.status == 200) {
 			const el = document.getElementById(`${requestId}`);
 			el.parentNode.removeChild(el);
+			$Notification = $Notification - 1;
+			$Notification = $Notification;
 		}
 	}
 	async function rejectReq(requestId) {
@@ -38,6 +40,8 @@
 		if (response.status == 200) {
 			const el = document.getElementById(`${requestId}`);
 			el.parentNode.removeChild(el);
+			$Notification = $Notification - 1;
+			$Notification = $Notification;
 		}
 	}
 </script>

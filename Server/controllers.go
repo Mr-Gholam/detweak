@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"sort"
@@ -85,6 +84,19 @@ func get_ws(w http.ResponseWriter, r *http.Request) {
 		defer conn.Close()
 		for {
 			msg, _, err := wsutil.ReadClientData(conn)
+			if len(msg) == 0 {
+				continue
+			}
+			var msgContent map[string]interface{}
+			err = json.Unmarshal(msg, &msgContent)
+			handleError(err)
+			targetId := findUserIdByUsername(msgContent["Target"].(string))
+			ws, ok := OnlineUserIds[targetId]
+			if ok {
+				notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"FriendReqSendedBy": username}})
+				handleError(err)
+				wsutil.WriteServerText(*ws, notification)
+			}
 
 			if err != nil {
 				for i := 0; i < len(friendIds); i++ {
@@ -98,7 +110,6 @@ func get_ws(w http.ResponseWriter, r *http.Request) {
 				delete(OnlineUserIds, userId)
 				break
 			}
-			log.Println(string(msg))
 		}
 	}()
 }

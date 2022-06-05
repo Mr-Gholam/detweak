@@ -2,7 +2,7 @@
 	// @ts-nocheck
 
 	import { page } from '$app/stores';
-	import { loading, User } from '../../store';
+	import { ws, loading, User } from '../../store';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	let user;
 	User.subscribe((value) => (user = value));
@@ -73,6 +73,7 @@
 			});
 			const data = await response.json();
 			isFriend = data.status;
+			$ws.send(JSON.stringify({ Target: userName }));
 		} else {
 			goto('/login');
 		}

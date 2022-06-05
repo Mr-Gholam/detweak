@@ -1,5 +1,5 @@
 <script>
-	import { loading, onlineFriends, User, ws } from '../store';
+	import { loading, onlineFriends, User, ws, Notification } from '../store';
 	import '../app.css';
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
@@ -25,6 +25,14 @@
 			webSokect.onmessage = (e) => {
 				const { Friend } = JSON.parse(e.data);
 				const { offlineFriend } = JSON.parse(e.data);
+				const { notification } = JSON.parse(e.data);
+				if (notification) {
+					if ($Notification == null) {
+						$Notification = 1;
+					} else {
+						$Notification++;
+					}
+				}
 				if (Friend) {
 					$onlineFriends.push(Friend);
 					$onlineFriends = $onlineFriends;

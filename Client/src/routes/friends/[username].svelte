@@ -3,7 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { loading, User } from '../../store';
+	import { loading, User, ws } from '../../store';
 	import { goto } from '$app/navigation';
 	let friends = [];
 	let username;
@@ -38,6 +38,7 @@
 				const user = friends.find((user) => user.Username == username);
 				user.IsFriend = data.status;
 				friends = friends;
+				$ws.send(JSON.stringify({ Target: username }));
 			}
 		} else {
 			goto('/login');
