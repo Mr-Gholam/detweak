@@ -527,11 +527,14 @@ func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
 	}
 	for i := 0; i < len(Ids); i++ {
 		var roomDetail RoomJSON
+		var chats []string
+		db.Model(&Chat{}).Select([]string{"message"}).Where("seen =? AND chat_room_id = ? AND receiver_id = ?", false, Ids[i]["chatRoomId"], userId).Find(&chats)
 		username, firstname, lastname, imgUrl := findUserById(Ids[i]["targetId"])
 		roomDetail.Firstname = firstname
 		roomDetail.ImgUrl = imgUrl
 		roomDetail.Username = username
 		roomDetail.Lastname = lastname
+		roomDetail.UnseenMsg = len(chats)
 		roomDetail.RoomId = Ids[i]["chatRoomId"]
 		Rooms = append(Rooms, roomDetail)
 	}
@@ -539,6 +542,7 @@ func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
 	e, err := json.Marshal(Rooms)
 	handleError(err)
 	w.Write(e)
+
 }
 func post_get_chat(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
@@ -554,6 +558,7 @@ func post_get_chat(w http.ResponseWriter, r *http.Request) {
 	roomId := uint(post["RoomId"].(float64))
 	db.Where("chat_room_id = ?", roomId).Find(&chats)
 	db.Where("sender_id =? AND id = ?", userId, roomId).Or("receiver_id =? AND id =?", userId, roomId).Find(&room)
+
 	for i := 0; i < len(chats); i++ {
 		var chat ChatJSON
 		if chats[i].ReceiverId == userId {
@@ -583,6 +588,7 @@ func post_get_chat(w http.ResponseWriter, r *http.Request) {
 	roomJSON.ImgUrl = imgUrl
 	roomJSON.RoomId = roomId
 	roomJSON.TargetId = targetId
+	db.Model(&Chat{}).Where("chat_room_id = ? AND receiver_id =? AND seen =?", roomId, userId, false).Update("seen", true)
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(roomJSON)
 	handleError(err)

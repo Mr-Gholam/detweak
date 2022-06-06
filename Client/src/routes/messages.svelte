@@ -19,6 +19,7 @@
 	onMount(async () => {
 		const response = await fetch('/api/load-chatRooms');
 		const data = await response.json();
+		console.log(data);
 		contacts = data;
 		if (targetUsername) {
 			if (contacts == null) {
@@ -246,32 +247,39 @@
 				RoomId: chatRoomId
 			})
 		});
-		const data = await response.json();
-		var h = window.location.href.split('/');
-		const webSokect = new WebSocket(
-			'ws' + h[0].replace('http', '') + '//' + h[2] + `/api/chatRoom/${chatRoomId}`
-		);
-		chatwebSocket = webSokect;
-		webSokect.onopen = () => {
-			console.log(`Conncted to chatroom ${chatRoomId}`);
-		};
-		webSokect.onclose = () => {
-			console.log(`Disconncted to chatroom ${chatRoomId}`);
-		};
-		webSokect.onmessage = (e) => {
-			const { Message } = JSON.parse(e.data);
-			if (Message.ImgUrl) {
-				createReceiveImgMessage(Message.ImgUrl, Message.Time, Message.Content);
-			} else {
-				createReceiveMessage(Message.Time, Message.Content);
-			}
-		};
-		currentChatInfo = data;
-		currentChat = data.Chat;
-		setTimeout(() => {
-			scrollToBottom();
-		}, 5);
-		loading = false;
+		if (response.ok) {
+			const selectedChat = contacts.find((chat) => {
+				return chat.RoomId == chatRoomId;
+			});
+			selectedChat.UnseenMsg = 0;
+			contacts = contacts;
+			const data = await response.json();
+			var h = window.location.href.split('/');
+			const webSokect = new WebSocket(
+				'ws' + h[0].replace('http', '') + '//' + h[2] + `/api/chatRoom/${chatRoomId}`
+			);
+			chatwebSocket = webSokect;
+			webSokect.onopen = () => {
+				console.log(`Conncted to chatroom ${chatRoomId}`);
+			};
+			webSokect.onclose = () => {
+				console.log(`Disconncted to chatroom ${chatRoomId}`);
+			};
+			webSokect.onmessage = (e) => {
+				const { Message } = JSON.parse(e.data);
+				if (Message.ImgUrl) {
+					createReceiveImgMessage(Message.ImgUrl, Message.Time, Message.Content);
+				} else {
+					createReceiveMessage(Message.Time, Message.Content);
+				}
+			};
+			currentChatInfo = data;
+			currentChat = data.Chat;
+			setTimeout(() => {
+				scrollToBottom();
+			}, 5);
+			loading = false;
+		}
 	}
 	function typing() {
 		const sendBtn = document.getElementById('sendBtn');
@@ -310,7 +318,7 @@
 			{#if contacts}
 				{#each contacts as contact}
 					<section
-						class="  py-2 px-3  md:my-2 items-center  w-full hover:opacity-90 cursor-pointer "
+						class="  py-2 pr-3  md:my-2 items-center  w-full hover:opacity-90 cursor-pointer "
 						on:click={changeChat(contact.RoomId)}
 						id={contact.Username}
 					>
@@ -333,13 +341,20 @@
 							{/if}
 
 							<!-- Name and username-->
-							<div class="mx-2 w-9/12 ">
+							<div class="mx-2 w-fit flex-1 ">
 								<h4 class=" font-semibold text-sm text-text  ">
 									{contact.Firstname}
 									{contact.Lastname}
 								</h4>
 								<h5 class=" text-xs  text-text   ">@{contact.Username}</h5>
 							</div>
+							{#if contact.UnseenMsg != 0}
+								<div
+									class="flex justify-center items-center w-6 h-6 rounded-full bg-main text-white text-xs "
+								>
+									{contact.UnseenMsg}
+								</div>
+							{/if}
 						</section>
 					</section>
 				{/each}
