@@ -311,6 +311,17 @@ func get_profile(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	w.Write(e)
 }
+func get_get_notification(w http.ResponseWriter, r *http.Request) {
+	var friendship int64
+	var unseenMsg int64
+	userId := getIdFromCookie(w, r)
+	db.Model(&FriendShip{}).Where("receiver_id =? AND status =?", userId, false).Count(&friendship)
+	db.Model(&Chat{}).Where("receiver_id = ? AND seen =?", userId, false).Count(&unseenMsg)
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"Friendship": friendship, "Messages": unseenMsg})
+	handleError(err)
+	w.Write(e)
+}
 
 // post controllers
 func post_create_post(w http.ResponseWriter, r *http.Request) {
@@ -542,7 +553,6 @@ func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
 	e, err := json.Marshal(Rooms)
 	handleError(err)
 	w.Write(e)
-
 }
 func post_get_chat(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
@@ -602,6 +612,12 @@ func post_create_message(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &messageInfo)
 	roomId := uint(messageInfo["RoomId"].(float64))
 	targetId := uint(messageInfo["TargetId"].(float64))
+	ws, ok := OnlineUserIds[targetId]
+	unseenMsg, err := json.Marshal(map[string]interface{}{"UnSeenMsg": map[string]interface{}{"UnseenMsg": 1}})
+	handleError(err)
+	if ok {
+		wsutil.WriteServerText(*ws, unseenMsg)
+	}
 	message := messageInfo["Message"].(string)
 	chat.ChatRoomId = roomId
 	chat.Message = message

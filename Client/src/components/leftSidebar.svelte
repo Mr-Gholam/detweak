@@ -1,13 +1,12 @@
 <script>
-	import { User, Notification } from '../store';
+	import { User, Notification, UnseenMsg } from '../store';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	onMount(async () => {
-		const response = await fetch('/api/friend-requests');
+		const response = await fetch('/api/get-notifications');
 		const data = await response.json();
-		if (data) {
-			$Notification = data.length;
-		}
+		$Notification = data.Friendship;
+		$UnseenMsg = data.Messages;
 	});
 </script>
 
@@ -54,10 +53,22 @@
 		</a>
 		<a
 			href="/messages"
-			class="hover:text-main pl-2  py-2 {$page.url.pathname === '/messages'
+			class="hover:text-main pl-2  py-2 flex  justify-between items-center {$page.url.pathname ===
+			'/messages'
 				? 'text-white'
-				: 'text-text'}"><i class="fa-solid fa-comments" /> Messages</a
+				: 'text-text'}"
 		>
+			<div>
+				<i class="fa-solid fa-comments" /> Messages
+			</div>
+			{#if $UnseenMsg}
+				<div
+					class="bg-main w-5 h-5 rounded-full text-xs flex justify-center items-center text-white mr-1"
+				>
+					{$UnseenMsg}
+				</div>
+			{/if}
+		</a>
 		<a
 			href="/liked-posts"
 			class="hover:text-main pl-2  py-2 {$page.url.pathname === '/liked-posts'

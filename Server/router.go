@@ -35,6 +35,7 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/delete-post", http.HandlerFunc(post_delete_post)).Methods("POST")
 	// profile
 	router.Handle("/api/profile/{username}", http.HandlerFunc(get_profile)).Methods("GET")
+	router.Handle("/api/get-notifications", http.HandlerFunc(get_get_notification)).Methods("GET")
 	// comments
 	router.Handle("/api/add-comment", http.HandlerFunc(post_create_comment)).Methods("POST")
 	router.Handle("/api/delete-Comment", http.HandlerFunc(post_delete_comment)).Methods("POST")

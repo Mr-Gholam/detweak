@@ -1,5 +1,5 @@
 <script>
-	import { loading, onlineFriends, User, ws, Notification } from '../store';
+	import { loading, onlineFriends, User, ws, Notification, UnseenMsg } from '../store';
 	import '../app.css';
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
@@ -26,6 +26,11 @@
 				const { Friend } = JSON.parse(e.data);
 				const { offlineFriend } = JSON.parse(e.data);
 				const { notification } = JSON.parse(e.data);
+				const { UnSeenMsg } = JSON.parse(e.data);
+				if (UnSeenMsg) {
+					$UnseenMsg = $UnseenMsg + 1;
+					$UnseenMsg = $UnseenMsg;
+				}
 				if (notification) {
 					if ($Notification == null) {
 						$Notification = 1;

@@ -66,8 +66,8 @@
 	<div
 		class="h-16 items-center justify-between relative flex lg:w-10/12 md:mx-auto md:w-11/12 bg-inherit xl:w-8/12 "
 	>
-		<a href="/" class="mx-2 bg-inherit ">
-			<img class=" object-cover" src="../../static/main-logo.png" alt="" />
+		<a href="/" class=" bg-inherit ml-6 ">
+			<img class=" object-cover " src="../../static/main-logo.png" alt="" />
 		</a>
 		<!--search bar-->
 		<section class="lg:ml-2 bg-inherit">
@@ -76,7 +76,7 @@
 					type="text"
 					bind:value={searchValue}
 					placeholder="search"
-					class="w-42  md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-40 text-text"
+					class="w-42  md:w-72 border-2 border-border rounded-md py-0.5  px-2 focus:outline-hidden focus:outline-none lg:w-128  bg-inherit xl:mr-24 text-text"
 				/>
 			</form>
 		</section>

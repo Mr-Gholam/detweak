@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
+	import { UnseenMsg } from '../store';
 	let chatwebSocket;
 	let contacts = [];
 	let currentChat = [];
@@ -19,7 +20,6 @@
 	onMount(async () => {
 		const response = await fetch('/api/load-chatRooms');
 		const data = await response.json();
-		console.log(data);
 		contacts = data;
 		if (targetUsername) {
 			if (contacts == null) {
@@ -251,7 +251,9 @@
 			const selectedChat = contacts.find((chat) => {
 				return chat.RoomId == chatRoomId;
 			});
+			$UnseenMsg = $UnseenMsg - selectedChat.UnseenMsg;
 			selectedChat.UnseenMsg = 0;
+			$UnseenMsg = $UnseenMsg;
 			contacts = contacts;
 			const data = await response.json();
 			var h = window.location.href.split('/');
