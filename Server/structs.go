@@ -126,7 +126,7 @@ type RoomJSON struct {
 	Lastname  string
 	ImgUrl    string
 	TargetId  uint
-	UnseenMsg int
+	UnseenMsg int64
 	Chat      []ChatJSON
 }
 

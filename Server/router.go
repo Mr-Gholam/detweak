@@ -27,6 +27,7 @@ func routerSetup(router *mux.Router) {
 	// post routes
 	router.Handle("/api/availablePosts", http.HandlerFunc(get_available_posts)).Methods("GET")
 	router.Handle("/api/post/{postId}", http.HandlerFunc(get_single_post)).Methods("GET")
+	router.Handle("/api/liked-by/{postId}", http.HandlerFunc(get_liked_by)).Methods("GET")
 	router.Handle("/api/liked-posts", http.HandlerFunc(get_liked_posts)).Methods("GET")
 	router.Handle("/api/create-post", http.HandlerFunc(post_create_post)).Methods("POST")
 	router.Handle("/api/create-postImg/{postId}", http.HandlerFunc(post_create_post_img)).Methods("POST")

@@ -456,6 +456,30 @@ func get_liked_posts(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	w.Write(e)
 }
+func get_liked_by(w http.ResponseWriter, r *http.Request) {
+	var result []map[string]string
+	var users []uint
+	postID := mux.Vars(r)["postId"]
+	userId := getIdFromCookie(w, r)
+	postId, err := strconv.ParseUint(postID, 10, 32)
+	handleError(err)
+	db.Model(&LikedPost{}).Select([]string{"user_id"}).Where("post_id =?", postId).Find(&users)
+	for i := 0; i < len(users); i++ {
+		var userInfo User
+		user := make(map[string]string)
+		db.Model(&User{}).Select([]string{"firstname", "lastname", "img_url", "username", "id"}).Where("id =?", users[i]).First(&userInfo)
+		user["Firstname"] = userInfo.Firstname
+		user["Lastname"] = userInfo.Lastname
+		user["ImgUrl"] = userInfo.ImgUrl
+		user["Username"] = userInfo.Username
+		user["IsFriend"] = findFriendShip(users[i], userId)
+		result = append(result, user)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
 
 // Comment controller
 func post_create_comment(w http.ResponseWriter, r *http.Request) {
@@ -538,14 +562,14 @@ func get_load_chatRooms(w http.ResponseWriter, r *http.Request) {
 	}
 	for i := 0; i < len(Ids); i++ {
 		var roomDetail RoomJSON
-		var chats []string
-		db.Model(&Chat{}).Select([]string{"message"}).Where("seen =? AND chat_room_id = ? AND receiver_id = ?", false, Ids[i]["chatRoomId"], userId).Find(&chats)
+		var chats int64
+		db.Model(&Chat{}).Where("seen =? AND chat_room_id = ? AND receiver_id = ?", false, Ids[i]["chatRoomId"], userId).Count(&chats)
 		username, firstname, lastname, imgUrl := findUserById(Ids[i]["targetId"])
 		roomDetail.Firstname = firstname
 		roomDetail.ImgUrl = imgUrl
 		roomDetail.Username = username
 		roomDetail.Lastname = lastname
-		roomDetail.UnseenMsg = len(chats)
+		roomDetail.UnseenMsg = chats
 		roomDetail.RoomId = Ids[i]["chatRoomId"]
 		Rooms = append(Rooms, roomDetail)
 	}
