@@ -1,24 +1,86 @@
+<script context="module">
+	export const load = async ({ fetch }) => {
+		const res = await fetch('/api/setting');
+		let user;
+		let firstName;
+		let lastName;
+		let bio;
+		let birthday;
+		let email;
+		let username;
+		let profileImage;
+		let selectedLanguage = null;
+		let selectedField = null;
+		let selectedFrameWork = null;
+		let gitHubUserName = '';
+		let experience = null;
+		let countrySelected;
+		let currentPic;
+		if (res.status == 200) {
+			const data = await res.json();
+			user = JSON.parse(JSON.stringify(data));
+			firstName = data.Firstname;
+			lastName = data.Lastname;
+			gitHubUserName = data.GitHub;
+			bio = data.Bio;
+			birthday = data.Birthday.slice(0, 10);
+			countrySelected = data.Location;
+			currentPic = data.ImgUrl;
+			profileImage = data.ImgUrl;
+			email = data.Email;
+			username = data.Username;
+			selectedLanguage = data.Language;
+			selectedField = data.Field;
+			selectedFrameWork = data.FrameWork;
+			experience = data.Experience;
+		}
+		return {
+			props: {
+				user,
+				firstName,
+				lastName,
+				gitHubUserName,
+				bio,
+				birthday,
+				countrySelected,
+				currentPic,
+				profileImage,
+				email,
+				selectedLanguage,
+				selectedField,
+				selectedFrameWork,
+				experience,
+				username
+			}
+		};
+	};
+</script>
+
 <script>
 	// @ts-nocheck
-
 	import { onMount } from 'svelte';
 	import { User } from '../store';
 	import { loading } from '../store';
-	let user;
-	let firstName;
-	let lastName;
-	let bio;
-	let profilePic;
+	export let user;
+	export let firstName;
+	export let lastName;
+	export let bio;
+	export let profilePic;
+	export let selectedLanguage;
+	export let selectedField;
+	export let selectedFrameWork;
+	export let gitHubUserName;
+	export let experience;
+	export let birthday;
+	export let email;
+	export let profileImage;
+	export let username;
+	export let currentPic;
 	let profilePicInput;
-	let currentPic;
 	let countrySelected;
-	let birthday;
-	let email;
-	let username;
 	let currentPassword;
 	let password;
 	let confirmPassword;
-	let profileImage;
 	let usernameLengthError = false;
 	let emailError = false;
 	let usernameError = false;
@@ -30,11 +92,6 @@
 	let passwordsNotMatch = false;
 	let incorectPassword = false;
 	let hasPhoto = false;
-	let selectedLanguage = null;
-	let selectedField = null;
-	let selectedFrameWork = null;
-	let gitHubUserName = '';
-	let experience = null;
 	let countries = [
 		{ text: 'Afghanistan', value: 'AF' },
 		{ text: 'Åland Islands', value: 'AX' },
@@ -292,25 +349,6 @@
 	let Fields = ['', 'Front-end', 'Back-end', 'Full-stack', 'Game Developer'];
 	let frontEndFrameWorks = ['', 'React', 'Vue', 'Svelte', 'Anguler'];
 
-	onMount(async () => {
-		const response = await fetch('/api/setting');
-		const data = await response.json();
-		user = JSON.parse(JSON.stringify(data));
-		firstName = data.Firstname;
-		lastName = data.Lastname;
-		gitHubUserName = data.GitHub;
-		bio = data.Bio;
-		birthday = data.Birthday.slice(0, 10);
-		countrySelected = data.Location;
-		currentPic = data.ImgUrl;
-		profileImage = data.ImgUrl;
-		email = data.Email;
-		username = data.Username;
-		selectedLanguage = data.Language;
-		selectedField = data.Field;
-		selectedFrameWork = data.FrameWork;
-		experience = data.Experience;
-	});
 	function imageChange() {
 		const file = profilePicInput.files[0];
 		if (file) {

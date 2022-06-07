@@ -1,65 +1,106 @@
+<script context="module">
+	export const load = async ({ fetch, params }) => {
+		let firstName;
+		let month;
+		let day;
+		let lastName;
+		let bio;
+		let profileImg;
+		let birthday;
+		let userName;
+		let postCount;
+		let friendCount;
+		let frameWork;
+		let language;
+		let location;
+		let isFriend;
+		let field;
+		let xp;
+		let gitHub;
+		let posts;
+		let myProfile;
+		const username = params.username;
+		const res = await fetch(`/api/profile/${username}`);
+		if (username === User.username) {
+			myProfile = true;
+		}
+		if (res.status == 200) {
+			const data = await res.json();
+			firstName = data.Firstname;
+			lastName = data.Lastname;
+			userName = data.Username;
+			bio = data.Bio;
+			profileImg = data.ImgUrl;
+			birthday = data.Birthday;
+			postCount = data.PostCount;
+			friendCount = data.FriendCount;
+			location = data.Location;
+			isFriend = data.IsFriend;
+			gitHub = data.GitHubUsername;
+			field = data.Field;
+			language = data.Language;
+			frameWork = data.FrameWork;
+			xp = data.Experience;
+			if (birthday) {
+				day = new Date(birthday).getDate();
+				month = new Date(birthday).getMonth() + 1;
+			}
+			posts = data.Posts;
+		}
+		return {
+			props: {
+				xp,
+				frameWork,
+				language,
+				field,
+				gitHub,
+				isFriend,
+				location,
+				friendCount,
+				postCount,
+				birthday,
+				profileImg,
+				bio,
+				userName,
+				lastName,
+				firstName,
+				posts,
+				month,
+				day,
+				myProfile
+			}
+		};
+	};
+</script>
+
 <script>
 	// @ts-nocheck
-
 	import { page } from '$app/stores';
 	import { ws, loading, User } from '../../store';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
-	let user;
-	User.subscribe((value) => (user = value));
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	export let firstName;
+	export let month;
+	export let day;
+	export let lastName;
+	export let bio;
+	export let profileImg;
+	export let birthday;
+	export let userName;
+	export let postCount;
+	export let friendCount;
+	export let frameWork;
+	export let language;
+	export let location;
+	export let myProfile;
+	export let isFriend;
+	export let field;
+	export let xp;
+	export let gitHub;
+	export let posts = null;
 	let comment;
-	let Loading = true;
-	let firstName;
-	let month;
-	let day;
-	let lastName;
-	let bio;
-	let profileImg;
-	let birthday;
-	let userName;
-	let postCount;
-	let friendCount;
-	let frameWork;
-	let language;
-	let location;
-	let myProfile;
-	let isFriend;
-	let field;
-	let xp;
-	let gitHub;
-	let posts = null;
-	onMount(async () => {
-		const username = $page.params.username;
-		if (username === user.username) {
-			myProfile = true;
-		}
-		const response = await fetch(`/api/profile/${username}`);
-		const data = await response.json();
-		if (data) {
-			$loading = false;
-		}
-		firstName = data.Firstname;
-		lastName = data.Lastname;
-		userName = data.Username;
-		bio = data.Bio;
-		profileImg = data.ImgUrl;
-		birthday = data.Birthday;
-		postCount = data.PostCount;
-		friendCount = data.FriendCount;
-		location = data.Location;
-		isFriend = data.IsFriend;
-		gitHub = data.GitHubUsername;
-		field = data.Field;
-		language = data.Language;
-		frameWork = data.FrameWork;
-		xp = data.Experience;
-		if (birthday) {
-			day = new Date(birthday).getDate();
-			month = new Date(birthday).getMonth() + 1;
-		}
-		posts = data.Posts;
-	});
+
 	async function addFriend() {
 		if (user) {
 			const response = await fetch('/api/add-friend', {
@@ -383,7 +424,7 @@
 									</a>
 								</section>
 								<section class="flex items-center ">
-									{#if post.Username == user.username}
+									{#if post.Username == $User.username}
 										<div class="relative text-text hover:text-main">
 											<i
 												on:click={postOption(post.PostId)}
@@ -432,7 +473,7 @@
 										{post.Description}
 									</h3>
 								</div>
-								{#if post.Username == user.username}
+								{#if post.Username == $User.username}
 									<form
 										id="form-{post.PostId}"
 										method=" post"

@@ -1,12 +1,10 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { loading, User } from '../store';
-	import { onMount } from 'svelte';
 	let email;
 	let password;
 	let passedEmail = false;
 	let passedPassword = false;
-
 	let uppercaseError = false;
 	let lowercaseError = false;
 	let numberError = false;
@@ -15,11 +13,6 @@
 	let passedLowercase = false;
 	let passedNumber = false;
 	let passedLength = false;
-	onMount(async () => {
-		if ($User.username) {
-			goto('/dashboard');
-		}
-	});
 	// check Email
 	function checkEmail() {
 		const error = document.createElement('p');

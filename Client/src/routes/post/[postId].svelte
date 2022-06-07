@@ -1,23 +1,27 @@
+<script context="module">
+	export const load = async ({ fetch, params }) => {
+		const postId = params.postId;
+		const res = await fetch(`/api/post/${postId}`);
+		let post;
+		let Comments;
+		if (res.status == 200) {
+			const data = await res.json();
+			post = data;
+			Comments = data.Comments;
+		}
+		return { props: { post, Comments } };
+	};
+</script>
+
 <script>
 	// @ts-nocheck
-
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { User } from '../../store';
-	let user;
-	let post;
+	export let post;
+	export let Comments;
 	let comment;
-	let Comments = [];
-	User.subscribe((value) => (user = value));
-	onMount(async () => {
-		const postId = $page.params.postId;
-		const response = await fetch(`/api/post/${postId}`);
-		const data = await response.json();
-		post = data;
-		Comments = data.Comments;
-	});
+
 	//  open post option
 	function postOption(postId) {
 		const option = document.getElementById(`${postId}`);
@@ -218,7 +222,7 @@
 						</a>
 					</section>
 					<section class="flex items-center ">
-						{#if post.username == user.username}
+						{#if post.username == $User.username}
 							<div class="relative text-text hover:text-main">
 								<i
 									on:click={postOption(post.PostId)}
@@ -267,7 +271,7 @@
 							{post.Description}
 						</h3>
 					</div>
-					{#if post.Username == user.username}
+					{#if post.Username == $User.username}
 						<form
 							id="form-{post.PostId}"
 							method=" post"
@@ -354,7 +358,7 @@
 									<h6 class="text-xs text-gray-500 ">
 										{formatDistanceToNow(new Date(comment.CreatedAt), { addSuffix: true })}
 									</h6>
-									{#if post.Username == user.username}
+									{#if post.Username == $User.username}
 										<div class="relative">
 											<i
 												on:click={postOptionComment(comment.CommentId)}
@@ -384,10 +388,10 @@
 					<section
 						class="flex justify-between items-center w-full  p-2 border-t border-solid border-border "
 					>
-						{#if user.ImgUrl}
+						{#if $User.ImgUrl}
 							<img
 								class="h-8 w-8 object-cover rounded-full hover:opacity-90"
-								src="/api/images/{user.ImgUrl}"
+								src="/api/images/{$User.ImgUrl}"
 								alt="Current profile photo"
 							/>
 						{:else}

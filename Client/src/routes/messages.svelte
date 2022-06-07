@@ -1,63 +1,17 @@
-<script>
-	// @ts-nocheck
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
-	import { UnseenMsg } from '../store';
-	let chatwebSocket;
-	let contacts = [];
-	let currentChat = [];
-	let currentChatInfo;
-	let textInput;
-	let picInput;
-	let hasPhoto = false;
-	let showList = true;
-	let bouncing = false;
-	let loading = true;
-	const targetUser = $page.url.search;
-	const targetUsername = targetUser.split('=')[1];
-
-	onMount(async () => {
-		const response = await fetch('/api/load-chatRooms');
-		const data = await response.json();
-		contacts = data;
-		if (targetUsername) {
-			if (contacts == null) {
-				const result = await fetch('/api/create-room', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						targetUsername
-					})
-				});
-				const newChatRoom = await result.json();
-				if (result.status == 200) {
-					if (contacts.length == 0) {
-						contacts.push(newChatRoom);
-					} else {
-						contacts.unshift(newChatRoom);
-					}
-					contacts = contacts;
-				}
-			} else {
-				const foundUser = contacts.find((contact) => contact.Username == targetUsername);
-				if (foundUser) {
-					const response = await fetch('/api/get-chat', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({
-							RoomId: foundUser.RoomId
-						})
-					});
-					const data = await response.json();
-					currentChatInfo = data;
-					currentChat = data.Chat;
-					loading = false;
-				} else {
+<script context="module">
+	export const load = async ({ fetch, url }) => {
+		const res = await fetch('/api/load-chatRooms');
+		let contacts = [];
+		let currentChat = [];
+		let currentChatInfo;
+		let loading = true;
+		if (res.ok) {
+			contacts = await res.json();
+			console.log(res);
+			const targetUser = url.search;
+			const targetUsername = targetUser.split('=')[1];
+			if (targetUsername) {
+				if (contacts == null) {
 					const result = await fetch('/api/create-room', {
 						method: 'POST',
 						headers: {
@@ -68,15 +22,68 @@
 						})
 					});
 					const newChatRoom = await result.json();
-					console.log(newChatRoom);
 					if (result.status == 200) {
-						contacts.unshift(newChatRoom);
+						if (contacts.length == 0) {
+							contacts.push(newChatRoom);
+						} else {
+							contacts.unshift(newChatRoom);
+						}
 						contacts = contacts;
+					}
+				} else {
+					const foundUser = contacts.find((contact) => contact.Username == targetUsername);
+					if (foundUser) {
+						const response = await fetch('/api/get-chat', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({
+								RoomId: foundUser.RoomId
+							})
+						});
+						const data = await response.json();
+						currentChatInfo = data;
+						currentChat = data.Chat;
+						loading = false;
+					} else {
+						const result = await fetch('/api/create-room', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({
+								targetUsername
+							})
+						});
+						const newChatRoom = await result.json();
+						if (result.status == 200) {
+							contacts.unshift(newChatRoom);
+							contacts = contacts;
+						}
 					}
 				}
 			}
 		}
-	});
+		return { props: { contacts, currentChat, currentChatInfo, loading } };
+	};
+</script>
+
+<script>
+	// @ts-nocheck
+	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
+	import { UnseenMsg } from '../store';
+	export let contacts;
+	export let currentChat;
+	export let currentChatInfo;
+	export let loading;
+	let chatwebSocket;
+	let textInput;
+	let picInput;
+	let hasPhoto = false;
+	let showList = true;
+	let bouncing = false;
+
 	function scrollToBottom() {
 		const element = document.getElementById('middlePart');
 		element.scrollTop = element.scrollHeight;

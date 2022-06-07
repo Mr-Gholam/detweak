@@ -1,26 +1,27 @@
+<script context="module">
+	export const load = async ({ fetch }) => {
+		const res = await fetch('/api/availablePosts', {
+			credentials: 'include'
+		});
+		let availablePosts = null;
+		if (res.status == 200) {
+			availablePosts = await res.json();
+		}
+		return { props: { availablePosts } };
+	};
+</script>
+
 <script>
 	// @ts-nocheck
-
-	import { onMount } from 'svelte';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
 	import { loading, User } from '../store';
 	import { goto } from '$app/navigation';
+	export let availablePosts;
 	let commentChecked = true;
 	let hasPhoto;
 	let postContent;
 	let imageSrc;
 	let postPicInput;
-	let availablePosts = [];
-	// onMount
-	onMount(async () => {
-		if (!$User) {
-			goto('/');
-		}
-		const response = await fetch('/api/availablePosts');
-		const posts = await response.json();
-		availablePosts = posts;
-		$loading = false;
-	});
 	function toggleComment(event) {
 		const target = event.target;
 
@@ -112,9 +113,9 @@
 	function postOption(postId) {
 		const option = document.getElementById(`${postId}`);
 		if (option.classList.contains('hidden')) {
-			option.classList.remove('hidden');
+			option.classList.replace('hidden', 'flex');
 		} else {
-			option.classList.add('hidden');
+			option.classList.replace('flex', 'hidden');
 		}
 	}
 	// add Comment
@@ -366,7 +367,7 @@
 											/>
 											<div
 												id={post.PostId}
-												class="hidden absolute bg-main-bg w-32 flex flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
+												class="hidden absolute bg-main-bg w-32  flex-col items-center  rounded p-3  option gap-2 z-10 border-2 border-border"
 											>
 												<button
 													on:click={openEdit(post.PostId)}

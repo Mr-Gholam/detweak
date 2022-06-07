@@ -1,7 +1,5 @@
 <script>
 	import { goto } from '$app/navigation';
-	import tr from 'date-fns/locale/tr';
-	import { onMount } from 'svelte';
 	import { loading, User } from '../store';
 
 	let email;
@@ -173,11 +171,6 @@
 			}
 		}
 	}
-	// onMount(async () => {
-	// 	if ($User.username) {
-	// 		goto('/dashboard');
-	// 	}
-	// });
 </script>
 
 <svelte:head>

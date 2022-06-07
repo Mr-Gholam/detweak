@@ -1,15 +1,20 @@
+<script context="module">
+	export const load = async ({ fetch }) => {
+		const res = await fetch('/api/friend-requests', {
+			credentials: 'include'
+		});
+		let friendRequests = [];
+		if (res.status == 200) {
+			friendRequests = await res.json();
+		}
+		return { props: { friendRequests } };
+	};
+</script>
+
 <script>
 	// @ts-nocheck
-
-	import { onMount } from 'svelte';
 	import { loading, Notification } from '../store';
-	let friendRequests = [];
-	onMount(async () => {
-		const response = await fetch('/api/friend-requests');
-		const data = await response.json();
-		friendRequests = data;
-		$loading = false;
-	});
+	export let friendRequests;
 	async function acceptReq(requestId) {
 		const response = await fetch('/api/accept-request', {
 			method: 'POST',

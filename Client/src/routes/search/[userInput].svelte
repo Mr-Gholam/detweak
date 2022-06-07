@@ -1,41 +1,43 @@
+<script context="module">
+	export const load = async ({ fetch, params }) => {
+		const userInput = params.userInput;
+		const res = await fetch(`/api/search/${userInput}`);
+		let suggestionUsers;
+		let suggestedPosts;
+		if (res.status == 200) {
+			const data = await res.json();
+			suggestionUsers = JSON.parse(JSON.stringify(data.Users));
+			suggestionUsers.sort((a, b) => {
+				if (a.IsFriend == 'Friend') {
+					return -1;
+				} else if (a.IsFriend == 'Not Friend') {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
+			suggestedPosts = JSON.parse(JSON.stringify(data.Posts));
+			suggestedPosts.sort((a, b) => {
+				if (a.IsFriend == 'Friend') {
+					return -1;
+				} else if (a.IsFriend == 'Not Friend') {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
+		}
+		return { props: { suggestionUsers, suggestedPosts } };
+	};
+</script>
+
 <script>
 	// @ts-nocheck
-
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { loading, User, ws } from '../../store';
 	import { goto } from '$app/navigation';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
-	let suggestionUsers;
-	let suggestedPosts;
-	onMount(async () => {
-		const userInput = $page.params.userInput;
-		const response = await fetch(`/api/search/${userInput}`);
-		const data = await response.json();
-		suggestionUsers = JSON.parse(JSON.stringify(data.Users));
-		suggestionUsers.sort((a, b) => {
-			if (a.IsFriend == 'Friend') {
-				return -1;
-			} else if (a.IsFriend == 'Not Friend') {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
-		suggestionUsers = suggestionUsers;
-		suggestedPosts = JSON.parse(JSON.stringify(data.Posts));
-		suggestedPosts.sort((a, b) => {
-			if (a.IsFriend == 'Friend') {
-				return -1;
-			} else if (a.IsFriend == 'Not Friend') {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
-		suggestedPosts = suggestedPosts;
-		$loading = false;
-	});
+	export let suggestionUsers;
+	export let suggestedPosts;
 	async function addFriend(username) {
 		if ($User) {
 			const response = await fetch('/api/add-friend', {
