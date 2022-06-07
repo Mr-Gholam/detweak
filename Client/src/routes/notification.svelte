@@ -24,9 +24,17 @@
 <script>
 	// @ts-nocheck
 	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
-	import { loading, Notification } from '../store';
+	import { loading, Notification, ws } from '../store';
 	export let friendRequests;
 	export let likes;
+	if ($ws) {
+		$ws.onmessage = (e) => {
+			const { notification } = JSON.parse(e.data);
+			console.log(notification);
+			likes.unshift(notification.Liked);
+			likes = likes;
+		};
+	}
 	async function acceptReq(requestId) {
 		const response = await fetch('/api/accept-request', {
 			method: 'POST',
