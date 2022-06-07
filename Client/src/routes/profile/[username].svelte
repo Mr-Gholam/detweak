@@ -75,10 +75,8 @@
 
 <script>
 	// @ts-nocheck
-	import { page } from '$app/stores';
 	import { ws, loading, User } from '../../store';
 	import formatDistanceToNow from 'date-fns/formatDistanceToNow/index.js';
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	export let firstName;
 	export let month;
@@ -102,7 +100,7 @@
 	let comment;
 
 	async function addFriend() {
-		if (user) {
+		if ($User.username) {
 			const response = await fetch('/api/add-friend', {
 				method: 'POST',
 				headers: {

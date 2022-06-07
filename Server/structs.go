@@ -37,10 +37,14 @@ type FriendShip struct {
 	ReceiverId uint
 	Status     bool
 }
+
 type LikedPost struct {
-	ID     uint `gorm:"primaryKey"`
-	UserId uint
-	PostId uint `json:"postId"`
+	ID        uint `gorm:"primaryKey"`
+	UserId    uint
+	PostId    uint `json:"postId"`
+	OwnerId   uint
+	Seen      bool
+	CreatedAt time.Time
 }
 type SearchResult struct {
 	Email        string

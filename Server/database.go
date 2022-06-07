@@ -89,7 +89,6 @@ func getPostsByUserId(ownerId uint, userId uint) []PostJSON {
 	}
 	return posts
 }
-
 func getPostByPostId(postId uint, userId uint) PostJSON {
 	var postsInfo Post
 	db.Where("id = ?", postId).Find(&postsInfo)
@@ -121,9 +120,9 @@ func getPostLikedByUserId(userId uint, postId uint) bool {
 	}
 }
 func likePost(postId uint) {
-	var post Post
+	var post uint
 	db.Model(&Post{}).Select([]string{"likes"}).Where("id=?", postId).First(&post)
-	newLikes := post.Likes + 1
+	newLikes := post + 1
 	db.Model(&Post{}).Where("id=?", postId).Update("likes", newLikes)
 }
 func dislikePost(postId uint) {

@@ -5,7 +5,7 @@
 	onMount(async () => {
 		const response = await fetch('/api/get-notifications');
 		const data = await response.json();
-		$Notification = data.Friendship;
+		$Notification = data.Friendship + data.NewLiked;
 		$UnseenMsg = data.Messages;
 	});
 </script>

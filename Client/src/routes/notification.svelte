@@ -1,4 +1,6 @@
 <script context="module">
+	import { get } from 'svelte/store';
+
 	export const load = async ({ fetch }) => {
 		const res = await fetch('/api/friend-requests', {
 			credentials: 'include'
@@ -7,14 +9,24 @@
 		if (res.status == 200) {
 			friendRequests = await res.json();
 		}
-		return { props: { friendRequests } };
+		let likes = [];
+		const newliked = await fetch('/api/new-liked');
+		if (newliked.status == 200) {
+			const data = await newliked.json();
+			likes = JSON.parse(JSON.stringify(data.Likes));
+			likes = likes.reverse();
+			Notification.set(get(Notification) - data.newlikes);
+		}
+		return { props: { friendRequests, likes } };
 	};
 </script>
 
 <script>
 	// @ts-nocheck
+	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
 	import { loading, Notification } from '../store';
 	export let friendRequests;
+	export let likes;
 	async function acceptReq(requestId) {
 		const response = await fetch('/api/accept-request', {
 			method: 'POST',
@@ -54,21 +66,21 @@
 <svelte:head>
 	<title>Notification</title>
 </svelte:head>
-<div class="w-96 lg:w-9/12 my-2 p-4">
+<div class="w-88 lg:w-128 my-2 py-4 flex flex-col">
 	<!--Friend requests-->
-	<section class="w-fit">
+	<div class="w-full">
 		<h4 class="text-center font-semibold my-2 text-text">Friend Requests</h4>
 		<section class="flex justify-between gap-4 flex-col">
 			{#if friendRequests}
 				{#each friendRequests as friendRequest}
 					<section
-						class="  py-2 px-3 flex my-2 items-center  justify-between lg:w-72 border-2 border-border rounded-md "
+						class="  py-2 px-3 flex my-2 items-center  justify-between 2-full border-2 border-border rounded-md "
 						id={friendRequest.RequestId}
 					>
 						<!--name and username-->
-						<section class="flex  items-center w-8/12 ">
+						<section class="flex  items-center w-5/12  justify-between">
 							<!--profile img-->
-							<a href="/profile/{friendRequest.Username}" class="lg:w-6/12">
+							<a href="/profile/{friendRequest.Username}">
 								<!-- svelte-ignore a11y-img-redundant-alt -->
 								{#if friendRequest.ImgUrl}
 									<img
@@ -84,8 +96,7 @@
 									</div>
 								{/if}
 							</a>
-							<!-- Name and username-->
-							<a href="/profile/{friendRequest.username}" class="mx-2 w-full">
+							<a href="/profile/{friendRequest.username}" class="mx-2 w-fit">
 								<h4 class=" font-semibold text-sm text-text hover:text-text-hover">
 									{friendRequest.Firstname}
 									{friendRequest.Lastname}
@@ -114,5 +125,70 @@
 				{/each}
 			{/if}
 		</section>
-	</section>
+	</div>
+	<!-- New likes -->
+	<div class="w-full ">
+		<h4 class="text-center font-semibold my-2 text-text">Likes</h4>
+		<section class="flex justify-between gap-4 flex-col">
+			{#each likes as like}
+				<section
+					class="  py-2 px-3 flex my-2 items-center  justify-between w-full lg:border-2  border-border rounded-md h-24 "
+					id={like.RequestId}
+				>
+					<!--name and username-->
+					<section class="flex  items-center h-16">
+						<!--profile img-->
+						<a href="/profile/{like.Username}">
+							<!-- svelte-ignore a11y-img-redundant-alt -->
+							{#if like.ImgUrl}
+								<img
+									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
+									src="/api/images/{like.ImgUrl}"
+									alt="Profile photo"
+								/>
+							{:else}
+								<div
+									class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border "
+								>
+									<i class="fa-solid fa-user text-slate-400 text-2xl" />
+								</div>
+							{/if}
+						</a>
+					</section>
+					<section class="w-48 lg:w-64 flex  justify-between flex-col  gap-2">
+						<div class="text-text">
+							<div class="flex items-center w-fit">
+								<a href="/profile/{like.Username} ">
+									<p class=" text-sm text-white hover:text-text-hover font-semibold ">
+										{like.Username}
+									</p>
+								</a>
+								<span class="text-xs mx-2"> liked </span>
+								<a
+									href="/post/{like.PostId}"
+									class="text-sm font-semibold text-white hover:text-text-hover"
+								>
+									your post</a
+								>
+							</div>
+						</div>
+						<p class="text-xs  bg-inherit text-text text-right">
+							{formatDistanceToNowStrict(new Date(like.CreatedAt), { addSuffix: true })}
+						</p>
+					</section>
+					<section class=" h-16 w-16">
+						{#if like.PostImgUrl}
+							<a href="/post/{like.PostId}">
+								<img
+									src="/api/images/{like.PostImgUrl}"
+									alt=""
+									class=" h-full w-full object-cover"
+								/>
+							</a>
+						{/if}
+					</section>
+				</section>
+			{/each}
+		</section>
+	</div>
 </div>

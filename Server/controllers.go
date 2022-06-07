@@ -314,11 +314,13 @@ func get_profile(w http.ResponseWriter, r *http.Request) {
 func get_get_notification(w http.ResponseWriter, r *http.Request) {
 	var friendship int64
 	var unseenMsg int64
+	var NewLikes int64
 	userId := getIdFromCookie(w, r)
 	db.Model(&FriendShip{}).Where("receiver_id =? AND status =?", userId, false).Count(&friendship)
 	db.Model(&Chat{}).Where("receiver_id = ? AND seen =?", userId, false).Count(&unseenMsg)
+	db.Model(&LikedPost{}).Where("owner_id = ? AND seen =?", userId, false).Count(&NewLikes)
 	w.WriteHeader(http.StatusOK)
-	e, err := json.Marshal(map[string]interface{}{"Friendship": friendship, "Messages": unseenMsg})
+	e, err := json.Marshal(map[string]interface{}{"Friendship": friendship, "Messages": unseenMsg, "NewLiked": NewLikes})
 	handleError(err)
 	w.Write(e)
 }
@@ -393,9 +395,12 @@ func get_available_posts(w http.ResponseWriter, r *http.Request) {
 }
 func post_like_post(w http.ResponseWriter, r *http.Request) {
 	var likedPost LikedPost
+	var ownerId uint
 	likedPost.jsonLikedPost(r)
 	userId := getIdFromCookie(w, r)
 	likedPost.UserId = userId
+	db.Model(&Post{}).Select([]string{"owner_id"}).Where("id =?", likedPost.PostId).Find(&ownerId)
+	likedPost.OwnerId = ownerId
 	result := getPostLikedByUserId(userId, likedPost.PostId)
 	if result {
 		dislikePost(likedPost.PostId)
@@ -406,6 +411,12 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 	} else {
 		likePost(likedPost.PostId)
+		ws, ok := OnlineUserIds[ownerId]
+		if ok {
+			notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"UserLikedYourPost": userId}})
+			handleError(err)
+			wsutil.WriteServerText(*ws, notification)
+		}
 		db.Create(&likedPost)
 		w.WriteHeader(http.StatusOK)
 		e, err := json.Marshal(map[string]interface{}{"Added": true})
@@ -477,6 +488,35 @@ func get_liked_by(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
+func get_new_likes(w http.ResponseWriter, r *http.Request) {
+	var posts []LikedPost
+	var result []map[string]interface{}
+	var newLikes int64
+	userId := getIdFromCookie(w, r)
+	db.Model(&LikedPost{}).Select([]string{"post_id", "user_id", "created_at", "id"}).Where("owner_id=?", userId).Find(&posts)
+	db.Model(&LikedPost{}).Where("owner_id = ? AND seen =?", userId, false).Count(&newLikes)
+	db.Model(&LikedPost{}).Where("owner_id = ? AND seen =?", userId, false).Update("seen", true)
+	for i := 0; i < len(posts); i++ {
+		user := make(map[string]interface{})
+		var post Post
+		username, firstname, lastname, imgUrl := findUserById(posts[i].UserId)
+		db.Model(&Post{}).Select([]string{"post_img_url", "description"}).Where("id =?", posts[i].PostId).Find(&post)
+		user["LikedId"] = posts[i].ID
+		user["Username"] = username
+		user["Firstname"] = firstname
+		user["Lastname"] = lastname
+		user["ImgUrl"] = imgUrl
+		user["Description"] = post.Description
+		user["PostImgUrl"] = post.PostImgUrl
+		user["CreatedAt"] = posts[i].CreatedAt
+		user["PostId"] = posts[i].PostId
+		result = append(result, user)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(map[string]interface{}{"Likes": result, "NewLikes": newLikes})
 	handleError(err)
 	w.Write(e)
 }

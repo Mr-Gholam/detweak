@@ -35,7 +35,8 @@
 	class=" h-fit p-4 my-2  xl:max-w-3/12 {$page.url.pathname === '/dashboard' ||
 	$page.url.pathname === '/liked-posts' ||
 	$page.params.username ||
-	$page.params.postId
+	$page.params.postId ||
+	$page.url.pathname === '/notification'
 		? '2xl:block'
 		: 'hidden'}"
 >

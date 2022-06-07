@@ -7,7 +7,6 @@
 		let loading = true;
 		if (res.ok) {
 			contacts = await res.json();
-			console.log(res);
 			const targetUser = url.search;
 			const targetUsername = targetUser.split('=')[1];
 			if (targetUsername) {
