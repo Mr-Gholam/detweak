@@ -1,22 +1,14 @@
-<script>
-	import { loading, onlineFriends, User, ws, Notification, UnseenMsg } from '../store';
-	import '../app.css';
-	import Navbar from '../components/navbar.svelte';
-	import LeftSidebar from '../components/leftSidebar.svelte';
-	import Loading from '../components/loading.svelte';
-	import RightSidebar from '../components/rightSidebar.svelte';
-	import { onMount } from 'svelte';
-	import { navigating, page } from '$app/stores';
-	$: $loading = !!$navigating;
-	onMount(async () => {
-		const res = await fetch('/api/jwt');
-		const u = await res.json();
+<script context="module">
+	export const load = async ({ url, stuff, fetch, get }) => {
+		const res = await fetch(`${url.protocol}//${url.hostname}/api/jwt`);
 		if (res.status == 200) {
-			$User = u;
+			const u = await res.json();
+			console.log(u);
+			User.set(u);
 			var h = window.location.href.split('/');
 			const webSokect = new WebSocket('ws' + h[0].replace('http', '') + '//' + h[2] + '/api/ws');
 			webSokect.onclose = () => {
-				$onlineFriends = [];
+				onlineFriends.set([]);
 				console.log('connection lost');
 			};
 			webSokect.onopen = () => {
@@ -28,35 +20,45 @@
 				const { notification } = JSON.parse(e.data);
 				const { UnSeenMsg } = JSON.parse(e.data);
 				if (UnSeenMsg) {
-					$UnseenMsg = $UnseenMsg + 1;
-					$UnseenMsg = $UnseenMsg;
+					UnseenMsg.set(get(UnseenMsg) + 1);
 				}
 				if (notification) {
 					if (notification.NewFriendReq || notification.Liked) {
-						if ($Notification == null) {
-							$Notification = 1;
+						if (Notification == null) {
+							Notification.set(1);
 						} else {
-							$Notification++;
+							Notification.set(get(Notification) + 1);
 						}
 					} else {
-						$Notification--;
+						Notification.set(get(Notification) - 1);
 					}
 				}
 				if (Friend) {
-					$onlineFriends.push(Friend);
-					$onlineFriends = $onlineFriends;
+					onlineFriends.set([...get(onlineFriends), Friend]);
 				}
 				if (offlineFriend) {
-					const location = $onlineFriends.findIndex(
+					const location = get(onlineFriends).findIndex(
 						(user) => user.Username == offlineFriend.Username
 					);
-					$onlineFriends.splice(location, 1);
-					$onlineFriends = $onlineFriends;
+					get(onlineFriends).splice(location, 1);
 				}
 			};
 			ws.set(webSokect);
 		}
-	});
+		return { props: { stuff } };
+	};
+</script>
+
+<script>
+	import { loading, onlineFriends, User, ws, Notification, UnseenMsg } from '../store';
+	import '../app.css';
+	import Navbar from '../components/navbar.svelte';
+	import LeftSidebar from '../components/leftSidebar.svelte';
+	import Loading from '../components/loading.svelte';
+	import RightSidebar from '../components/rightSidebar.svelte';
+	import { onMount } from 'svelte';
+	import { navigating, page } from '$app/stores';
+	$: $loading = !!$navigating;
 </script>
 
 <Navbar />

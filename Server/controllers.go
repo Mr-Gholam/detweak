@@ -188,7 +188,7 @@ func post_signup(w http.ResponseWriter, r *http.Request) {
 	user.encryptPassword()
 	// creating the user in database
 	db.Create(&user)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": user.Username, "id": user.ID, "imgUrl": ""})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": user.Username, "id": user.ID, "imgUrl": "", "firstname": "", "lastname": ""})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusCreated)
@@ -222,7 +222,8 @@ func post_login(w http.ResponseWriter, r *http.Request) {
 		w.Write(e)
 		return
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": id, "imgUrl": ImgUrl})
+	db.Model(&User{}).Select([]string{"firstname", "lastname"}).Where("id =?", id).First(&user)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": id, "imgUrl": ImgUrl, "firstname": user.Firstname, "lastname": user.Lastname})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
@@ -250,6 +251,10 @@ func post_set_profile(w http.ResponseWriter, r *http.Request) {
 	}
 	db.Model(&userData).
 		Where("id = ?", userId).Updates(User{Firstname: userData.Firstname, Lastname: userData.Lastname, Bio: userData.Bio, Birthday: userData.Birthday, Location: userData.Location})
+	db.Model(&User{}).Select([]string{"username", "img_url"}).Where("id = ?", userData.ID).First(&userData)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": userData.Username, "id": userId, "imgUrl": userData.ImgUrl, "firstname": userData.Firstname, "lastname": userData.Lastname})
+	tokenStr, _ := token.SignedString(jwtSecret)
+	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
 }
 func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
@@ -263,9 +268,9 @@ func post_set_profile_img(w http.ResponseWriter, r *http.Request) {
 	}
 	ImgUrl, err := FileUpload(r)
 	handleError(err)
-	username := findUsernameById(userId)
+	username, firstname, lastname, _ := findUserById(userId)
 	db.Model(&User{}).Where("id = ?", userId).Updates(User{ImgUrl: ImgUrl})
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": ImgUrl})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": ImgUrl, "firstname": firstname, "lastname": lastname})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
