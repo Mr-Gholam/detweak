@@ -9,15 +9,17 @@
 		if (res.status == 200) {
 			FriendRequests = await res.json();
 		}
-		let likes = [];
+		let Likes = [];
 		const newliked = await fetch('/api/new-liked');
 		if (newliked.status == 200) {
 			const data = await newliked.json();
-			likes = JSON.parse(JSON.stringify(data.Likes));
-			likes = likes.reverse();
+			Likes = JSON.parse(JSON.stringify(data.Likes));
+			if (Likes) {
+				Likes = likes.reverse();
+			}
 			Notification.set(get(Notification) - data.newlikes);
 		}
-		return { props: { FriendRequests, likes } };
+		return { props: { FriendRequests, Likes } };
 	};
 </script>
 
@@ -26,8 +28,15 @@
 	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
 	import { loading, Notification, ws } from '../store';
 	export let FriendRequests;
-	export let likes;
-	let friendRequests = [...FriendRequests];
+	export let Likes;
+	let likes = [];
+	let friendRequests = [];
+	if (FriendRequests) {
+		friendRequests = [...FriendRequests];
+	}
+	if (Likes) {
+		likes = [...Likes];
+	}
 	if ($ws) {
 		$ws.onmessage = (e) => {
 			const { notification } = JSON.parse(e.data);

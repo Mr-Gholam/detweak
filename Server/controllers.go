@@ -679,9 +679,9 @@ func post_create_message(w http.ResponseWriter, r *http.Request) {
 	roomId := uint(messageInfo["RoomId"].(float64))
 	targetId := uint(messageInfo["TargetId"].(float64))
 	ws, ok := OnlineUserIds[targetId]
-	unseenMsg, err := json.Marshal(map[string]interface{}{"UnSeenMsg": map[string]interface{}{"UnseenMsg": 1}})
-	handleError(err)
 	if ok {
+		unseenMsg, err := json.Marshal(map[string]interface{}{"UnSeenMsg": map[string]interface{}{"RoomId": roomId}})
+		handleError(err)
 		wsutil.WriteServerText(*ws, unseenMsg)
 	}
 	message := messageInfo["Message"].(string)
@@ -708,6 +708,12 @@ func post_create_message_img(w http.ResponseWriter, r *http.Request) {
 	chat.ReceiverId = uint(receiverId)
 	chat.ChatRoomId = room.ID
 	db.Create(&chat)
+	ws, ok := OnlineUserIds[uint(receiverId)]
+	if ok {
+		unseenMsg, err := json.Marshal(map[string]interface{}{"UnSeenMsg": map[string]interface{}{"RoomId": room.ID}})
+		handleError(err)
+		wsutil.WriteServerText(*ws, unseenMsg)
+	}
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(map[string]interface{}{"CreatedAt": chat.CreatedAt, "ImgUrl": imgUrl, "MessageId": chat.ID})
 	handleError(err)

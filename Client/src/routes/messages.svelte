@@ -71,7 +71,7 @@
 <script>
 	// @ts-nocheck
 	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
-	import { UnseenMsg } from '../store';
+	import { UnseenMsg, ws } from '../store';
 	export let contacts;
 	export let currentChat;
 	export let currentChatInfo;
@@ -82,7 +82,25 @@
 	let hasPhoto = false;
 	let showList = true;
 	let bouncing = false;
-
+	if ($ws) {
+		$ws.onmessage = (e) => {
+			const { UnSeenMsg } = JSON.parse(e.data);
+			if (UnSeenMsg) {
+				let roomId;
+				roomId = UnSeenMsg.RoomId;
+				const found = contacts.find((contact) => {
+					return (contact.RoomId = roomId);
+				});
+				found.UnseenMsg = found.UnseenMsg + 1;
+				const indexOfFound = contacts.indexOf(found);
+				if (indexOfFound != 0) {
+					contacts.splice(0, 0, indexOfFound);
+				}
+				contacts = contacts;
+				$UnseenMsg++;
+			}
+		};
+	}
 	function scrollToBottom() {
 		const element = document.getElementById('middlePart');
 		element.scrollTop = element.scrollHeight;
