@@ -7,13 +7,7 @@
 	import { onMount } from 'svelte';
 	const path = $page.url.pathname;
 	let humberguer = false;
-	onMount(async () => {
-		const response = await fetch('/api/friend-requests');
-		const data = await response.json();
-		if (data) {
-			$Notification = data.length;
-		}
-	});
+
 	function openHumberguer() {
 		const firstBurger = document.getElementById('firstBurger');
 		const midtBurger = document.getElementById('midBurger');

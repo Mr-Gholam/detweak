@@ -79,7 +79,7 @@
 	async function sumbit() {
 		$loading = true;
 		if (passedEmail && passedPassword) {
-			const response = await fetch('/api/login', {
+			const response = await fetch(`${location.protocol}//${location.hostname}/api/login`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

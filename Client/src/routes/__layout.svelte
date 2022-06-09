@@ -1,9 +1,22 @@
 <script context="module">
-	export const load = async ({ url, stuff, fetch, get }) => {
+	export const load = async ({ url, fetch }) => {
 		const res = await fetch(`${url.protocol}//${url.hostname}/api/jwt`);
+		if (res.status == 401) {
+			if (
+				url.pathname == '/dashboard' ||
+				url.pathname.includes('/friends') ||
+				url.pathname.includes('/liked-by') ||
+				url.pathname.includes('/post') ||
+				url.pathname == '/liked-posts' ||
+				url.pathname == '/messages' ||
+				url.pathname == '/notifiction' ||
+				url.pathname == '/sitting'
+			) {
+				return { status: 301, redirect: '/login' };
+			}
+		}
 		if (res.status == 200) {
 			const u = await res.json();
-			console.log(u);
 			User.set(u);
 			var h = window.location.href.split('/');
 			const webSokect = new WebSocket('ws' + h[0].replace('http', '') + '//' + h[2] + '/api/ws');
@@ -44,21 +57,33 @@
 				}
 			};
 			ws.set(webSokect);
+			if (
+				url.pathname == '/signup' ||
+				url.pathname == '/login' ||
+				url.pathname == '/new-password' ||
+				url.pathname == '/set-resume' ||
+				url.pathname == '/set-profile' ||
+				url.pathname == '/reset-password' ||
+				url.pathname == '/'
+			) {
+				return { status: 301, redirect: '/dashboard' };
+			}
 		}
-		return { props: { stuff } };
+		return {};
 	};
 </script>
 
 <script>
+	import { get } from 'svelte/store';
 	import { loading, onlineFriends, User, ws, Notification, UnseenMsg } from '../store';
 	import '../app.css';
 	import Navbar from '../components/navbar.svelte';
 	import LeftSidebar from '../components/leftSidebar.svelte';
 	import Loading from '../components/loading.svelte';
 	import RightSidebar from '../components/rightSidebar.svelte';
-	import { onMount } from 'svelte';
 	import { navigating, page } from '$app/stores';
 	$: $loading = !!$navigating;
+	console.log($User);
 </script>
 
 <Navbar />

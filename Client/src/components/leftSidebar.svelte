@@ -11,8 +11,9 @@
 </script>
 
 <div
-	class=" h-fit p-4 my-2  sticky top-20 hidden md:block  w-52 {$page.url.pathname ===
-		'/set-profile' || $page.url.pathname === '/set-resume'
+	class=" h-fit p-4 my-2  sticky top-20 hidden md:block  w-52 {$User.username
+		? 'md:block'
+		: 'md:hidden'} {$page.url.pathname === '/set-profile' || $page.url.pathname === '/set-resume'
 		? 'md:hidden'
 		: 'md:block'}  "
 >

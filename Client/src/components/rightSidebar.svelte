@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { onlineFriends } from '../store';
+	import { onlineFriends, User } from '../store';
 	let suggestion = [
 		{
 			userName: 'mr-gholam',
@@ -32,7 +32,8 @@
 
 <!--Right part-->
 <div
-	class=" h-fit p-4 my-2  xl:max-w-3/12 {$page.url.pathname === '/dashboard' ||
+	class=" h-fit p-4 my-2  xl:max-w-3/12 {$User.username ? 'md:block' : 'md:hidden'} {$page.url
+		.pathname === '/dashboard' ||
 	$page.url.pathname === '/liked-posts' ||
 	$page.params.username ||
 	$page.params.postId ||
