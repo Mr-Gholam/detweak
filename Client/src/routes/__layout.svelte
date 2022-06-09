@@ -32,10 +32,14 @@
 					$UnseenMsg = $UnseenMsg;
 				}
 				if (notification) {
-					if ($Notification == null) {
-						$Notification = 1;
+					if (notification.NewFriendReq || notification.Liked) {
+						if ($Notification == null) {
+							$Notification = 1;
+						} else {
+							$Notification++;
+						}
 					} else {
-						$Notification++;
+						$Notification--;
 					}
 				}
 				if (Friend) {

@@ -87,17 +87,6 @@ func get_ws(w http.ResponseWriter, r *http.Request) {
 			if len(msg) == 0 {
 				continue
 			}
-			var msgContent map[string]interface{}
-			err = json.Unmarshal(msg, &msgContent)
-			handleError(err)
-			targetId := findUserIdByUsername(msgContent["Target"].(string))
-			ws, ok := OnlineUserIds[targetId]
-			if ok {
-				notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"FriendReqSendedBy": username}})
-				handleError(err)
-				wsutil.WriteServerText(*ws, notification)
-			}
-
 			if err != nil {
 				for i := 0; i < len(friendIds); i++ {
 					offlineFriend, err := json.Marshal(map[string]interface{}{"offlineFriend": map[string]interface{}{"Username": username}})
@@ -405,6 +394,15 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 	if result {
 		dislikePost(likedPost.PostId)
 		db.Where("user_id = ? AND post_id = ?", userId, likedPost.PostId).Delete(&LikedPost{})
+		if ownerId != userId {
+			ws, ok := OnlineUserIds[ownerId]
+			if ok {
+				username := findUsernameById(userId)
+				notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"Disliked": map[string]interface{}{"Username": username, "PostId": likedPost.PostId}}})
+				handleError(err)
+				wsutil.WriteServerText(*ws, notification)
+			}
+		}
 		w.WriteHeader(http.StatusOK)
 		e, err := json.Marshal(map[string]interface{}{"Added": false})
 		handleError(err)
@@ -412,14 +410,16 @@ func post_like_post(w http.ResponseWriter, r *http.Request) {
 	} else {
 		likePost(likedPost.PostId)
 		db.Create(&likedPost)
-		ws, ok := OnlineUserIds[ownerId]
-		if ok {
-			var postImg string
-			db.Model(&Post{}).Select([]string{"post_img_url"}).Where("id = ?", likedPost.PostId).Find(&postImg)
-			username, _, _, imgUrl := findUserById(userId)
-			notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"Liked": map[string]interface{}{"Username": username, "ImgUrl": imgUrl, "PostImgUrl": postImg, "CreatedAt": likedPost.CreatedAt, "PostId": likedPost.PostId}}})
-			handleError(err)
-			wsutil.WriteServerText(*ws, notification)
+		if ownerId != userId {
+			ws, ok := OnlineUserIds[ownerId]
+			if ok {
+				var postImg string
+				db.Model(&Post{}).Select([]string{"post_img_url"}).Where("id = ?", likedPost.PostId).Find(&postImg)
+				username, _, _, imgUrl := findUserById(userId)
+				notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"Liked": map[string]interface{}{"Username": username, "ImgUrl": imgUrl, "PostImgUrl": postImg, "CreatedAt": likedPost.CreatedAt, "PostId": likedPost.PostId}}})
+				handleError(err)
+				wsutil.WriteServerText(*ws, notification)
+			}
 		}
 		w.WriteHeader(http.StatusOK)
 		e, err := json.Marshal(map[string]interface{}{"Added": true})
@@ -503,6 +503,9 @@ func get_new_likes(w http.ResponseWriter, r *http.Request) {
 	db.Model(&LikedPost{}).Where("owner_id = ? AND seen =?", userId, false).Count(&newLikes)
 	db.Model(&LikedPost{}).Where("owner_id = ? AND seen =?", userId, false).Update("seen", true)
 	for i := 0; i < len(posts); i++ {
+		if posts[i].UserId == userId {
+			continue
+		}
 		user := make(map[string]interface{})
 		var postImg string
 		username, _, _, imgUrl := findUserById(posts[i].UserId)
@@ -952,6 +955,13 @@ func post_add_friend(w http.ResponseWriter, r *http.Request) {
 	friendShip.ReceiverId = targetId
 	friendShip.Status = false
 	db.Create(&friendShip)
+	ws, ok := OnlineUserIds[targetId]
+	if ok {
+		username, firstname, lastname, imgUrl := findUserById(userId)
+		notification, err := json.Marshal(map[string]interface{}{"notification": map[string]interface{}{"NewFriendReq": map[string]interface{}{"Username": username, "Firstname": firstname, "Lastname": lastname, "ImgUrl": imgUrl, "RequestId": friendShip.ID}}})
+		handleError(err)
+		wsutil.WriteServerText(*ws, notification)
+	}
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(map[string]interface{}{"status": "Pending"})
 	handleError(err)

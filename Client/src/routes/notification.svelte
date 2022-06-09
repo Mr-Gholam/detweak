@@ -5,9 +5,9 @@
 		const res = await fetch('/api/friend-requests', {
 			credentials: 'include'
 		});
-		let friendRequests = [];
+		let FriendRequests = [];
 		if (res.status == 200) {
-			friendRequests = await res.json();
+			FriendRequests = await res.json();
 		}
 		let likes = [];
 		const newliked = await fetch('/api/new-liked');
@@ -17,7 +17,7 @@
 			likes = likes.reverse();
 			Notification.set(get(Notification) - data.newlikes);
 		}
-		return { props: { friendRequests, likes } };
+		return { props: { FriendRequests, likes } };
 	};
 </script>
 
@@ -25,14 +25,33 @@
 	// @ts-nocheck
 	import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict/index';
 	import { loading, Notification, ws } from '../store';
-	export let friendRequests;
+	export let FriendRequests;
 	export let likes;
+	let friendRequests = [...FriendRequests];
 	if ($ws) {
 		$ws.onmessage = (e) => {
 			const { notification } = JSON.parse(e.data);
-			console.log(notification);
-			likes.unshift(notification.Liked);
-			likes = likes;
+			if (notification.NewFriendReq) {
+				$Notification++;
+				friendRequests.push(notification.NewFriendReq);
+				friendRequests.sort((a, b) => {
+					return a.RequestId > b.RequestId;
+				});
+				friendRequests = friendRequests;
+			}
+			if (notification.Liked) {
+				likes.unshift(notification.Liked);
+				likes = likes;
+			}
+			if (notification.Disliked) {
+				likes = likes.filter((liked) => {
+					return (
+						liked.Username != notification.Disliked.Username &&
+						liked.PostId != notification.Disliked.PostId
+					);
+				});
+				likes = likes;
+			}
 		};
 	}
 	async function acceptReq(requestId) {

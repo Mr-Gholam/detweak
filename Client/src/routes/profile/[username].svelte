@@ -112,7 +112,6 @@
 			});
 			const data = await response.json();
 			isFriend = data.status;
-			$ws.send(JSON.stringify({ Target: userName }));
 		} else {
 			goto('/login');
 		}
