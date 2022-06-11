@@ -241,7 +241,7 @@
 							<img
 								on:dblclick={likePost(post.PostId)}
 								class="w-full h-fit  md:mx-auto  object-cover"
-								src="/api/{post.PostImgUrl}"
+								src="/api/images/{post.PostImgUrl}"
 								alt=""
 							/>
 						{/if}

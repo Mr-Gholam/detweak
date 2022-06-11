@@ -58,14 +58,13 @@
 
 <script>
 	// @ts-nocheck
-	import { onMount } from 'svelte';
 	import { User } from '../store';
 	import { loading } from '../store';
 	export let user;
 	export let firstName;
 	export let lastName;
 	export let bio;
-	export let profilePic;
+	export let ProfilePic;
 	export let selectedLanguage;
 	export let selectedField;
 	export let selectedFrameWork;
@@ -76,8 +75,9 @@
 	export let profileImage;
 	export let username;
 	export let currentPic;
+	export let countrySelected;
+	let profilePic = ProfilePic;
 	let profilePicInput;
-	let countrySelected;
 	let currentPassword;
 	let password;
 	let confirmPassword;

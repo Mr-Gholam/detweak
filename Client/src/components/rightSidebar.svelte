@@ -32,8 +32,7 @@
 
 <!--Right part-->
 <div
-	class=" h-fit p-4 my-2  xl:max-w-3/12 {$User.username ? 'md:block' : 'md:hidden'} {$page.url
-		.pathname === '/dashboard' ||
+	class=" h-fit p-4 my-2  xl:max-w-3/12 {($User.username && $page.url.pathname === '/dashboard') ||
 	$page.url.pathname === '/liked-posts' ||
 	$page.params.username ||
 	$page.params.postId ||

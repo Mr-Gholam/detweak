@@ -4,7 +4,6 @@
 	import { User, Notification } from '../store';
 	let searchValue;
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	const path = $page.url.pathname;
 	let humberguer = false;
 

@@ -1,14 +1,4 @@
 <script>
-	import { goto } from '$app/navigation';
-	import { User } from '../store';
-
-	import { onMount } from 'svelte';
-
-	onMount(async () => {
-		if ($User.username) {
-			goto('/dashboard');
-		}
-	});
 </script>
 
 <svelte:head>
