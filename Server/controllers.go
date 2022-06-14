@@ -1107,6 +1107,28 @@ func get_friends_by_username(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 
+// Job
+func post_create_job(w http.ResponseWriter, r *http.Request) {
+	var job Job
+	var user map[string]interface{}
+	userId := getIdFromCookie(w, r)
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &user)
+	job.ProjectName = user["ProjectName"].(string)
+	job.Language = user["language"].(string)
+	job.FrameWork = user["frameWork"].(string)
+	job.Deadline = user["deadline"].(string)
+	if budget, err := strconv.ParseInt(user["budget"].(string), 10, 64); err == nil {
+
+		job.Budget = budget
+	}
+	job.Description = user["description"].(string)
+	job.OwnerId = userId
+	db.Create(&job)
+
+}
+
 // search
 func get_search(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)

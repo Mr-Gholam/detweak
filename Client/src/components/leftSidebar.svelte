@@ -16,7 +16,7 @@
 		? 'md:hidden'
 		: 'md:block'}  "
 >
-	<section class=" flex justify-evenly flex-col text-lg p-2 font-semibold w-full ">
+	<div class=" flex justify-evenly flex-col text-lg p-2 font-semibold w-full ">
 		<a
 			href="/dashboard"
 			class="hover:text-main {$page.url.pathname === '/dashboard'
@@ -83,5 +83,23 @@
 				? 'text-white'
 				: 'text-text'}"><i class="fa-solid fa-gears mr-1" /> Setting</a
 		>
-	</section>
+		<section class="flex-1 flex flex-col border-t border-border my-8">
+			<a
+				href="/find-job"
+				class=" hover:text-main pl-2 py-2 {$page.url.pathname === '/find-job'
+					? 'text-white'
+					: 'text-text'}"
+			>
+				Find a Job</a
+			>
+			<a
+				href="/create-job"
+				class=" hover:text-main pl-2 py-2 {$page.url.pathname === '/create-job'
+					? 'text-white'
+					: 'text-text'}"
+			>
+				Create a Job</a
+			>
+		</section>
+	</div>
 </div>

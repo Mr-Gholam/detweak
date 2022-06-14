@@ -224,7 +224,7 @@
 	<!--Main part-->
 	<div
 		id="main"
-		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-full   overflow-x-hidden	 "
+		class="flex  justify-between items-center md:py-4  gap-4 flex-col  w-full   overflow-x-hidden "
 	>
 		<!--Creat Post-->
 		<div

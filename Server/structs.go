@@ -88,6 +88,17 @@ type FriendReq struct {
 	Lastname  string
 	ImgUrl    string
 }
+type Job struct {
+	ID          uint `gorm:"primaryKey"`
+	ProjectName string
+	Language    string
+	FrameWork   string
+	Description string
+	Budget      int64
+	OwnerId     uint
+	Deadline    string
+	CreatedAt   time.Time
+}
 type PostJSON struct {
 	IsFriend      string
 	PostId        uint
