@@ -23,7 +23,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/api/login" || r.URL.Path == "/api/signup" {
+		if r.URL.Path == "/api/login" || r.URL.Path == "/api/signup" || r.URL.Path == "/api/reset-password" {
 			next.ServeHTTP(w, r)
 			return
 		}

@@ -62,7 +62,6 @@
 					}
 				};
 				ws.set(webSokect);
-				goto('/dashboard');
 			}
 		} else {
 			if (

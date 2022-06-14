@@ -20,6 +20,8 @@ type User struct {
 	Location       string `json:"location,omitempty"`
 	Experience     string `json:"experience,omitempty"`
 	ImgUrl         string
+	Token          string
+	TokenExpire    time.Time
 	CreatedAt      time.Time
 }
 type Post struct {

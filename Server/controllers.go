@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
 	"net"
@@ -11,8 +12,10 @@ import (
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/gomail.v2"
 )
 
 var OnlineUserIds = map[uint]*net.Conn{}
@@ -293,6 +296,36 @@ func post_set_resume(w http.ResponseWriter, r *http.Request) {
 		Where("id = ?", userId).
 		Updates(User{GitHubUsername: userData.GitHubUsername, Language: userData.Language, FrameWork: userData.FrameWork, Field: userData.Field, Experience: userData.Experience})
 	w.WriteHeader(http.StatusOK)
+}
+func post_reset_password(w http.ResponseWriter, r *http.Request) {
+	var user map[string]interface{}
+	var userId uint
+	body, err := ioutil.ReadAll(r.Body)
+	handleError(err)
+	err = json.Unmarshal(body, &user)
+	email := user["email"].(string)
+	db.Model(&User{}).Select([]string{"id"}).Where("email = ?", email).First(&userId)
+	if userId == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		e, err := json.Marshal(map[string]interface{}{"error": map[string]interface{}{"message": "Email does not  exists"}})
+		handleError(err)
+		w.Write(e)
+		return
+	}
+	token := uuid.New().String()
+	location := "localhost/new-password?token=" + token
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", "Detweak Support")
+	msg.SetHeader("To", email)
+	msg.SetHeader("Subject", "reset Password")
+	msg.SetBody("text/html", location)
+	n := gomail.NewDialer("smtp.gmail.com", 587, "detweak@gmail.com", "Mehdi007!")
+	n.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Send the email
+	if err := n.DialAndSend(msg); err != nil {
+		panic(err)
+	}
 }
 
 // profile controller
