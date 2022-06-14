@@ -1,11 +1,12 @@
 package main
 
 import (
-	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/smtp"
 	"sort"
 	"strconv"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/gomail.v2"
 )
 
 var OnlineUserIds = map[uint]*net.Conn{}
@@ -314,18 +314,31 @@ func post_reset_password(w http.ResponseWriter, r *http.Request) {
 	}
 	token := uuid.New().String()
 	location := "localhost/new-password?token=" + token
-	msg := gomail.NewMessage()
-	msg.SetHeader("From", "Detweak Support")
-	msg.SetHeader("To", email)
-	msg.SetHeader("Subject", "reset Password")
-	msg.SetBody("text/html", location)
-	n := gomail.NewDialer("smtp.gmail.com", 587, "detweak@gmail.com", "Mehdi007!")
-	n.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	from := "detweak@gmail.com"
+	password := "Mehdi007!"
 
-	// Send the email
-	if err := n.DialAndSend(msg); err != nil {
-		panic(err)
+	// Receiver email address.
+	to := []string{
+		email,
 	}
+
+	// smtp server configuration.
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+
+	// Message.
+	message := []byte(location)
+
+	// Authentication.
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+
+	// Sending email.
+	err1 := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+	if err1 != nil {
+		fmt.Println(err1)
+		return
+	}
+	fmt.Println("Email Sent Successfully!")
 }
 
 // profile controller
