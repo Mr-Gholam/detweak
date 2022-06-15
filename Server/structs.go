@@ -93,6 +93,7 @@ type Job struct {
 	ProjectName string
 	Language    string
 	FrameWork   string
+	Field       string
 	Description string
 	Budget      int64
 	OwnerId     uint

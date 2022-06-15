@@ -1117,12 +1117,13 @@ func post_create_job(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &user)
 	job.ProjectName = user["ProjectName"].(string)
 	job.Language = user["language"].(string)
-	job.FrameWork = user["frameWork"].(string)
-	job.Deadline = user["deadline"].(string)
-	if budget, err := strconv.ParseInt(user["budget"].(string), 10, 64); err == nil {
-
-		job.Budget = budget
+	job.Field = user["field"].(string)
+	frameWork, ok := user["frameWork"]
+	if ok {
+		job.FrameWork = frameWork.(string)
 	}
+	job.Deadline = user["deadline"].(string)
+	job.Budget = int64(user["budget"].(float64))
 	job.Description = user["description"].(string)
 	job.OwnerId = userId
 	db.Create(&job)
