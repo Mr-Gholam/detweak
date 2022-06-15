@@ -1127,7 +1127,33 @@ func post_create_job(w http.ResponseWriter, r *http.Request) {
 	job.Description = user["description"].(string)
 	job.OwnerId = userId
 	db.Create(&job)
-
+}
+func get_my_jobs(w http.ResponseWriter, r *http.Request) {
+	var jobs []Job
+	var result []JobJSON
+	userId := getIdFromCookie(w, r)
+	db.Where("owner_id =?", userId).Find(&jobs)
+	username, firstname, lastname, imgUrl := findUserById(userId)
+	for i := 0; i < len(jobs); i++ {
+		var job JobJSON
+		job.ProjectName = jobs[i].ProjectName
+		job.Budget = jobs[i].Budget
+		job.CreatedAt = jobs[i].CreatedAt
+		job.Deadline = jobs[i].Deadline
+		job.Description = jobs[i].Description
+		job.Field = jobs[i].Field
+		job.FrameWork = jobs[i].FrameWork
+		job.Language = jobs[i].Language
+		job.OwnerFirstname = firstname
+		job.OwnerImg = imgUrl
+		job.OwnerLastname = lastname
+		job.OwnerUsername = username
+		result = append(result, job)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
 }
 
 // search

@@ -100,6 +100,20 @@ type Job struct {
 	Deadline    string
 	CreatedAt   time.Time
 }
+type JobJSON struct {
+	ProjectName    string
+	Language       string
+	FrameWork      string
+	Field          string
+	Description    string
+	Budget         int64
+	Deadline       string
+	CreatedAt      time.Time
+	OwnerImg       string
+	OwnerFirstname string
+	OwnerLastname  string
+	OwnerUsername  string
+}
 type PostJSON struct {
 	IsFriend      string
 	PostId        uint
