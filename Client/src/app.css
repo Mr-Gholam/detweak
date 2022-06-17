@@ -31,6 +31,16 @@ input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
 }
+/* .text_hover {
+	background-image: linear-gradient(90deg, #e23e57, #6db0d1);
+	background-size: 0%, 1px;
+	background-repeat: no-repeat;
+	background-position: left bottom;
+	transition: background-size 300ms ease;
+}
+.text_hover:hover {
+	background-size: 100%, 1px;
+} */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

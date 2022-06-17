@@ -90,6 +90,7 @@ type FriendReq struct {
 }
 type Job struct {
 	ID          uint `gorm:"primaryKey"`
+	Title       string
 	ProjectName string
 	Language    string
 	FrameWork   string
@@ -101,6 +102,8 @@ type Job struct {
 	CreatedAt   time.Time
 }
 type JobJSON struct {
+	Id             uint
+	Title          string
 	ProjectName    string
 	Language       string
 	FrameWork      string

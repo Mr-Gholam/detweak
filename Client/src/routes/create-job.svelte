@@ -8,7 +8,10 @@
 	let deadline;
 	let field;
 	let budget;
+	let title;
 	let description;
+	let passedtitle;
+	let errortitle;
 	let passedName;
 	let errorName;
 	let passedField;
@@ -23,7 +26,7 @@
 	let errorDes;
 	function checkName() {
 		if (projectname) {
-			if (projectname.length > 3) {
+			if (projectname.length > 2) {
 				passedName = true;
 				errorName = undefined;
 			} else {
@@ -80,6 +83,20 @@
 			errorDes = 'Description must be at least 15 characters';
 		}
 	}
+	function checkTitle() {
+		if (title) {
+			if (title.length > 2) {
+				passedtitle = true;
+				errortitle = undefined;
+			} else {
+				passedtitle = undefined;
+				errortitle = 'Title must be at least 3 characters';
+			}
+		} else {
+			passedtitle = undefined;
+			errortitle = 'Title must be at least 3 characters';
+		}
+	}
 	async function submit() {
 		checkName();
 		checkField();
@@ -87,6 +104,7 @@
 		checkDeadline();
 		checkBudget();
 		checkDescription();
+		checkTitle();
 		if (
 			passedBudget &&
 			passedDeadline &&
@@ -101,6 +119,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
+					title,
 					ProjectName: projectname,
 					language,
 					field,
@@ -135,6 +154,20 @@
 			on:submit|preventDefault={submit}
 		>
 			<div class="flex-col gap-4 flex">
+				<section class="w-80">
+					<p class="text-error text-sm text-center {errortitle ? 'block' : 'hidden'}">
+						{errortitle}
+					</p>
+					<label for="name" class="text-base text-text">Title</label>
+					<input
+						bind:value={title}
+						type="text"
+						on:change={checkTitle}
+						class="outline-none border-2   rounded-lg px-1 mx-auto block w-11/12 p-2 my-3 text-text {errortitle
+							? 'border-error'
+							: 'border-border'}"
+					/>
+				</section>
 				<section class="w-80">
 					<p class="text-error text-sm text-center {errorName ? 'block' : 'hidden'}">{errorName}</p>
 					<label for="name" class="text-base text-text">Project name </label>
@@ -201,6 +234,8 @@
 						{/each}
 					</select>
 				</section>
+			</div>
+			<div class="flex-col gap-4 flex">
 				<section class="w-80">
 					<p class="text-error text-sm text-center {errorDeadline ? 'block' : 'hidden'}">
 						{errorDeadline}
@@ -215,8 +250,6 @@
 							: 'border-border'}"
 					/>
 				</section>
-			</div>
-			<div class="flex-col gap-4 flex">
 				<section class="w-80 relative">
 					<p class="text-error text-sm text-center {errorBudget ? 'block' : 'hidden'}">
 						{errorBudget}

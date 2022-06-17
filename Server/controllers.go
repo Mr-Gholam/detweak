@@ -1117,6 +1117,7 @@ func post_create_job(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &user)
 	job.ProjectName = user["ProjectName"].(string)
 	job.Language = user["language"].(string)
+	job.Title = user["title"].(string)
 	job.Field = user["field"].(string)
 	frameWork, ok := user["frameWork"]
 	if ok {
@@ -1136,6 +1137,8 @@ func get_my_jobs(w http.ResponseWriter, r *http.Request) {
 	username, firstname, lastname, imgUrl := findUserById(userId)
 	for i := 0; i < len(jobs); i++ {
 		var job JobJSON
+		job.Id = jobs[i].ID
+		job.Title = jobs[i].Title
 		job.ProjectName = jobs[i].ProjectName
 		job.Budget = jobs[i].Budget
 		job.CreatedAt = jobs[i].CreatedAt

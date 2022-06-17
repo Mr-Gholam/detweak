@@ -36,7 +36,8 @@
 	$page.url.pathname === '/liked-posts' ||
 	$page.params.username ||
 	$page.params.postId ||
-	$page.url.pathname === '/notification'
+	$page.url.pathname === '/notification' ||
+	$page.url.pathname === '/my-jobs'
 		? '2xl:block'
 		: 'hidden'}"
 >
