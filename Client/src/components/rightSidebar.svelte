@@ -37,7 +37,8 @@
 	$page.params.username ||
 	$page.params.postId ||
 	$page.url.pathname === '/notification' ||
-	$page.url.pathname === '/my-jobs'
+	$page.url.pathname === '/my-jobs' ||
+	$page.url.pathname === '/find-job'
 		? '2xl:block'
 		: 'hidden'}"
 >

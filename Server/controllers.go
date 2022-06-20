@@ -1133,8 +1133,8 @@ func get_my_jobs(w http.ResponseWriter, r *http.Request) {
 	var jobs []Job
 	var result []JobJSON
 	userId := getIdFromCookie(w, r)
-	db.Where("owner_id =?", userId).Find(&jobs)
-	username, firstname, lastname, imgUrl := findUserById(userId)
+	db.Model(&Job{}).Select([]string{"id", "title", "project_name", "budget", "created_at"}).Where("owner_id =?", userId).Find(&jobs)
+	username, _, _, imgUrl := findUserById(userId)
 	for i := 0; i < len(jobs); i++ {
 		var job JobJSON
 		job.Id = jobs[i].ID
@@ -1142,19 +1142,36 @@ func get_my_jobs(w http.ResponseWriter, r *http.Request) {
 		job.ProjectName = jobs[i].ProjectName
 		job.Budget = jobs[i].Budget
 		job.CreatedAt = jobs[i].CreatedAt
-		job.Deadline = jobs[i].Deadline
-		job.Description = jobs[i].Description
-		job.Field = jobs[i].Field
-		job.FrameWork = jobs[i].FrameWork
-		job.Language = jobs[i].Language
-		job.OwnerFirstname = firstname
 		job.OwnerImg = imgUrl
-		job.OwnerLastname = lastname
 		job.OwnerUsername = username
 		result = append(result, job)
 	}
 	w.WriteHeader(http.StatusOK)
 	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
+func get_find_jobs(w http.ResponseWriter, r *http.Request) {
+	userId := getIdFromCookie(w, r)
+	var jobs []Job
+	var jsonJobs []JobJSON
+	var language string
+	db.Model(&User{}).Select([]string{"language"}).Where("id = ?", userId).Find(&language)
+	db.Model(&Job{}).Select([]string{"id", "title", "project_name", "budget", "owner_id", "created_at"}).Where("language = ?", language).Find(&jobs)
+	for i := 0; i < len(jobs); i++ {
+		var job JobJSON
+		username, _, _, imgUrl := findUserById(jobs[i].OwnerId)
+		job.Id = jobs[i].ID
+		job.Title = jobs[i].Title
+		job.ProjectName = jobs[i].ProjectName
+		job.Budget = jobs[i].Budget
+		job.CreatedAt = jobs[i].CreatedAt
+		job.OwnerImg = imgUrl
+		job.OwnerUsername = username
+		jsonJobs = append(jsonJobs, job)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(jsonJobs)
 	handleError(err)
 	w.Write(e)
 }

@@ -69,6 +69,7 @@ func routerSetup(router *mux.Router) {
 
 	// Job
 	router.Handle("/api/my-jobs", http.HandlerFunc(get_my_jobs)).Methods("GET")
+	router.Handle("/api/find-jobs", http.HandlerFunc(get_find_jobs)).Methods("GET")
 	router.Handle("/api/create-job", http.HandlerFunc(post_create_job)).Methods("POST")
 	// search
 	router.Handle("/api/search/{userInput}", http.HandlerFunc(get_search)).Methods("GET")

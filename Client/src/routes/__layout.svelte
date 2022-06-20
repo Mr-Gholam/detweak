@@ -22,6 +22,11 @@
 				// @ts-ignore
 				if (!get(User).firstname) {
 					if (url.pathname != '/set-profile') return { status: 301, redirect: '/set-profile' };
+					return;
+				}
+				if (url.pathname == '/set-resume') {
+					console.log('set-resume');
+					return goto('/set-resume');
 				}
 				var h = window.location.href.split('/');
 				const webSokect = new WebSocket('ws' + h[0].replace('http', '') + '//' + h[2] + '/api/ws');
@@ -62,6 +67,17 @@
 					}
 				};
 				ws.set(webSokect);
+				if (
+					url.pathname == '/signup' ||
+					url.pathname == '/login' ||
+					url.pathname == '/new-password' ||
+					url.pathname == '/set-resume' ||
+					url.pathname == '/set-profile' ||
+					url.pathname == '/reset-password' ||
+					url.pathname == '/'
+				) {
+					goto('/dashboard');
+				}
 			}
 		} else {
 			if (
@@ -73,7 +89,6 @@
 				url.pathname == '/reset-password' ||
 				url.pathname == '/'
 			) {
-				console.log('3');
 				goto('/dashboard');
 			}
 		}

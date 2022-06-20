@@ -102,20 +102,18 @@ type Job struct {
 	CreatedAt   time.Time
 }
 type JobJSON struct {
-	Id             uint
-	Title          string
-	ProjectName    string
-	Language       string
-	FrameWork      string
-	Field          string
-	Description    string
-	Budget         int64
-	Deadline       string
-	CreatedAt      time.Time
-	OwnerImg       string
-	OwnerFirstname string
-	OwnerLastname  string
-	OwnerUsername  string
+	Id            uint
+	Title         string
+	ProjectName   string
+	Language      string
+	FrameWork     string
+	Field         string
+	Description   string
+	Budget        int64
+	Deadline      string
+	CreatedAt     time.Time
+	OwnerImg      string
+	OwnerUsername string
 }
 type PostJSON struct {
 	IsFriend      string

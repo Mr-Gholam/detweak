@@ -6,7 +6,6 @@
 		let jobs;
 		if (res.status == 200) {
 			jobs = await res.json();
-			console.log(res);
 		}
 		return { props: { jobs } };
 	};
