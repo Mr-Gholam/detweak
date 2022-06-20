@@ -1175,6 +1175,39 @@ func get_find_jobs(w http.ResponseWriter, r *http.Request) {
 	handleError(err)
 	w.Write(e)
 }
+func get_job_byId(w http.ResponseWriter, r *http.Request) {
+	var job Job
+	result := make(map[string]interface{})
+	jobId := mux.Vars(r)["jobId"]
+	JobId, err := strconv.ParseUint(jobId, 10, 32)
+	handleError(err)
+	userId := getIdFromCookie(w, r)
+	db.Where("id = ?", JobId).First(&job)
+	username, firstname, lastname, imgUrl := findUserById(job.OwnerId)
+	if job.OwnerId == userId {
+		result["isOwner"] = true
+	} else {
+		result["isOwner"] = false
+	}
+	result["OwnerFirstname"] = firstname
+	result["OwnerLastname"] = lastname
+	result["OwnerUsername"] = username
+	result["OwnerImgUrl"] = imgUrl
+	result["Title"] = job.Title
+	result["Budget"] = job.Budget
+	result["CreatedAt"] = job.CreatedAt
+	result["Deadline"] = job.Deadline
+	result["Description"] = job.Description
+	result["Field"] = job.Field
+	result["FrameWork"] = job.FrameWork
+	result["ID"] = job.ID
+	result["Language"] = job.Language
+	result["ProjectName"] = job.ProjectName
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
 
 // search
 func get_search(w http.ResponseWriter, r *http.Request) {
