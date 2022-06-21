@@ -36,6 +36,7 @@
 	$page.url.pathname === '/liked-posts' ||
 	$page.params.username ||
 	$page.params.postId ||
+	$page.params.jobId ||
 	$page.url.pathname === '/notification' ||
 	$page.url.pathname === '/my-jobs' ||
 	$page.url.pathname === '/find-job'
