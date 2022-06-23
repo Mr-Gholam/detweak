@@ -1176,6 +1176,7 @@ func get_find_jobs(w http.ResponseWriter, r *http.Request) {
 	w.Write(e)
 }
 func get_job_byId(w http.ResponseWriter, r *http.Request) {
+	var offers []Offer
 	var job Job
 	result := make(map[string]interface{})
 	jobId := mux.Vars(r)["jobId"]
@@ -1186,8 +1187,35 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 	username, firstname, lastname, imgUrl := findUserById(job.OwnerId)
 	if job.OwnerId == userId {
 		result["isOwner"] = true
+		db.Where("job_id =?", JobId).Find(&offers)
+		var detailedOffer []map[string]interface{}
+		for i := 0; i < len(offers); i++ {
+			offer := make(map[string]interface{})
+			username, firstname, lastname, imgUrl := findUserById(offers[i].OwnerId)
+			offer["Description"] = offers[i].Description
+			offer["Id"] = offers[i].ID
+			offer["OwnerUsername"] = username
+			offer["OwnerFirstname"] = firstname
+			offer["OwnerLastname"] = lastname
+			offer["OwnerImgUrl"] = imgUrl
+			offer["CreatedAt"] = offers[i].CreatedAt
+			detailedOffer = append(detailedOffer, offer)
+		}
+		fmt.Println(detailedOffer[0]["Id"])
+		orderedOffer := reverseArray(detailedOffer)
+		result["Offers"] = orderedOffer
 	} else {
 		result["isOwner"] = false
+		db.Model(&Offer{}).Select([]string{"owner_id"}).Where("job_id =?", JobId).Find(&offers)
+		var detailedOffer []map[string]interface{}
+		for i := 0; i < len(offers); i++ {
+			offer := make(map[string]interface{})
+			username, _, _, imgUrl := findUserById(offers[i].OwnerId)
+			offer["OwnerUsername"] = username
+			offer["OwnerImgUrl"] = imgUrl
+			detailedOffer = append(detailedOffer, offer)
+		}
+		result["Others"] = detailedOffer
 	}
 	result["OwnerFirstname"] = firstname
 	result["OwnerLastname"] = lastname
@@ -1207,6 +1235,27 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 	e, err := json.Marshal(result)
 	handleError(err)
 	w.Write(e)
+}
+func post_create_application(w http.ResponseWriter, r *http.Request) {
+	var application Offer
+	var offer map[string]interface{}
+	var hasOffer uint
+	userId := getIdFromCookie(w, r)
+	body, err := ioutil.ReadAll(r.Body)
+	err = json.Unmarshal(body, &offer)
+	handleError(err)
+	JobId, err := strconv.ParseUint(offer["jobId"].(string), 10, 32)
+	handleError(err)
+	db.Model(&Offer{}).Select([]string{"id"}).Where("owner_id = ? AND job_id =?", userId, JobId).First(&hasOffer)
+	if hasOffer != 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	application.Description = offer["description"].(string)
+	application.OwnerId = userId
+	application.JobId = uint(JobId)
+	db.Create(&application)
+	w.WriteHeader(http.StatusOK)
 }
 
 // search

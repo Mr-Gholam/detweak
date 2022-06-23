@@ -99,6 +99,8 @@ type Job struct {
 	Budget      int64
 	OwnerId     uint
 	Deadline    string
+	WorkerId    uint
+	Finished    bool
 	CreatedAt   time.Time
 }
 type JobJSON struct {
@@ -114,6 +116,14 @@ type JobJSON struct {
 	CreatedAt     time.Time
 	OwnerImg      string
 	OwnerUsername string
+}
+type Offer struct {
+	ID          uint `gorm:"primaryKey"`
+	JobId       uint
+	OwnerId     uint
+	Description string
+	Seen        bool
+	CreatedAt   time.Time
 }
 type PostJSON struct {
 	IsFriend      string
