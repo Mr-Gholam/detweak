@@ -12,16 +12,16 @@
 	font-family: 'Roboto', sans-serif;
 	background-color: #0f172a;
 }
-.overflow-y-auto::-webkit-scrollbar {
+::-webkit-scrollbar {
 	width: 5px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
 	border-radius: 100vh;
 	background: #413f42;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
 	background-color: #7f8487;
 	border-radius: 100vh;
 	/* border: 1px solid #1f306e; */

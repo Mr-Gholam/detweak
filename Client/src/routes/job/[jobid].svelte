@@ -205,8 +205,10 @@
 								{offer.Description}
 							</h4>
 						</section>
-						<section class="flex items-center border-t border-border p-2 mt-2">
-							<button class=" main-btn text-sm border-0">contact for more information</button>
+						<section class="flex items-center mt-2">
+							<button class=" main-btn text-sm border-0">
+								<i class="fa-solid fa-comments text-xs mr-2" />contact for more information</button
+							>
 							<section class="flex justify-end w-10  items-center gap-3 text-lg flex-1 ">
 								<button
 									on:click={rejectOffer(offer.Id)}
