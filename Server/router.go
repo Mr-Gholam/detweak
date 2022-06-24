@@ -73,6 +73,8 @@ func routerSetup(router *mux.Router) {
 	router.Handle("/api/job/{jobId}", http.HandlerFunc(get_job_byId)).Methods("GET")
 	router.Handle("/api/create-job", http.HandlerFunc(post_create_job)).Methods("POST")
 	router.Handle("/api/create-application", http.HandlerFunc(post_create_application)).Methods("POST")
+	router.Handle("/api/reject-offer", http.HandlerFunc(post_reject_Offer)).Methods("POST")
+	router.Handle("/api/accept-offer", http.HandlerFunc(post_accept_Offer)).Methods("POST")
 	// search
 	router.Handle("/api/search/{userInput}", http.HandlerFunc(get_search)).Methods("GET")
 }

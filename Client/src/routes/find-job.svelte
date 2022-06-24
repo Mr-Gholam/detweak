@@ -117,6 +117,17 @@
 						</section>
 					</div>
 				{/each}
+			{:else}
+				<div class="my-8">
+					<div class="text-white  mx-auto w-fit   ">
+						<a
+							href="/setting"
+							class="text-center w-fit mx-auto border-border md:border-2 py-3 px-5 rounded-full text-sm  hover:text-main hover:border-main "
+						>
+							Update your professional information
+						</a>
+					</div>
+				</div>
 			{/if}
 		</div>
 	</div>

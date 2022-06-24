@@ -814,8 +814,8 @@ func post_remove_profileImg(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	db.Model(&User{}).Where("id =?", userId).Update("ImgUrl", "")
 	DeleteFile(ImgUrl)
-	username := findUsernameById(userId)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": " "})
+	username, firstname, lastname, _ := findUserById(userId)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": " ", "firstname": firstname, "lastname": lastname})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
@@ -830,8 +830,8 @@ func post_update_profileImg(w http.ResponseWriter, r *http.Request) {
 	NewImgUrl, err := FileUpload(r)
 	handleError(err)
 	db.Model(&User{}).Where("id = ?", userId).Update("ImgUrl", NewImgUrl)
-	username := findUsernameById(userId)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": NewImgUrl})
+	username, firstname, lastname, _ := findUserById(userId)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username, "id": userId, "imgUrl": NewImgUrl, "firstname": firstname, "lastname": lastname})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
@@ -908,8 +908,8 @@ func post_update_account(w http.ResponseWriter, r *http.Request) {
 		updated["Username"] = username
 	}
 	db.Model(&User{}).Where("id = ?", userId).Updates(updated)
-	newUsername, _, _, imgUrl := findUserById(userId)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": newUsername, "id": userId, "imgUrl": imgUrl})
+	newUsername, firstname, lastname, imgUrl := findUserById(userId)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": newUsername, "id": userId, "imgUrl": imgUrl, "firstname": firstname, "lastname": lastname})
 	tokenStr, _ := token.SignedString(jwtSecret)
 	http.SetCookie(w, &http.Cookie{Name: "jwt", Value: tokenStr, HttpOnly: true, Secure: true, MaxAge: 3600 * 24 * 1, SameSite: http.SameSiteNoneMode})
 	w.WriteHeader(http.StatusOK)
@@ -1187,7 +1187,7 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 	username, firstname, lastname, imgUrl := findUserById(job.OwnerId)
 	if job.OwnerId == userId {
 		result["isOwner"] = true
-		db.Where("job_id =?", JobId).Find(&offers)
+		db.Where("job_id =? AND rejected = ?", JobId, false).Find(&offers)
 		var detailedOffer []map[string]interface{}
 		for i := 0; i < len(offers); i++ {
 			offer := make(map[string]interface{})
@@ -1201,7 +1201,6 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 			offer["CreatedAt"] = offers[i].CreatedAt
 			detailedOffer = append(detailedOffer, offer)
 		}
-		fmt.Println(detailedOffer[0]["Id"])
 		orderedOffer := reverseArray(detailedOffer)
 		result["Offers"] = orderedOffer
 	} else {
@@ -1255,6 +1254,25 @@ func post_create_application(w http.ResponseWriter, r *http.Request) {
 	application.OwnerId = userId
 	application.JobId = uint(JobId)
 	db.Create(&application)
+	w.WriteHeader(http.StatusOK)
+}
+func post_reject_Offer(w http.ResponseWriter, r *http.Request) {
+	var offer map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	err = json.Unmarshal(body, &offer)
+	handleError(err)
+	db.Model(&Offer{}).Where("id =?", offer["offerId"]).Update("rejected", true)
+	w.WriteHeader(http.StatusOK)
+}
+func post_accept_Offer(w http.ResponseWriter, r *http.Request) {
+	var request Offer
+	var offer map[string]interface{}
+	body, err := ioutil.ReadAll(r.Body)
+	err = json.Unmarshal(body, &offer)
+	handleError(err)
+	db.Model(&Offer{}).Select([]string{"job_id", "owner_id"}).Where("id = ?", offer["offerId"]).Find(&request)
+	db.Model(&Offer{}).Where("id =?", offer["offerId"]).Update("accepted", true)
+	db.Model(&Job{}).Where("id = ?", request.JobId).Updates(Job{WorkerId: request.OwnerId, OfferId: request.ID})
 	w.WriteHeader(http.StatusOK)
 }
 

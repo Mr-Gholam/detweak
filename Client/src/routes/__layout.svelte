@@ -17,16 +17,18 @@
 			const res = await fetch(`${url.protocol}//${url.hostname}/api/jwt`);
 			if (res.status == 200) {
 				console.log('2');
+				console.log(url.pathname);
 				const u = await res.json();
+				console.log(u);
 				User.set(u);
 				// @ts-ignore
 				if (!get(User).firstname) {
+					console.log('KIE');
 					if (url.pathname != '/set-profile') return { status: 301, redirect: '/set-profile' };
-					return;
 				}
 				if (url.pathname == '/set-resume') {
 					console.log('set-resume');
-					return goto('/set-resume');
+					return { status: 301, redirect: '/set-resume' };
 				}
 				var h = window.location.href.split('/');
 				const webSokect = new WebSocket('ws' + h[0].replace('http', '') + '//' + h[2] + '/api/ws');
@@ -71,8 +73,6 @@
 					url.pathname == '/signup' ||
 					url.pathname == '/login' ||
 					url.pathname == '/new-password' ||
-					url.pathname == '/set-resume' ||
-					url.pathname == '/set-profile' ||
 					url.pathname == '/reset-password' ||
 					url.pathname == '/'
 				) {
@@ -90,6 +90,7 @@
 				url.pathname == '/'
 			) {
 				goto('/dashboard');
+				return {};
 			}
 		}
 

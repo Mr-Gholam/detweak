@@ -101,6 +101,7 @@ type Job struct {
 	Deadline    string
 	WorkerId    uint
 	Finished    bool
+	OfferId     uint
 	CreatedAt   time.Time
 }
 type JobJSON struct {
@@ -118,12 +119,16 @@ type JobJSON struct {
 	OwnerUsername string
 }
 type Offer struct {
-	ID          uint `gorm:"primaryKey"`
-	JobId       uint
-	OwnerId     uint
-	Description string
-	Seen        bool
-	CreatedAt   time.Time
+	ID           uint `gorm:"primaryKey"`
+	JobId        uint
+	OwnerId      uint
+	Description  string
+	Seen         bool
+	Rejected     bool
+	RejectedSeen bool
+	Accepted     bool
+	AcceptedSeen bool
+	CreatedAt    time.Time
 }
 type PostJSON struct {
 	IsFriend      string
