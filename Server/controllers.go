@@ -1178,6 +1178,7 @@ func get_find_jobs(w http.ResponseWriter, r *http.Request) {
 func get_job_byId(w http.ResponseWriter, r *http.Request) {
 	var offers []Offer
 	var job Job
+	var hasAcceptedOffer Offer
 	result := make(map[string]interface{})
 	jobId := mux.Vars(r)["jobId"]
 	JobId, err := strconv.ParseUint(jobId, 10, 32)
@@ -1185,27 +1186,49 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 	userId := getIdFromCookie(w, r)
 	db.Where("id = ?", JobId).First(&job)
 	username, firstname, lastname, imgUrl := findUserById(job.OwnerId)
+	db.Where("job_id = ? AND accepted = ?", JobId, true).First(&hasAcceptedOffer)
 	if job.OwnerId == userId {
 		result["isOwner"] = true
-		db.Where("job_id =? AND rejected = ?", JobId, false).Find(&offers)
-		var detailedOffer []map[string]interface{}
-		for i := 0; i < len(offers); i++ {
+		if hasAcceptedOffer.ID == 0 {
+			db.Where("job_id =? AND rejected = ?", JobId, false).Find(&offers)
+			var detailedOffer []map[string]interface{}
+			for i := 0; i < len(offers); i++ {
+				offer := make(map[string]interface{})
+				username, firstname, lastname, imgUrl := findUserById(offers[i].OwnerId)
+				offer["Description"] = offers[i].Description
+				offer["Id"] = offers[i].ID
+				offer["OwnerUsername"] = username
+				offer["OwnerFirstname"] = firstname
+				offer["OwnerLastname"] = lastname
+				offer["OwnerImgUrl"] = imgUrl
+				offer["CreatedAt"] = offers[i].CreatedAt
+				detailedOffer = append(detailedOffer, offer)
+			}
+			orderedOffer := reverseArray(detailedOffer)
+			result["Offers"] = orderedOffer
+		} else {
 			offer := make(map[string]interface{})
-			username, firstname, lastname, imgUrl := findUserById(offers[i].OwnerId)
-			offer["Description"] = offers[i].Description
-			offer["Id"] = offers[i].ID
+			username, firstname, lastname, imgUrl := findUserById(hasAcceptedOffer.OwnerId)
+			offer["Description"] = hasAcceptedOffer.Description
+			offer["Id"] = hasAcceptedOffer.ID
 			offer["OwnerUsername"] = username
 			offer["OwnerFirstname"] = firstname
 			offer["OwnerLastname"] = lastname
 			offer["OwnerImgUrl"] = imgUrl
-			offer["CreatedAt"] = offers[i].CreatedAt
-			detailedOffer = append(detailedOffer, offer)
+			offer["CreatedAt"] = hasAcceptedOffer.CreatedAt
+			result["AcceptedOffer"] = offer
 		}
-		orderedOffer := reverseArray(detailedOffer)
-		result["Offers"] = orderedOffer
 	} else {
 		result["isOwner"] = false
 		db.Model(&Offer{}).Select([]string{"owner_id"}).Where("job_id =?", JobId).Find(&offers)
+		if hasAcceptedOffer.ID != 0 {
+			offer := make(map[string]interface{})
+			username, firstname, lastname, _ := findUserById(hasAcceptedOffer.OwnerId)
+			offer["OwnerUsername"] = username
+			offer["OwnerFirstname"] = firstname
+			offer["OwnerLastname"] = lastname
+			result["AcceptedOffer"] = offer
+		}
 		var detailedOffer []map[string]interface{}
 		for i := 0; i < len(offers); i++ {
 			offer := make(map[string]interface{})
@@ -1216,6 +1239,7 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 		}
 		result["Others"] = detailedOffer
 	}
+	result["HasAcceptedOffer"] = hasAcceptedOffer.Accepted
 	result["OwnerFirstname"] = firstname
 	result["OwnerLastname"] = lastname
 	result["OwnerUsername"] = username

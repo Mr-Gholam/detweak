@@ -57,7 +57,7 @@
 	async function acceptOffer(offerId) {
 		const box = document.querySelectorAll('.button-box');
 		const offer = document.getElementById(`offer-${offerId}`);
-		const res = await fetch('/api/reject-offer', {
+		const res = await fetch('/api/accept-offer', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -174,32 +174,103 @@
 			<!-- apply form -->
 			{#if !job.isOwner}
 				<div class="" id="application">
-					<form on:submit|preventDefault={submitApplication}>
-						<section class="w-full relative">
-							<p class="text-sm text-error text-center my-2 {descriptionErr ? 'block' : 'hidden'}">
-								{descriptionErr}
-							</p>
-							<p class="text-sm text-error text-center my-2 {duplicateOffer ? 'block' : 'hidden'}">
-								{duplicateOffer}
-							</p>
-							<label class="text-base text-text " for="bio"
-								>Describe why you are the best candidate</label
-							>
-							<textarea
-								name="bio"
-								id="bio"
-								cols="20 "
-								rows="5"
-								placeholder="..."
-								bind:value={description}
-								class="outline-none border-2  text-text border-solid
+					{#if !job.HasAcceptedOffer}
+						<form on:submit|preventDefault={submitApplication}>
+							<section class="w-full relative">
+								<p
+									class="text-sm text-error text-center my-2 {descriptionErr ? 'block' : 'hidden'}"
+								>
+									{descriptionErr}
+								</p>
+								<p
+									class="text-sm text-error text-center my-2 {duplicateOffer ? 'block' : 'hidden'}"
+								>
+									{duplicateOffer}
+								</p>
+								<label class="text-base text-text " for="bio"
+									>Describe why you are the best candidate</label
+								>
+								<textarea
+									name="bio"
+									id="bio"
+									cols="20 "
+									rows="5"
+									placeholder="..."
+									bind:value={description}
+									class="outline-none border-2  text-text border-solid
 								 rounded-lg px-2.5 mx-auto block w-11/12 my-3 p-2 resize-none {descriptionErr
-									? 'border-error'
-									: 'border-border'}"
-							/>
-						</section>
-						<input type="submit" class="main-btn float-right mr-8" value="Apply" />
-					</form>
+										? 'border-error'
+										: 'border-border'}"
+								/>
+							</section>
+							<input type="submit" class="main-btn float-right mr-8" value="Apply" />
+						</form>
+					{:else}
+						<div
+							class="text-center w-fit mx-auto border-border md:border-2 py-3 px-5 rounded-full text-sm"
+						>
+							<p class="text-text text-center">
+								<a
+									href="/profile/{job.AcceptedOffer.OwnerUsername} "
+									class="font-semibold text-text hover:text-text-hover"
+									>{job.AcceptedOffer.OwnerFirstname} {job.AcceptedOffer.OwnerLastname}</a
+								>
+								's offer has been accepted
+							</p>
+						</div>
+					{/if}
+				</div>
+			{/if}
+			<p class="text-text text-center">Selected Offer</p>
+			{#if job.AcceptedOffer}
+				<div
+					id="offer-{job.AcceptedOffer.Id}"
+					class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden p-2"
+				>
+					<!-- iformation -->
+					<section class="flex gap-2 items-center justify-between  border-b border-border p-2 mb-2">
+						<a href="/profile/{job.AcceptedOffer.OwnerUsername}" class="ml-2">
+							{#if job.AcceptedOffer.OwnerImgUrl}
+								<!-- svelte-ignore a11y-img-redundant-alt -->
+								<img
+									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
+									src="/api/images/{job.AcceptedOffer.OwnerImgUrl}"
+									alt="Profile photo"
+								/>
+							{:else}
+								<div
+									class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
+								>
+									<i class="fa-solid fa-user text-slate-400 text-2xl" />
+								</div>
+							{/if}
+						</a>
+						<a href="/profile/{job.AcceptedOffer.OwnerUsername}" class="flex-1">
+							<h4 class="mx-2 font-semibold text-text hover:text-text-hover">
+								{job.AcceptedOffer.OwnerFirstname}
+								{job.AcceptedOffer.OwnerLastname}
+							</h4>
+							<h5 class=" text-sm  text-text hover:text-text-hover mx-2 ">
+								@{job.AcceptedOffer.OwnerUsername}
+							</h5>
+						</a>
+						<h6 class="text-xs text-text mx-2">
+							{formatDistanceToNow(new Date(job.AcceptedOffer.CreatedAt), { addSuffix: true })}
+						</h6>
+					</section>
+					<section>
+						<h4 class="text-text mx-2 ">
+							{job.AcceptedOffer.Description}
+						</h4>
+					</section>
+					<section class="flex items-center mt-2">
+						<button
+							class=" main-btn text-sm border-1"
+							on:click={sendMessage(job.AcceptedOffer.OwnerUsername)}
+						>
+							<i class="fa-solid fa-comments text-xs mr-2 " />contact for more details</button
+						>
+					</section>
 				</div>
 			{/if}
 			{#if job.Offers}
@@ -276,26 +347,28 @@
 				</div>
 			{/if}
 			{#if job.Others}
-				<h3 class="text-text">People who also apply for this job</h3>
-				<div class="flex">
-					{#each job.Others as other}
-						<a href="/profile/{other.OwnerUsername}" class="ml-2">
-							{#if other.OwnerImgUrl}
-								<!-- svelte-ignore a11y-img-redundant-alt -->
-								<img
-									class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
-									src="/api/images/{other.OwnerImgUrl}"
-									alt="Profile photo"
-								/>
-							{:else}
-								<div
-									class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
-								>
-									<i class="fa-solid fa-user text-slate-400 text-2xl" />
-								</div>
-							{/if}
-						</a>
-					{/each}
+				<div class="my-2">
+					<h3 class="text-text text-sm">People who also apply for this job</h3>
+					<div class="flex my-2">
+						{#each job.Others as other}
+							<a href="/profile/{other.OwnerUsername}" class="ml-2">
+								{#if other.OwnerImgUrl}
+									<!-- svelte-ignore a11y-img-redundant-alt -->
+									<img
+										class="h-12 w-12 object-cover rounded-full hover:opacity-90  "
+										src="/api/images/{other.OwnerImgUrl}"
+										alt="Profile photo"
+									/>
+								{:else}
+									<div
+										class="h-12 w-12 rounded-full hover:opacity-90 bg-main-bg flex items-center justify-center border-2 border-border"
+									>
+										<i class="fa-solid fa-user text-slate-400 text-2xl" />
+									</div>
+								{/if}
+							</a>
+						{/each}
+					</div>
 				</div>
 			{/if}
 		</div>
