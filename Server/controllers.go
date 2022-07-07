@@ -1303,6 +1303,40 @@ func post_accept_Offer(w http.ResponseWriter, r *http.Request) {
 	db.Model(&Job{}).Where("id = ?", request.JobId).Updates(Job{WorkerId: request.OwnerId, OfferId: request.ID})
 	w.WriteHeader(http.StatusOK)
 }
+func get_my_Offers(w http.ResponseWriter, r *http.Request) {
+	var result []map[string]interface{}
+	var Offers []Offer
+	var job Job
+	userId := getIdFromCookie(w, r)
+	db.Where("owner_id = ?", userId).Find(&Offers)
+	for i := 0; i < len(Offers); i++ {
+		offer := make(map[string]interface{})
+		offer["JobId"] = Offers[i].JobId
+		if Offers[i].Accepted {
+			offer["Status"] = "Accepted"
+			if !Offers[i].AcceptedSeen {
+				offer["AcceptedSeen"] = true
+				db.Where("id = ? AND accepted_seen = ?", Offers[i].ID, false).Update("accepted_seen", true)
+			}
+		} else if Offers[i].Rejected {
+			offer["Status"] = "Rejected"
+			if !Offers[i].RejectedSeen {
+				offer["RejectedSeen"] = true
+				db.Where("id = ? AND rejected_seen = ?", Offers[i].ID, false).Update("rejected_seen", true)
+			}
+		} else {
+			offer["Status"] = "Pending"
+		}
+		db.Model(&Job{}).Select([]string{"title", "project_name"}).Where("id=?", Offers[i].JobId).First(&job)
+		offer["ProjectName"] = job.ProjectName
+		offer["Title"] = job.Title
+		result = append(result, offer)
+	}
+	w.WriteHeader(http.StatusOK)
+	e, err := json.Marshal(result)
+	handleError(err)
+	w.Write(e)
+}
 
 // search
 func get_search(w http.ResponseWriter, r *http.Request) {
