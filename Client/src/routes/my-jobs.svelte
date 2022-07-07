@@ -57,11 +57,13 @@
 							</h5>
 						</a>
 						<section class="flex flex-col justify-end items-center relative ">
-							<p
-								class="w-5 h-5 bg-main rounded-full flex items-center justify-center text-white text-sm absolute -top-2 -right-2"
-							>
-								4
-							</p>
+							{#if job.Unseen != 0}
+								<p
+									class="w-5 h-5 bg-main rounded-full flex items-center justify-center text-white text-sm absolute -top-2 -right-1"
+								>
+									{job.Unseen}
+								</p>
+							{/if}
 							<a
 								href="/job/{job.Id}"
 								class="border-border p-2 border-2 rounded-full text-sm text-text hover:border-main hover:text-white"

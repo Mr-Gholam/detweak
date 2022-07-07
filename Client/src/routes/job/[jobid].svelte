@@ -221,8 +221,8 @@
 					{/if}
 				</div>
 			{/if}
-			<p class="text-text text-center">Selected Offer</p>
 			{#if job.AcceptedOffer}
+				<p class="text-text text-center">Selected Offer</p>
 				<div
 					id="offer-{job.AcceptedOffer.Id}"
 					class="md:border-2 border-solid border-border  shadow-xl w-full rounded-md my-2 overflow-x-hidden p-2"
@@ -274,7 +274,7 @@
 				</div>
 			{/if}
 			{#if job.Offers}
-				<div id="offer-container">
+				<div id="offer-container" class="flex gap-4 flex-col">
 					{#each job.Offers as offer}
 						<div
 							id="offer-{offer.Id}"

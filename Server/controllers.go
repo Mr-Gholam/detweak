@@ -1131,19 +1131,22 @@ func post_create_job(w http.ResponseWriter, r *http.Request) {
 }
 func get_my_jobs(w http.ResponseWriter, r *http.Request) {
 	var jobs []Job
-	var result []JobJSON
+	var result []map[string]interface{}
 	userId := getIdFromCookie(w, r)
 	db.Model(&Job{}).Select([]string{"id", "title", "project_name", "budget", "created_at"}).Where("owner_id =?", userId).Find(&jobs)
 	username, _, _, imgUrl := findUserById(userId)
 	for i := 0; i < len(jobs); i++ {
-		var job JobJSON
-		job.Id = jobs[i].ID
-		job.Title = jobs[i].Title
-		job.ProjectName = jobs[i].ProjectName
-		job.Budget = jobs[i].Budget
-		job.CreatedAt = jobs[i].CreatedAt
-		job.OwnerImg = imgUrl
-		job.OwnerUsername = username
+		var unseen int64
+		job := make(map[string]interface{})
+		db.Model(&Offer{}).Where("job_id = ? AND seen =? ", jobs[i].ID, false).Count(&unseen)
+		job["Id"] = jobs[i].ID
+		job["Unseen"] = unseen
+		job["Title"] = jobs[i].Title
+		job["ProjectName"] = jobs[i].ProjectName
+		job["Budget"] = jobs[i].Budget
+		job["CreatedAt"] = jobs[i].CreatedAt
+		job["OwnerImg"] = imgUrl
+		job["OwnerUsername"] = username
 		result = append(result, job)
 	}
 	w.WriteHeader(http.StatusOK)
@@ -1206,6 +1209,7 @@ func get_job_byId(w http.ResponseWriter, r *http.Request) {
 			}
 			orderedOffer := reverseArray(detailedOffer)
 			result["Offers"] = orderedOffer
+			db.Model(&Offer{}).Where("job_id =? AND seen = ?", JobId, false).Update("seen", true)
 		} else {
 			offer := make(map[string]interface{})
 			username, firstname, lastname, imgUrl := findUserById(hasAcceptedOffer.OwnerId)
